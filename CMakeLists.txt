@@ -5,25 +5,46 @@ cmake_minimum_required (VERSION 3.8)
 project ("RandomParticleEngine")
 
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+if(CMAKE_EXPORT_COMPILE_COMMANDS)
+    set(CMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES ${CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES})
+endif()
+
+# Compile Options
+# set(CMAKE_CXX_CLANG_TIDY clang-tidy --extra-arg=-Wno-unknown-warning-option -p=${CMAKE_BINARY_DIR})
+# Disable clang tidy for now. There's an issue using this with this toolchain since it can't find opengl
+# headers
+set(CXX_STANDARD 20)
+
+include(FetchContent)
+
+# Runs through the process of fetching content from a url and building it
+# as a a dependency
+function(build_depend_from_git depend_name url)
+  FetchContent_Declare(
+    ${depend_name}
+    GIT_REPOSITORY ${url}
+  )
+
+  FetchContent_GetProperties(${depend_name})
+  if(NOT ${depend_name}_POPULATED)
+    FetchContent_Populate(${depend_name})
+    add_subdirectory(${${depend_name}_SOURCE_DIR} ${${depend_name}_BINARY_DIR})
+  endif()
+endfunction()
+
 # Setup dependencies
 find_package(OpenGL REQUIRED)
 find_package(GLM REQUIRED)
-
-include(FetchContent)
-FetchContent_Declare(
-  glfw
-  GIT_REPOSITORY https://github.com/glfw/glfw
-)
-FetchContent_GetProperties(glfw)
-if(NOT glfw_POPULATED)
-  FetchContent_Populate(glfw)
-  add_subdirectory(${glfw_SOURCE_DIR} ${glfw_BINARY_DIR})
-endif()
+build_depend_from_git(glfw https://github.com/glfw/glfw)
+add_subdirectory(external)
 
 # Setup main
 add_executable(RandomParticleEngine)
 target_sources(RandomParticleEngine
     PRIVATE 
+    src/scene.h
+    
     src/camera.cpp
     src/particle_system.cpp
     src/scene.cpp
@@ -31,10 +52,9 @@ target_sources(RandomParticleEngine
 )
 target_include_directories(RandomParticleEngine PRIVATE src) 
 
-# Link sources
+# Link main with it's dependencies
 target_link_libraries(RandomParticleEngine PRIVATE
     ${OPENGL_LIBRARY}
     glfw
+    glew_s
 )
-
-# TODO: Add tests and install targets if needed.

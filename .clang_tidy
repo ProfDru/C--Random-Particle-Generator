@@ -1,0 +1,2 @@
+Checks: '-*, readability-*, bugprone-*, clang-analyzer-*, performance-*'
+p 'build'
