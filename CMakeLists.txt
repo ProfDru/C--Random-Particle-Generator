@@ -58,3 +58,11 @@ target_link_libraries(RandomParticleEngine PRIVATE
     glfw
     glew_s
 )
+
+set_property(
+  TARGET RandomParticleEngine
+  PROPERTY CXX_STANDARD 20
+)
+target_compile_options(
+  RandomParticleEngine PRIVATE -Wall
+)
