@@ -1,4 +1,4 @@
-# CMakeList.txt : CMake project for RandomParticleEngine, include source and define
+﻿# CMakeList.txt : CMake project for RandomParticleEngine, include source and define
 # project specific logic here.
 #
 cmake_minimum_required (VERSION 3.8)
@@ -44,11 +44,14 @@ add_executable(RandomParticleEngine)
 target_sources(RandomParticleEngine
     PRIVATE 
     src/scene.h
+    src/shader.h
+    src/particle_system.h
     
     src/camera.cpp
     src/particle_system.cpp
     src/scene.cpp
     src/main.cpp
+    src/shader.cpp
 )
 target_include_directories(RandomParticleEngine PRIVATE src) 
 
@@ -63,6 +66,14 @@ set_property(
   TARGET RandomParticleEngine
   PROPERTY CXX_STANDARD 20
 )
+
 target_compile_options(
   RandomParticleEngine PRIVATE -Wall
+)
+
+add_custom_command(
+        TARGET RandomParticleEngine POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                ${CMAKE_SOURCE_DIR}/src/shaders
+                ${CMAKE_CURRENT_BINARY_DIR}/shaders
 )
