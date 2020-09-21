@@ -24,8 +24,6 @@ class Scene {
   */
   void Start();
 
-  void CreateDummyParticleEngine();
-
   ~Scene();
 };
 }  // namespace rpg

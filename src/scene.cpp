@@ -81,9 +81,6 @@ void Scene::Start() {
   this->DrawLoop();
 }
 
-void Scene::CreateDummyParticleEngine() {
-  this->PI = ParticleEngine();
-}
 
 void Scene::DrawLoop() {
   // Ensure we can capture the escape key being pressed below
