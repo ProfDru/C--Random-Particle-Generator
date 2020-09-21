@@ -1,4 +1,5 @@
 #include <particle_system.h>
+#include <camera.h>
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -10,6 +11,7 @@ namespace rpg {
 /*! \brief Manages the state of the OpenGL renderer */
 class Scene {
   std::optional<ParticleEngine> PI;
+  Camera main_camera;
 
  private:
   GLFWwindow* current_window;
