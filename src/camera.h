@@ -47,7 +47,8 @@ class Camera {
   void SetPos(float px, float py, float pz, float dx, float dy, float dz);
 
   /*! \brief Move the camera and update it's matricies */
-  void Move();
+  void Move(const glm::vec2& position_change,
+            const glm::vec2& direction_change);
 
   const glm::mat4& GetPerspectiveMatrix() const;
   const glm::mat4& GetViewMatrix() const;

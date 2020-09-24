@@ -45,12 +45,15 @@ target_sources(RandomParticleEngine
     src/scene.h
     src/shader.h
     src/particle_system.h
-    
+    src/controls.h
+
     src/camera.cpp
     src/particle_system.cpp
     src/scene.cpp
     src/main.cpp
     src/shader.cpp
+    src/controls.cpp
+
 )
 target_include_directories(RandomParticleEngine PRIVATE src) 
 

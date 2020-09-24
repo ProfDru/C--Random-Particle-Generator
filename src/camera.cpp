@@ -47,7 +47,7 @@ void Camera::UpdateMatricies() {
   this->perspective_matrix =
       glm::perspective(glm::radians(this->fov), this->width / this->height,
                        this->near_plane, this->far_plane);
-  this->view_matrix = glm::lookAt(this->pos, this->rot + this->pos, up);
+  this->view_matrix = glm::lookAt(this->pos, direction + this->pos, up);
 }
 
 const glm::mat4& Camera::GetPerspectiveMatrix() const {
@@ -61,6 +61,18 @@ const glm::mat4& Camera::GetViewMatrix() const {
 glm::mat4 Camera::CalculateMVP() const {
   const glm::mat4 model_matrix(1.0);
   return this->perspective_matrix * this->view_matrix * model_matrix;
+}
+
+void Camera::Move(const glm::vec2& position_change,
+                  const glm::vec2& direction_change) {
+  this->pos += (ComputeDirection(this->vertical_angle, this->horizontal_angle) *
+                position_change.y);
+  this->pos += (ComputeRightAngle(this->horizontal_angle) * position_change.x);
+
+  this->horizontal_angle += direction_change.x;
+  this->vertical_angle += direction_change.y;
+
+  UpdateMatricies();
 }
 
 }  // namespace rpg

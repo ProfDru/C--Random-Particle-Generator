@@ -1,6 +1,7 @@
 #include <GL\glew.h>
 #include <GLFW\glfw3.h>
 #include <scene.h>
+#include <controls.h>
 
 #include <cassert>
 #include <exception>
@@ -54,6 +55,9 @@ GLFWwindow* InitWindow() {
   glDepthFunc(GL_LEQUAL);
 
   // Enable several opengl settings
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
   glEnable(GL_POINT_SMOOTH);
   glEnable(GL_MULTISAMPLE);
   glEnable(GL_POINT_SPRITE);
@@ -113,6 +117,11 @@ void Scene::DrawLoop() {
   glClearColor(0.1f, 0.1f, 0.1f, 0.0f);
 
   do {
+    // Poll keyboard events
+    glfwPollEvents();
+    auto moves = Move(this->current_window);
+    this->main_camera.Move(moves.position_change, moves.direction_change);
+
     auto MVP = this->main_camera.CalculateMVP();
     this->PI->SetCameraPosition(MVP);
 
@@ -122,11 +131,7 @@ void Scene::DrawLoop() {
     // Draw the particle engine
     this->PI->Draw();
 
-    // Swap buffers (update the screen)
     glfwSwapBuffers(current_window);
-
-    // Poll keyboard events
-    glfwPollEvents();
 
   }  // End the loop if the escape key was pressed or the window was closed
   while (glfwGetKey(current_window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
