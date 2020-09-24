@@ -72,7 +72,7 @@ target_compile_options(
 )
 
 add_custom_command(
-        TARGET RandomParticleEngine POST_BUILD
+        TARGET RandomParticleEngine PRE_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
                 ${CMAKE_SOURCE_DIR}/src/shaders
                 ${CMAKE_CURRENT_BINARY_DIR}/shaders
