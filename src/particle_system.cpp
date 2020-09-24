@@ -78,20 +78,10 @@ void ParticleEngine::FillBuffers() {
 }
 
 void ParticleEngine::Draw() {
-  // Update every frame for now
-  // this->FillBuffers();
-
   glUseProgram(this->shader.program_id);
 
-  const auto pos_arr = CreatePositionArray(this->particles);
-  glBindBuffer(GL_ARRAY_BUFFER, this->position_vbo);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * pos_arr.size(),
-               pos_arr.data(), this->draw_type);
-
-  const auto color_arr = CreateColorArray(this->particles);
-  glBindBuffer(GL_ARRAY_BUFFER, this->color_vbo);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * color_arr.size(),
-               color_arr.data(), this->draw_type);
+  // Update every frame for now
+  this->FillBuffers();
 
   glEnableVertexAttribArray(this->shader.pos_attr);
   glEnableVertexAttribArray(this->shader.color_attr);
