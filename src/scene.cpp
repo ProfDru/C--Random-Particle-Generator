@@ -41,6 +41,11 @@ bool InitGlew() {
   return true;
 }
 
+void Scene::WindowResizeCallback(GLFWwindow* window, int width, int height) {
+  this->main_camera.height = height;
+  this->main_camera.width = width;
+}
+
 /*! \brief Initalize and return the glfw window*/
 GLFWwindow* InitWindow() {
   printf("Initializing GLFW...\n");
@@ -118,7 +123,6 @@ void Scene::DrawLoop() {
 
   do {
     // Poll keyboard events
-    glfwPollEvents();
     auto moves = Move(this->current_window);
     this->main_camera.Move(moves.position_change, moves.direction_change);
 
@@ -132,6 +136,7 @@ void Scene::DrawLoop() {
     this->PI->Draw();
 
     glfwSwapBuffers(current_window);
+    glfwPollEvents();
 
   }  // End the loop if the escape key was pressed or the window was closed
   while (glfwGetKey(current_window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&

@@ -4,6 +4,7 @@
 
 #include <math.h>
 #include <numbers>
+#include <utils.h>
 
 using std::numbers::pi;
 namespace rpg {

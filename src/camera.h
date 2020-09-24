@@ -24,9 +24,6 @@ class Camera {
   glm::mat4 perspective_matrix;
   glm::mat4 view_matrix;
 
-  float width = 1280;
-  float height = 720;
-
   float near_plane = 0.1f;
   float far_plane = 10000.0f;
 
@@ -35,6 +32,8 @@ class Camera {
   void UpdateMatricies();
 
  public:
+  float width = 1280;
+  float height = 720;
   float fov = 90;
 
   /*! \brief Create a camera centered at the origin */
