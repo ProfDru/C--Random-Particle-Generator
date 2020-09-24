@@ -29,6 +29,18 @@ inline glm::vec2 CalcMovement(GLFWwindow* window) {
   return control;
 }
 
+inline float CalcBoostMultiplier(GLFWwindow* window) {
+  const float boost_factor = 2.5;
+  float boost_multiplier = 1.0f;
+
+  if (DidPress(window, CONTROL_MAP::BOOST))
+    boost_multiplier *= boost_factor;
+  if (DidPress(window, CONTROL_MAP::BRAKE))
+    boost_multiplier /= boost_factor;
+
+  return boost_multiplier;
+}
+
 /*! \brief Calculate the difference between the cursor's position and the center
  * of the screen in pixels */
 inline glm::vec2 CalcDirection(GLFWwindow* window) {
@@ -46,13 +58,15 @@ MoveInfo Move(GLFWwindow* window) {
   const float speed = 0.5f;
   const float mouse_sensitivity = 0.05f;
   const float change_in_time = CalculateChangeInTime();
+  const float boost_multi = CalcBoostMultiplier(window);
 
   if (last_time == 0) {
     last_time = change_in_time;
     return MoveInfo();
   }
 
-  glm::vec2 movement_change = CalcMovement(window) * speed * change_in_time;
+  glm::vec2 movement_change =
+      CalcMovement(window) * speed * change_in_time * boost_multi;
   glm::vec2 direction_change =
       CalcDirection(window) * mouse_sensitivity * change_in_time;
 
