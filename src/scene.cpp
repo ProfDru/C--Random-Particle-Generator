@@ -55,23 +55,6 @@ GLFWwindow* InitWindow() {
   if (!glfwInit())
     throw std::exception();
 
-  // Enable depth buffer test
-  glEnable(GL_DEPTH_TEST);
-  glDepthFunc(GL_LEQUAL);
-
-  // Enable several opengl settings
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-  glEnable(GL_POINT_SMOOTH);
-  glEnable(GL_MULTISAMPLE);
-  glEnable(GL_POINT_SPRITE);
-  glHint(GL_POINT_SMOOTH_HINT, GL_FASTEST);
-
-  // Make the window resizable and update at 60 FPS
-  glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
-  glfwWindowHint(GLFW_REFRESH_RATE, 60);
-
   // Create a new window, throw if it fails
   printf("Creating Window...\n");
   GLFWwindow* window =
@@ -81,8 +64,23 @@ GLFWwindow* InitWindow() {
   // Set the new window as the current context
   glfwMakeContextCurrent(window);
 
-  printf("Initializing GLEW...\n");
+  // Enable depth buffer test
+  glEnable(GL_DEPTH_TEST);
+  glDepthFunc(GL_LESS);
+  glDepthMask(GL_TRUE);
+  glDepthRange(0.0f, 1.0f);
 
+  // Enable several opengl settings
+  glEnable(GL_POINT_SMOOTH);
+  glEnable(GL_MULTISAMPLE);
+  glEnable(GL_POINT_SPRITE);
+  glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
+
+  // Make the window resizable and update at 60 FPS
+  glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
+  glfwWindowHint(GLFW_REFRESH_RATE, 60);
+
+  printf("Initializing GLEW...\n");
   bool did_init = InitGlew();
   assert(did_init);
 
@@ -107,7 +105,7 @@ void Scene::Start() {
   this->main_camera = Camera(0, 0, 2, 0, 0, -1);
 
   // Set Point Size
-  glPointSize(10.0f);
+  glPointSize(50.0f);
 
   // initiate draw loop
   printf("Beginning Draw Loop. \n");
