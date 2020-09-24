@@ -48,9 +48,18 @@ GLFWwindow* InitWindow() {
   if (!glfwInit())
     throw std::exception();
 
+  glEnable(GL_POINT_SMOOTH);
+  glEnable(GL_MULTISAMPLE);
+  glEnable(GL_DEPTH_TEST);
+  glDepthFunc(GL_POINT_SMOOTH);
+  glEnable(GL_MULTISAMPLE);
+  glEnable(GL_POINT_SPRITE);
+
   // Make the window resizable
   glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
 
+  glHint(GL_POINT_SMOOTH_HINT, GL_FASTEST);
+  glfwWindowHint(GLFW_REFRESH_RATE, 60);
   // Create a new window, throw if it fails
   GLFWwindow* window =
       glfwCreateWindow(1280, 720, "Random Particle Engine", NULL, NULL);
@@ -75,21 +84,26 @@ void Scene::Start() {
   glDebugMessageCallback(MessageCallback, 0);
 
   // Create a particle engine to draw
-  this->PI = ParticleEngine();
+  this->PI.emplace(ParticleEngine());
+  this->main_camera = Camera(0, 0, 2, 0, 0, -1);
 
   // initiate draw loop
   this->DrawLoop();
 }
 
-
 void Scene::DrawLoop() {
   // Ensure we can capture the escape key being pressed below
   glfwSetInputMode(this->current_window, GLFW_STICKY_KEYS, GL_TRUE);
+
+  glPointSize(10.0f);
 
   // Set the backgorun color
   glClearColor(0.1f, 0.1f, 0.1f, 0.0f);
 
   do {
+    auto MVP = this->main_camera.CalculateMVP();
+    this->PI->SetCameraPosition(MVP);
+
     // Clear the screen
     glClear(GL_COLOR_BUFFER_BIT);
 
@@ -98,7 +112,7 @@ void Scene::DrawLoop() {
 
     // Swap buffers (update the screen)
     glfwSwapBuffers(current_window);
-    
+
     // Poll keyboard events
     glfwPollEvents();
 

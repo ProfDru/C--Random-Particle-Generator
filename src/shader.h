@@ -1,6 +1,20 @@
-#include <GL/Glew.h>
+#include <GL/glew.h>
 #include <string>
+
+#pragma once
 namespace rpg {
+
+class Shader {
+ public:
+  GLuint program_id;
+
+  GLuint pos_attr;
+  GLuint color_attr;
+  GLuint mvp;
+
+  inline Shader(){};
+  Shader(GLuint program_id);
+};
 
 /*! \brief Load the fragment and vertex shaders at the given path
 
@@ -14,6 +28,6 @@ namespace rpg {
         \throws std::invalid_argument File could be found but did not compile
    into a valid shader
 */
-GLuint LoadShaders(const std::string& path);
+Shader LoadShaders(const std::string& path);
 
 }  // namespace rpg

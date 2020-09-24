@@ -1,3 +1,4 @@
+#pragma once
 #include <particle_system.h>
 #include <camera.h>
 

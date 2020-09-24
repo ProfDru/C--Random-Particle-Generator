@@ -6,10 +6,19 @@
 #include <fstream>
 #include <vector>
 #include <exception>
+#include <cassert>
 namespace rpg {
 
 using std::ifstream;
 using std::string;
+
+Shader::Shader(GLuint program_id) {
+  this->program_id = program_id;
+
+  this->pos_attr = glGetAttribLocation(program_id, "vpos");
+  this->color_attr = glGetAttribLocation(program_id, "vcolor");
+  this->mvp = glGetUniformLocation(program_id, "MVP");
+}
 
 /*! \brief Get a string containing all the characters in a file
     \remarks Taken from a stack overflow post
@@ -44,6 +53,7 @@ inline void CheckShader(GLuint shader_id) {
     std::vector<char> error_message(log_length + 1);
     glGetShaderInfoLog(shader_id, log_length, NULL, &error_message[0]);
     printf("SHADER ERROR: %s\n", &error_message[0]);
+    assert(log_length < 0);
   }
 }
 
@@ -61,6 +71,7 @@ inline void CheckProgram(GLuint program_id) {
     std::vector<char> error_message(log_length + 1);
     glGetProgramInfoLog(program_id, log_length, NULL, &error_message[0]);
     printf("Program ERROR: %s\n", &error_message[0]);
+    assert(log_length < 0);
   }
 }
 
@@ -91,7 +102,7 @@ inline GLuint LinkShaders(GLuint frag_id, GLuint vert_id) {
   return program_id;
 }
 
-GLuint LoadShaders(const std::string& path) {
+Shader LoadShaders(const std::string& path) {
   string frag_code = ReadFile(path + ".frag");
   string vert_code = ReadFile(path + ".vert");
 
@@ -112,6 +123,6 @@ GLuint LoadShaders(const std::string& path) {
   glDeleteShader(vert_shader_id);
   glDeleteShader(frag_shader_id);
 
-  return program_id;
+  return Shader(program_id);
 }
 }  // namespace rpg
