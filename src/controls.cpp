@@ -45,8 +45,8 @@ inline glm::vec2 CalcDirection(GLFWwindow* window) {
 }
 
 MoveInfo Move(GLFWwindow* window) {
-  const float speed = 0.05f;
-  const float mouse_sensitivity = 0.0005f;
+  const float speed = 0.5f;
+  const float mouse_sensitivity = 0.05f;
   const float change_in_time = CalculateChangeInTime();
 
   if (last_time == 0) {
@@ -58,6 +58,7 @@ MoveInfo Move(GLFWwindow* window) {
   glm::vec2 direction_change =
       CalcDirection(window) * mouse_sensitivity * change_in_time;
 
+  last_time = glfwGetTime();
   return (MoveInfo{movement_change, direction_change});
 }
 

@@ -24,8 +24,8 @@ class Camera {
   glm::mat4 perspective_matrix;
   glm::mat4 view_matrix;
 
-  float width = 1920;
-  float height = 1080;
+  float width = 1280;
+  float height = 720;
 
   float near_plane = 0.1f;
   float far_plane = 10000.0f;
