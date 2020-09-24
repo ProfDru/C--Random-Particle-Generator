@@ -42,9 +42,8 @@ bool InitGlew() {
   return true;
 }
 
-void Scene::WindowResizeCallback(GLFWwindow* window, int width, int height) {
-  this->main_camera.height = height;
-  this->main_camera.width = width;
+void FramebufferSizeCallback(GLFWwindow* window, int width, int height) {
+  glViewport(0, 0, width, height);
 }
 
 /*! \brief Initalize and return the glfw window*/
@@ -99,6 +98,9 @@ void Scene::Start() {
   // Setup error callback for OpenGL
   glEnable(GL_DEBUG_OUTPUT);
   glDebugMessageCallback(MessageCallback, 0);
+
+  glfwSetWindowSizeCallback(this->current_window, WindowResizeCallback);
+  glfwSetFramebufferSizeCallback(this->current_window, FramebufferSizeCallback);
 
   // Create a particle engine to draw
   printf("Creating Particle Engine and Camera...");

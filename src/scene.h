@@ -21,9 +21,6 @@ class Scene {
   /*! \brief Draw in a loop and pass info to the camera */
   void DrawLoop();
 
-  /*! \brief Called every time the window is resized */
-  void WindowResizeCallback(GLFWwindow* window, int width, int height);
-
  public:
   /*!
       \brief Start rendering the scene with the current options

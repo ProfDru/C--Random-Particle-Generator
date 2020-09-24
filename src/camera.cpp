@@ -46,7 +46,7 @@ void Camera::UpdateMatricies() {
   const glm::vec3 up = glm::cross(right, direction);
 
   this->perspective_matrix =
-      glm::perspective(glm::radians(this->fov), this->width / this->height,
+      glm::perspective(glm::radians(this->fov), CalculateAspectRatio(),
                        this->near_plane, this->far_plane);
   this->view_matrix = glm::lookAt(this->pos, direction + this->pos, up);
 }
