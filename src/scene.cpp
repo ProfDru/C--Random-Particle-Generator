@@ -42,6 +42,7 @@ bool InitGlew() {
 
 /*! \brief Initalize and return the glfw window*/
 GLFWwindow* InitWindow() {
+  printf("Initializing GLFW...\n");
   glewExperimental = true;
 
   // throw some exception if this cannot init (Should be an actual exception)
@@ -63,6 +64,7 @@ GLFWwindow* InitWindow() {
   glfwWindowHint(GLFW_REFRESH_RATE, 60);
 
   // Create a new window, throw if it fails
+  printf("Creating Window...\n");
   GLFWwindow* window =
       glfwCreateWindow(1280, 720, "Random Particle Engine", NULL, NULL);
   assert(window != NULL);
@@ -70,7 +72,12 @@ GLFWwindow* InitWindow() {
   // Set the new window as the current context
   glfwMakeContextCurrent(window);
 
-  assert(InitGlew());
+  printf("Initializing GLEW...\n");
+
+  bool did_init = InitGlew();
+  assert(did_init);
+
+  printf("Returning Window...\n");
   return window;
 }
 
@@ -86,6 +93,7 @@ void Scene::Start() {
   glDebugMessageCallback(MessageCallback, 0);
 
   // Create a particle engine to draw
+  printf("Creating Particle Engine and Camera...");
   this->PI.emplace(ParticleEngine());
   this->main_camera = Camera(0, 0, 2, 0, 0, -1);
 
@@ -93,6 +101,7 @@ void Scene::Start() {
   glPointSize(10.0f);
 
   // initiate draw loop
+  printf("Beginning Draw Loop. \n");
   this->DrawLoop();
 }
 
