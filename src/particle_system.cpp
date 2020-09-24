@@ -7,8 +7,8 @@ namespace rpg {
 /*! \brief Creates a position array from an array of particles */
 inline vector<GLfloat> CreatePositionArray(const vector<Particle>& particles) {
   std::vector<GLfloat> pos_arr(particles.size() * 3);
-  for (int i = 0; i < particles.size(); i++) {
-    const int offset = i * 3;
+  for (long long unsigned int i = 0; i < particles.size(); i++) {
+    const auto offset = i * 3;
     const Particle& particle = particles[i];
     pos_arr[offset] = particle.pos.x;
     pos_arr[offset + 1] = particle.pos.y;
@@ -22,8 +22,8 @@ inline vector<GLfloat> CreatePositionArray(const vector<Particle>& particles) {
 inline vector<GLfloat> CreateColorArray(const vector<Particle>& particles) {
   std::vector<GLfloat> color_arr(particles.size() * 3);
 
-  for (int i = 0; i < particles.size(); i++) {
-    const int offset = i * 3;
+  for (long long unsigned int i = 0; i < particles.size(); i++) {
+    const auto offset = i * 3;
     const Particle& particle = particles[i];
     color_arr[offset] = particle.color.r;
     color_arr[offset + 1] = particle.color.g;
