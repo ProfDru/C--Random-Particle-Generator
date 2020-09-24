@@ -13,6 +13,7 @@ namespace rpg {
 class Scene {
   std::optional<ParticleEngine> PI;
   Camera main_camera;
+  bool paused = false;
 
  private:
   GLFWwindow* current_window;

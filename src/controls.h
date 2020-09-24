@@ -22,10 +22,16 @@ enum class CONTROL_MAP {
   LEFT = GLFW_KEY_A,
 
   BOOST = GLFW_KEY_LEFT_SHIFT,
-  BRAKE = GLFW_KEY_LEFT_CONTROL
+  BRAKE = GLFW_KEY_LEFT_CONTROL,
+
+  PAUSE = GLFW_KEY_TAB
 };
 
 /*! \brief Determine the change in the camera's position and rotation based on
  * inputs. */
 MoveInfo Move(GLFWwindow* window);
+
+/*! \brief determine if the user should pause or not */
+bool ShouldPause(GLFWwindow* window, bool paused_state);
+
 }  // namespace rpg

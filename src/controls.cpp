@@ -74,4 +74,29 @@ MoveInfo Move(GLFWwindow* window) {
   return (MoveInfo{movement_change, direction_change});
 }
 
+static bool pause_pressed_last_frame = false;
+
+bool ShouldPause(GLFWwindow* win, bool paused_state) {
+  bool pause_pressed = DidPress(win, CONTROL_MAP::PAUSE);
+
+  // If pause is pressed it'll be considered as pressed for every frame the key
+  // is held. To handle this we'll need to keep track of last time it was
+  // pushed.
+  if (pause_pressed_last_frame && pause_pressed)
+    return paused_state;
+  else
+    pause_pressed_last_frame = false;
+
+  if (DidPress(win, CONTROL_MAP::PAUSE)) {
+    // If we aren't paused, pause and show cursor.
+    // If we are paused Unpause and hide the cursor
+    auto cursor_mode = paused_state ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL;
+    glfwSetInputMode(win, GLFW_CURSOR, cursor_mode);
+    pause_pressed_last_frame = true;
+    return !paused_state;
+  } else {
+    return paused_state;
+  }
+}
+
 }  // namespace rpg

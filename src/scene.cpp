@@ -6,6 +6,7 @@
 #include <cassert>
 #include <exception>
 #include <iostream>
+#include <utils.h>
 
 namespace rpg {
 
@@ -121,7 +122,7 @@ void Scene::DrawLoop() {
 
   do {
     // Poll keyboard events
-    auto moves = Move(this->current_window);
+    auto moves = this->paused ? MoveInfo() : Move(this->current_window);
     this->main_camera.Move(moves.position_change, moves.direction_change);
 
     auto MVP = this->main_camera.CalculateMVP();
@@ -134,6 +135,7 @@ void Scene::DrawLoop() {
     this->PI->Draw();
 
     glfwSwapBuffers(current_window);
+    this->paused = ShouldPause(this->current_window, this->paused);
     glfwPollEvents();
 
   }  // End the loop if the escape key was pressed or the window was closed
