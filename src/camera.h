@@ -32,8 +32,6 @@ class Camera {
   void UpdateMatricies();
 
  public:
-  float width = 1280;
-  float height = 720;
   float fov = 90;
 
   /*! \brief Create a camera centered at the origin */

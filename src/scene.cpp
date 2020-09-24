@@ -57,8 +57,8 @@ GLFWwindow* InitWindow() {
 
   // Create a new window, throw if it fails
   printf("Creating Window...\n");
-  GLFWwindow* window =
-      glfwCreateWindow(1280, 720, "Random Particle Engine", NULL, NULL);
+  GLFWwindow* window = glfwCreateWindow(window_width, window_height,
+                                        "Random Particle Engine", NULL, NULL);
   assert(window != NULL);
 
   // Set the new window as the current context

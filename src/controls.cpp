@@ -44,14 +44,13 @@ inline float CalcBoostMultiplier(GLFWwindow* window) {
 /*! \brief Calculate the difference between the cursor's position and the center
  * of the screen in pixels */
 inline glm::vec2 CalcDirection(GLFWwindow* window) {
-  Resolution win_res = GetWindowResolution(window);
-  Resolution win_center = win_res.GetCenterPoint();
+  auto win_center = ScreenCenter();
 
   double cursor_x, cursor_y;
   glfwGetCursorPos(window, &cursor_x, &cursor_y);
-  glfwSetCursorPos(window, win_center.width, win_center.height);
+  glfwSetCursorPos(window, win_center.x, win_center.y);
 
-  return glm::vec2(win_center.width - cursor_x, win_center.height - cursor_y);
+  return glm::vec2(win_center.x - cursor_x, win_center.y - cursor_y);
 }
 
 MoveInfo Move(GLFWwindow* window) {
