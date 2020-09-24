@@ -48,18 +48,20 @@ GLFWwindow* InitWindow() {
   if (!glfwInit())
     throw std::exception();
 
+  // Enable depth buffer test
+  glEnable(GL_DEPTH_TEST);
+  glDepthFunc(GL_LEQUAL);
+
+  // Enable several opengl settings
   glEnable(GL_POINT_SMOOTH);
   glEnable(GL_MULTISAMPLE);
-  glEnable(GL_DEPTH_TEST);
-  glDepthFunc(GL_POINT_SMOOTH);
-  glEnable(GL_MULTISAMPLE);
   glEnable(GL_POINT_SPRITE);
-
-  // Make the window resizable
-  glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
-
   glHint(GL_POINT_SMOOTH_HINT, GL_FASTEST);
+
+  // Make the window resizable and update at 60 FPS
+  glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
   glfwWindowHint(GLFW_REFRESH_RATE, 60);
+
   // Create a new window, throw if it fails
   GLFWwindow* window =
       glfwCreateWindow(1280, 720, "Random Particle Engine", NULL, NULL);
@@ -87,6 +89,9 @@ void Scene::Start() {
   this->PI.emplace(ParticleEngine());
   this->main_camera = Camera(0, 0, 2, 0, 0, -1);
 
+  // Set Point Size
+  glPointSize(10.0f);
+
   // initiate draw loop
   this->DrawLoop();
 }
@@ -94,8 +99,6 @@ void Scene::Start() {
 void Scene::DrawLoop() {
   // Ensure we can capture the escape key being pressed below
   glfwSetInputMode(this->current_window, GLFW_STICKY_KEYS, GL_TRUE);
-
-  glPointSize(10.0f);
 
   // Set the backgorun color
   glClearColor(0.1f, 0.1f, 0.1f, 0.0f);
@@ -105,7 +108,7 @@ void Scene::DrawLoop() {
     this->PI->SetCameraPosition(MVP);
 
     // Clear the screen
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Draw the particle engine
     this->PI->Draw();
