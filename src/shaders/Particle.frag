@@ -1,17 +1,14 @@
 #version 330 core
 
-// FROM OPEN GL TUTORIALS http://www.opengl-tutorial.org/beginners-tutorials/tutorial-2-the-first-triangle/
+// FROM OPEN GL TUTORIALS
+// http://www.opengl-tutorial.org/beginners-tutorials/tutorial-2-the-first-triangle/
 // Interpolated values from the vertex shaders
-in vec2 UV;
-in vec4 particlecolor;
+in vec3 particle_color;
 
 // Ouput data
-out vec4 color;
+out vec3 color;
 
-uniform sampler2D myTextureSampler;
-
-void main(){
-	// Output color = color of the texture at the specified UV
-	color = texture( myTextureSampler, UV ) * particlecolor;
-
+void main() {
+  // Output color = color of the texture at the specified UV
+  color = particle_color;
 }
