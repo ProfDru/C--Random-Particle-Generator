@@ -46,6 +46,7 @@ target_sources(RandomParticleEngine
     src/shader.h
     src/particle_system.h
     src/controls.h
+    src/utils.h
 
     src/camera.cpp
     src/particle_system.cpp

@@ -1,5 +1,6 @@
 #include <controls.h>
 #include <numeric>
+#include <utils.h>
 
 namespace rpg {
 static double last_time = 0;
@@ -31,17 +32,14 @@ inline glm::vec2 CalcMovement(GLFWwindow* window) {
 /*! \brief Calculate the difference between the cursor's position and the center
  * of the screen in pixels */
 inline glm::vec2 CalcDirection(GLFWwindow* window) {
-  int window_width, window_height;
-  glfwGetWindowSize(window, &window_width, &window_height);
-
-  const float center_x = window_width / 2;
-  const float center_y = window_height / 2;
+  Resolution win_res = GetWindowResolution(window);
+  Resolution win_center = win_res.GetCenterPoint();
 
   double cursor_x, cursor_y;
   glfwGetCursorPos(window, &cursor_x, &cursor_y);
-  glfwSetCursorPos(window, center_x, center_y);
+  glfwSetCursorPos(window, win_center.width, win_center.height);
 
-  return glm::vec2(center_x - cursor_x, center_y - cursor_y);
+  return glm::vec2(win_center.width - cursor_x, win_center.height - cursor_y);
 }
 
 MoveInfo Move(GLFWwindow* window) {
