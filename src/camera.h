@@ -24,8 +24,8 @@ class Camera {
   glm::mat4 perspective_matrix;
   glm::mat4 view_matrix;
 
-  float near_plane = 0.1f;
-  float far_plane = 10000.0f;
+  float near_plane = 0.01f;
+  float far_plane = 1000.0f;
 
   /*! \brief Update view/perspective matricies based on the current position and
    rotation */
