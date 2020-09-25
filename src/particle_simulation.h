@@ -4,8 +4,8 @@
 #include <vector>
 namespace rpg::simulation {
 
-const float gravitational_constant = 9.81f;
+const float gravitational_constant = 0.981f;
 
-void simulate_particles(const std::vector<Particle> P);
+void simulate_particles(std::vector<Particle>& P);
 
 }  // namespace rpg::simulation
