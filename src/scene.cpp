@@ -1,10 +1,12 @@
 #include <GL\glew.h>
 #include <GLFW\glfw3.h>
 #include <scene.h>
+#include <controls.h>
 
 #include <cassert>
 #include <exception>
 #include <iostream>
+#include <utils.h>
 
 namespace rpg {
 
@@ -40,6 +42,10 @@ bool InitGlew() {
   return true;
 }
 
+void FramebufferSizeCallback(GLFWwindow* window, int width, int height) {
+  glViewport(0, 0, width, height);
+}
+
 /*! \brief Initalize and return the glfw window*/
 GLFWwindow* InitWindow() {
   printf("Initializing GLFW...\n");
@@ -49,31 +55,32 @@ GLFWwindow* InitWindow() {
   if (!glfwInit())
     throw std::exception();
 
-  // Enable depth buffer test
-  glEnable(GL_DEPTH_TEST);
-  glDepthFunc(GL_LEQUAL);
-
-  // Enable several opengl settings
-  glEnable(GL_POINT_SMOOTH);
-  glEnable(GL_MULTISAMPLE);
-  glEnable(GL_POINT_SPRITE);
-  glHint(GL_POINT_SMOOTH_HINT, GL_FASTEST);
-
-  // Make the window resizable and update at 60 FPS
-  glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
-  glfwWindowHint(GLFW_REFRESH_RATE, 60);
-
   // Create a new window, throw if it fails
   printf("Creating Window...\n");
-  GLFWwindow* window =
-      glfwCreateWindow(1280, 720, "Random Particle Engine", NULL, NULL);
+  GLFWwindow* window = glfwCreateWindow(window_width, window_height,
+                                        "Random Particle Engine", NULL, NULL);
   assert(window != NULL);
 
   // Set the new window as the current context
   glfwMakeContextCurrent(window);
 
-  printf("Initializing GLEW...\n");
+  // Enable depth buffer test
+  glEnable(GL_DEPTH_TEST);
+  glDepthFunc(GL_LESS);
+  glDepthMask(GL_TRUE);
+  glDepthRange(0.0f, 1.0f);
 
+  // Enable several opengl settings
+  glEnable(GL_POINT_SMOOTH);
+  glEnable(GL_MULTISAMPLE);
+  glEnable(GL_POINT_SPRITE);
+  glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
+
+  // Make the window resizable and update at 60 FPS
+  glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
+  glfwWindowHint(GLFW_REFRESH_RATE, 60);
+
+  printf("Initializing GLEW...\n");
   bool did_init = InitGlew();
   assert(did_init);
 
@@ -92,13 +99,18 @@ void Scene::Start() {
   glEnable(GL_DEBUG_OUTPUT);
   glDebugMessageCallback(MessageCallback, 0);
 
+  glfwSetWindowSizeCallback(this->current_window, WindowResizeCallback);
+  glfwSetFramebufferSizeCallback(this->current_window, FramebufferSizeCallback);
+
   // Create a particle engine to draw
   printf("Creating Particle Engine and Camera...");
   this->PI.emplace(ParticleEngine());
   this->main_camera = Camera(0, 0, 2, 0, 0, -1);
 
+  glfwSetInputMode(this->current_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
   // Set Point Size
-  glPointSize(10.0f);
+  glPointSize(50.0f);
 
   // initiate draw loop
   printf("Beginning Draw Loop. \n");
@@ -113,6 +125,10 @@ void Scene::DrawLoop() {
   glClearColor(0.1f, 0.1f, 0.1f, 0.0f);
 
   do {
+    // Poll keyboard events
+    auto moves = this->paused ? MoveInfo() : Move(this->current_window);
+    this->main_camera.Move(moves.position_change, moves.direction_change);
+
     auto MVP = this->main_camera.CalculateMVP();
     this->PI->SetCameraPosition(MVP);
 
@@ -122,10 +138,8 @@ void Scene::DrawLoop() {
     // Draw the particle engine
     this->PI->Draw();
 
-    // Swap buffers (update the screen)
     glfwSwapBuffers(current_window);
-
-    // Poll keyboard events
+    this->paused = ShouldPause(this->current_window, this->paused);
     glfwPollEvents();
 
   }  // End the loop if the escape key was pressed or the window was closed

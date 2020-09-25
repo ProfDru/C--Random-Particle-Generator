@@ -24,11 +24,8 @@ class Camera {
   glm::mat4 perspective_matrix;
   glm::mat4 view_matrix;
 
-  float width = 1920;
-  float height = 1080;
-
-  float near_plane = 0.1f;
-  float far_plane = 10000.0f;
+  float near_plane = 0.01f;
+  float far_plane = 1000.0f;
 
   /*! \brief Update view/perspective matricies based on the current position and
    rotation */
@@ -47,7 +44,8 @@ class Camera {
   void SetPos(float px, float py, float pz, float dx, float dy, float dz);
 
   /*! \brief Move the camera and update it's matricies */
-  void Move();
+  void Move(const glm::vec2& position_change,
+            const glm::vec2& direction_change);
 
   const glm::mat4& GetPerspectiveMatrix() const;
   const glm::mat4& GetViewMatrix() const;

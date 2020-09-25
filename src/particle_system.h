@@ -18,7 +18,7 @@ struct Particle {
 };
 
 class ParticleEngine {
-  static const GLenum draw_type = GL_DYNAMIC_DRAW;
+  static const GLenum draw_type = GL_STREAM_DRAW;
   inline static const std::string shader_path = "shaders/particle";
   Shader shader;
   glm::vec3 pos = {0, 0, 0};
