@@ -107,6 +107,8 @@ void Scene::Start() {
   this->PI.emplace(ParticleEngine());
   this->main_camera = Camera(0, 0, 2, 0, 0, -1);
 
+  glfwSetInputMode(this->current_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
   // Set Point Size
   glPointSize(50.0f);
 

@@ -90,6 +90,7 @@ bool ShouldPause(GLFWwindow* win, bool paused_state) {
     // If we aren't paused, pause and show cursor.
     // If we are paused Unpause and hide the cursor
     auto cursor_mode = paused_state ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL;
+
     glfwSetInputMode(win, GLFW_CURSOR, cursor_mode);
     pause_pressed_last_frame = true;
     return !paused_state;
