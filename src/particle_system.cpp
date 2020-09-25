@@ -33,12 +33,6 @@ inline vector<GLfloat> CreateColorArray(const vector<Particle>& particles) {
   return color_arr;
 }
 
-Particle::Particle(glm::vec3 pos, glm::vec3 color) {
-  this->pos = pos;
-  this->color = color;
-  this->velocity = glm::vec3{0, 0, 0};
-}
-
 void ParticleEngine::GenerateBuffers() {
   // Position Buffer
   glGenBuffers(1, &this->position_vbo);
