@@ -4,6 +4,7 @@
 #include <glm/gtx/polar_coordinates.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/rotate_vector.hpp>
+#include <glm/gtx/color_space.hpp>
 
 #include <chrono>
 #include <algorithm>
@@ -16,7 +17,7 @@ using clock = std::chrono::high_resolution_clock;
 using timems = std::chrono::time_point<clock>;
 static timems last_time;
 
-static const float time_threshold = 0.01f;
+static const float time_threshold = 0.001f;
 
 int get_time_since() {
   timems current_time = clock::now();
@@ -41,6 +42,15 @@ void apply_gravity(Particle& p, float time) {
 /*! \brief Move particle based on it's velocity */
 void update_particle_position(Particle& p, float time) {
   p.pos += (p.velocity * time);
+  if (p.pos.y <= 0 && p.velocity.y < 0) {
+    p.color = glm::mix(p.color, glm::vec3(0, 0, 0),
+                       std::min(p.velocity.y / 3.0f, 1.0f));
+
+    p.velocity.y *= -0.1;
+    p.velocity.z *= 0.75;
+    p.velocity.x *= 0.75;
+    p.lifetime = std::min(p.lifetime, 0.25f);
+  }
 }
 
 /*! \brief Determine if this particle should die on this frame */
@@ -60,14 +70,20 @@ bool sim_particle(Particle& p, float time) {
 }
 
 static float overflow = 0.0f;
-const static float fire_rate = 0.01f;
-static const int max_patricles = 10000;
-static const float spread = 10.0f;
+const static float fire_rate = 0.001f;
+static const int max_patricles = 50000;
+static const float spread = 20.0f;
 
-const float max_mag = 2.0f;
+const float max_mag = 3.0f;
 const float min_mag = 1.0f;
 const glm::vec3 origin(0, 0, 0);
 const glm::vec3 white(255, 255, 255);
+
+inline glm::vec3 make_random_color() {
+  float saturation = RandomManager::random_range(0, 255);
+
+  return glm::rgbColor(glm::vec3(saturation, 0.25f, 1.0f));
+}
 
 /*! \brief calculate the number of new particles to create this frame */
 int calc_num_shots(float time_since) {
@@ -91,9 +107,13 @@ inline float to_radians(float num_in_degrees) {
 }
 
 inline Particle EmitParticle() {
-  const float horizontal_angle = get_rand(-spread, spread);
-  const float vertical_angle = get_rand(-spread, spread);
   const float magnitude = get_rand(min_mag, max_mag);
+  const float mag_intensity =
+      ((abs(magnitude) - min_mag) / (max_mag - min_mag));
+
+  const float mag_spread = spread * mag_intensity;
+  const float horizontal_angle = get_rand(-mag_spread, mag_spread);
+  const float vertical_angle = get_rand(-mag_spread, mag_spread);
 
   glm::vec2 polar_coords(to_radians(horizontal_angle),
                          to_radians(vertical_angle));
@@ -102,6 +122,15 @@ inline Particle EmitParticle() {
 
   Particle out_particle(origin, white);
   out_particle.velocity = (dir * magnitude);
+
+  // float h = mag_intensity * 255.0f;
+  // float s = 1.0f;
+  // float v = 1.0f;
+  // glm::vec3 hsv(h, s, v);
+  // out_particle.color = glm::rgbColor(hsv);
+
+  out_particle.color =
+      glm::mix(glm::vec3(1, 1, 1), glm::vec3(0, 0, 1), mag_intensity);
 
   return out_particle;
 }
