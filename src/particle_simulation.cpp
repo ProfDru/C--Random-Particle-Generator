@@ -1,5 +1,6 @@
 
 #include <sys_time.h>
+#include <coordinates.h>
 #include <particle_simulation.h>
 #include <random_manager.h>
 
@@ -72,10 +73,10 @@ bool sim_particle(Particle& p, float time) {
 static float overflow = 0.0f;
 const static float fire_rate = 0.001f;
 static const int max_patricles = 50000;
-static const float spread = 20.0f;
+static const float spread = 15.0f;
 
-const float max_mag = 3.0f;
-const float min_mag = 1.0f;
+const float max_mag = 10.0f;
+const float min_mag = 10.0f;
 const glm::vec3 origin(0, 0, 0);
 const glm::vec3 white(255, 255, 255);
 
@@ -108,16 +109,14 @@ inline float to_radians(float num_in_degrees) {
 
 inline Particle EmitParticle() {
   const float magnitude = get_rand(min_mag, max_mag);
-  const float mag_intensity =
+  const double mag_intensity =
       ((abs(magnitude) - min_mag) / (max_mag - min_mag));
 
-  const float mag_spread = spread * mag_intensity;
-  const float horizontal_angle = get_rand(-mag_spread, mag_spread);
-  const float vertical_angle = get_rand(-mag_spread, mag_spread);
+  const float horizontal_angle = get_rand(0, 360);
+  const float vertical_angle = get_rand(0, spread);
 
-  glm::vec2 polar_coords(to_radians(horizontal_angle),
-                         to_radians(vertical_angle));
-  glm::vec3 dir = glm::euclidean(polar_coords);
+  auto dir = math::spherical_to_cartesian(
+      glm::vec3(1, to_radians(horizontal_angle), to_radians(vertical_angle)));
   dir = glm::rotateX(dir, to_radians(-90));
 
   Particle out_particle(origin, white);
