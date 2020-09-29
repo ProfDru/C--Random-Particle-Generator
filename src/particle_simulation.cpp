@@ -13,12 +13,12 @@
 
 namespace rpg::simulation {
 
-static int last_time = 0;
+static double last_time = 0;
 static const float time_threshold = 0.001f;
 
-int get_time_since() {
+double get_time_since() {
   // Get the current time
-  int current_time = rpg::system::get_time_ms();
+  double current_time = rpg::system::get_precise_time_ms();
 
   // If last time was never set, just return 0 and set it
   if (last_time == 0) {
@@ -149,7 +149,7 @@ void create_particles(std::vector<Particle>& particles, float time) {
 
 void simulate_particles(std::vector<Particle>& particles) {
   // Convert milliseconds to seconds
-  const float time_diff = static_cast<float>(get_time_since()) / 1000.0f;
+  const double time_diff = static_cast<double>(get_time_since()) / 1000.0;
 
   // Don't update if the time is less than the threshold
   if (time_diff < time_threshold)

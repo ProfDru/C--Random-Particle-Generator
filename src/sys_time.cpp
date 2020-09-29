@@ -15,4 +15,16 @@ int get_time_ms() {
       .count();
 }
 
+double get_precise_time_ms() {
+  timems current_time = clock::now();
+
+  auto time_since_epoch = current_time.time_since_epoch();
+
+  const double ns =
+      std::chrono::duration_cast<std::chrono::nanoseconds>(time_since_epoch)
+          .count();
+
+  return ns / 1000000.0;
+}
+
 }  // namespace rpg::system
