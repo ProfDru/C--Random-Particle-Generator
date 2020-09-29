@@ -51,7 +51,6 @@ target_sources(RandomParticleEngine
     src/particle.h
     src/random_manager.cpp
     src/sys_time.cpp
-    src/coordinates.cpp
 
     src/camera.cpp
     src/particle_system.cpp
@@ -63,9 +62,11 @@ target_sources(RandomParticleEngine
     src/particle.cpp
     src/random_manager.h
     src/sys_time.h
-    src/coordinates.h
-    src/math_concepts.h
-    src/math_core.h
+
+    src/math/vector3d.h
+    src/math/physics.h
+    src/math/units.h
+    src/math/base.h
 
 )
 target_include_directories(RandomParticleEngine PRIVATE src) 

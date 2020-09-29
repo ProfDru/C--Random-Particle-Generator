@@ -1,39 +1,31 @@
 #pragma once
-#include <concepts>
-#include <numeric>
-#include <cassert>
+#include <math/base.h>
+#include <math.h>
 
 namespace rpg::math {
+
 template <typename T>
 concept Vector3DStruct = requires(T a) {
   { a.x }
-  ->std::convertible_to<double>;
+  ->Numeric;
   { a.y }
-  ->std::convertible_to<double>;
+  ->Numeric;
   { a.z }
-  ->std::convertible_to<double>;
+  ->Numeric;
 };
 
 template <typename T>
 concept Vector3DArray = requires(T a) {
   { a[0] }
-  ->std::convertible_to<double>;
+  ->Numeric;
   { a[1] }
-  ->std::convertible_to<double>;
+  ->Numeric;
   { a[2] }
-  ->std::convertible_to<double>;
+  ->Numeric;
 };
 
 template <typename T>
 concept Vector3D = Vector3DStruct<T> || Vector3DArray<T>;
-
-template <typename T>
-concept Kinematic = requires {
-  { T::pos }
-  ->Vector3D;
-  { T::vel }
-  ->Vector3D;
-};
 
 template <Vector3DStruct T>
 auto get_coordinate(int i, const T& st) {
@@ -58,4 +50,20 @@ template <Vector3DArray T>
 auto get_coordinate(const T& st, int i) {
   return st[i];
 }
+
+/*! \brief Convert 3 coordinates from a spherical coordinate system to a
+ * cartesian coordinate system */
+template <Vector3D T>
+inline auto spherical_to_cartesian(const T coord) {
+  const auto rho = get_coordinate(coord, 0);
+  const auto theta = get_coordinate(coord, 1);
+  const auto phi = get_coordinate(coord, 2);
+
+  const auto x = rho * sin(phi) * cos(theta);
+  const auto y = rho * sin(phi) * sin(theta);
+  const auto z = rho * cos(phi);
+
+  return T{x, y, z};
+}
+
 }  // namespace rpg::math

@@ -1,9 +1,11 @@
 
 #include <sys_time.h>
-#include <coordinates.h>
 #include <particle_simulation.h>
 #include <random_manager.h>
-#include <math_core.h>
+#include <math/base.h>
+
+#include <math/vector3d.h>
+#include <math/units.h>
 
 #include <glm/gtx/polar_coordinates.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -106,8 +108,6 @@ inline float get_rand(float min, float max) {
 
 inline Particle EmitParticle() {
   const float magnitude = 2.0f;  // get_rand(min_mag, max_mag);
-  const double mag_intensity =
-      ((abs(magnitude) - min_mag) / (max_mag - min_mag));
 
   const float horizontal_angle = get_rand(0, 360);
   const float vertical_angle = 10.0f;  // get_rand(0, spread);
@@ -118,6 +118,8 @@ inline Particle EmitParticle() {
 
   Particle out_particle(origin, white);
   out_particle.velocity = (dir * magnitude);
+
+  const double mag_intensity = math::inverse_lerp(0, 360, horizontal_angle);
 
   // float h = mag_intensity * 255.0f;
   // float s = 1.0f;
