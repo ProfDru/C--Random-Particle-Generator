@@ -1,4 +1,5 @@
 #include <particle_system.h>
+#include <particle_simulation.h>
 #include <shader.h>
 
 using std::vector;
@@ -33,12 +34,6 @@ inline vector<GLfloat> CreateColorArray(const vector<Particle>& particles) {
   return color_arr;
 }
 
-Particle::Particle(glm::vec3 pos, glm::vec3 color) {
-  this->pos = pos;
-  this->color = color;
-  this->velocity = glm::vec3{0, 0, 0};
-}
-
 void ParticleEngine::GenerateBuffers() {
   // Position Buffer
   glGenBuffers(1, &this->position_vbo);
@@ -51,14 +46,7 @@ void ParticleEngine::GenerateBuffers() {
 
 ParticleEngine::ParticleEngine() {
   // Hardcode points for now
-  this->particles = std::vector<Particle>{
-      Particle(glm::vec3(0, 0, 1), glm::vec3(255, 0, 0)),
-      Particle(glm::vec3(0, 1, 0), glm::vec3(0, 255, 0)),
-      Particle(glm::vec3(1, 0, 0), glm::vec3(0, 0, 255)),
-      Particle(glm::vec3(-1, 0, 0), glm::vec3(255, 0, 255)),
-      Particle(glm::vec3(0, -1, 0), glm::vec3(0, 255, 255)),
-      Particle(glm::vec3(0, 0, -1), glm::vec3(255, 255, 255)),
-  };
+  this->particles = std::vector<Particle>();
 
   this->shader = LoadShaders(this->shader_path);
 
@@ -81,6 +69,7 @@ void ParticleEngine::Draw() {
   glUseProgram(this->shader.program_id);
 
   // Update every frame for now
+  simulation::simulate_particles(this->particles);
   this->FillBuffers();
 
   glEnableVertexAttribArray(this->shader.pos_attr);

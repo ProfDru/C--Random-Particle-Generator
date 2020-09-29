@@ -23,10 +23,12 @@ void GLAPIENTRY MessageCallback(GLenum source,
                                 GLsizei length,
                                 const GLchar* message,
                                 const void* userParam) {
-  fprintf(stderr,
-          "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
-          (type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : ""), type, severity,
-          message);
+  // return;
+  if (severity != 0x826b)
+    fprintf(stderr,
+            "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
+            (type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : ""), type,
+            severity, message);
 }
 
 /*!
@@ -110,7 +112,7 @@ void Scene::Start() {
   glfwSetInputMode(this->current_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
   // Set Point Size
-  glPointSize(50.0f);
+  glPointSize(10.0f);
 
   // initiate draw loop
   printf("Beginning Draw Loop. \n");

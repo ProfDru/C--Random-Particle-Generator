@@ -16,5 +16,6 @@ void main() {
   gl_Position = MVP * vec4(vpos, 1);
 
   // UV of the vertex. No special space for this one.
+  // particle_color = vcolor;
   particle_color = vcolor;
 }

@@ -1,5 +1,7 @@
 #pragma once
 #include <shader.h>
+
+#include <particle.h>
 #include <GL/glew.h>
 
 #include <vector>
@@ -8,14 +10,6 @@
 #include <glm/glm.hpp>
 
 namespace rpg {
-struct Particle {
-  glm::vec3 pos;
-  glm::vec3 velocity;
-  glm::vec3 color;
-  float lifetime;
-
-  Particle(glm::vec3 pos, glm::vec3 color);
-};
 
 class ParticleEngine {
   static const GLenum draw_type = GL_STREAM_DRAW;

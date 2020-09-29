@@ -47,6 +47,9 @@ target_sources(RandomParticleEngine
     src/particle_system.h
     src/controls.h
     src/utils.h
+    src/particle_simulation.h
+    src/particle.h
+    src/random_manager.cpp
 
     src/camera.cpp
     src/particle_system.cpp
@@ -54,6 +57,9 @@ target_sources(RandomParticleEngine
     src/main.cpp
     src/shader.cpp
     src/controls.cpp
+    src/particle_simulation.cpp
+    src/particle.cpp
+    src/random_manager.h
 
 )
 target_include_directories(RandomParticleEngine PRIVATE src) 
