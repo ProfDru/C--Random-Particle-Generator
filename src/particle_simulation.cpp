@@ -1,3 +1,5 @@
+
+#include <sys_time.h>
 #include <particle_simulation.h>
 #include <random_manager.h>
 
@@ -6,31 +8,29 @@
 #include <glm/gtx/rotate_vector.hpp>
 #include <glm/gtx/color_space.hpp>
 
-#include <chrono>
 #include <algorithm>
 #include <numbers>
 
 namespace rpg::simulation {
 
-// All of this time stuff should be moved to its own class
-using clock = std::chrono::high_resolution_clock;
-using timems = std::chrono::time_point<clock>;
-static timems last_time;
-
+static int last_time = 0;
 static const float time_threshold = 0.001f;
 
 int get_time_since() {
-  timems current_time = clock::now();
+  // Get the current time
+  int current_time = rpg::system::get_time_ms();
 
   // If last time was never set, just return 0 and set it
-  if (last_time.time_since_epoch().count() == 0) {
+  if (last_time == 0) {
     last_time = current_time;
     return 0;
   }
 
-  std::chrono::duration<float, std::milli> dur(current_time - last_time);
+  // set the return value then update last time
+  auto return_time = current_time - last_time;
   last_time = current_time;
-  return std::chrono::duration_cast<std::chrono::milliseconds>(dur).count();
+
+  return return_time;
 }
 
 /*! \brief Acceperate a particle downward in accordance with the forces of

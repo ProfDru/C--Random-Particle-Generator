@@ -50,6 +50,7 @@ target_sources(RandomParticleEngine
     src/particle_simulation.h
     src/particle.h
     src/random_manager.cpp
+    src/sys_time.cpp
 
     src/camera.cpp
     src/particle_system.cpp
@@ -60,6 +61,7 @@ target_sources(RandomParticleEngine
     src/particle_simulation.cpp
     src/particle.cpp
     src/random_manager.h
+    src/sys_time.h
 
 )
 target_include_directories(RandomParticleEngine PRIVATE src) 
