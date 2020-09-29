@@ -80,7 +80,7 @@ GLFWwindow* InitWindow() {
 
   // Make the window resizable and update at 60 FPS
   glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
-  glfwWindowHint(GLFW_REFRESH_RATE, 60);
+  glfwWindowHint(GLFW_REFRESH_RATE, 120);
 
   printf("Initializing GLEW...\n");
   bool did_init = InitGlew();

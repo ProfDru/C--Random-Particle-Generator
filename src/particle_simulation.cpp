@@ -6,6 +6,7 @@
 
 #include <math/vector3d.h>
 #include <math/units.h>
+#include <math/physics.h>
 
 #include <glm/gtx/polar_coordinates.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -37,23 +38,34 @@ double get_time_since() {
   return return_time;
 }
 
-/*! \brief Acceperate a particle downward in accordance with the forces of
+inline float get_rand(float min, float max) {
+  return RandomManager::random_range(min, max);
+}
+
+/*! \brief Accelerate a particle downward in accordance with the forces of
  * gravity */
 void apply_gravity(Particle& p, float time) {
-  p.velocity += (glm::vec3(0, -gravitational_constant, 0) * time);
+  p.velocity += (glm::vec3(0, -math::gravitational_constant, 0) * time);
 }
 
 /*! \brief Move particle based on it's velocity */
 void update_particle_position(Particle& p, float time) {
-  p.pos += (p.velocity * time);
-  if (p.pos.y <= 0 && p.velocity.y < 0) {
-    p.color = glm::mix(p.color, glm::vec3(0, 0, 0),
-                       std::min(p.velocity.y / 3.0f, 1.0f));
+  math::apply_velocity(p, time);
 
-    p.velocity.y *= -0.1;
-    p.velocity.z *= 0.75;
-    p.velocity.x *= 0.75;
-    p.lifetime = std::min(p.lifetime, 0.25f);
+  if (p.pos.y <= 0 && p.velocity.y < 0) {
+    // p.velocity.y *= -0.1;
+    // p.velocity.z *= 0.75;
+    // p.velocity.x *= 0.75;
+
+    math::bounce_basic(p, 5.0, get_rand(0.5, 0.6));
+    // p.color =
+    //    glm::mix(p.color, glm::vec3(1, 1, 1),
+    //            math::inverse_lerp(0.25, 2.0, math::magnitude(p.velocity)));
+
+    if (math::magnitude(p.velocity) < 0.25f)
+      p.lifetime = 0;
+    else
+      p.lifetime += 3.0f;
   }
 }
 
@@ -68,15 +80,19 @@ bool sim_particle(Particle& p, float time) {
 
   p.lifetime -= time;
 
-  apply_gravity(p, time);
+  double life_left =
+      1.0 - math::inverse_lerp(0.0, 10.0,
+                               std::min(math::magnitude(p.velocity), 20.0));
+  p.color = glm::rgbColor(glm::vec3(life_left * 255, 1.0f, 1.0f));
+  math::apply_gravity(p, time);
   update_particle_position(p, time);
   return true;
 }
 
 static float overflow = 0.0f;
-const static float fire_rate = 0.001f;
+const static float fire_rate = 0.0005f;
 static const int max_patricles = 50000;
-static const float spread = 15.0f;
+static const float spread = 45.0f;
 
 const float max_mag = 3.0f;
 const float min_mag = 1.0f;
@@ -102,15 +118,11 @@ int calc_num_shots(float time_since) {
   return shots;
 }
 
-inline float get_rand(float min, float max) {
-  return RandomManager::random_range(min, max);
-}
-
 inline Particle EmitParticle() {
-  const float magnitude = 2.0f;  // get_rand(min_mag, max_mag);
+  const float magnitude = 10.0f;  // get_rand(min_mag, max_mag);
 
   const float horizontal_angle = get_rand(0, 360);
-  const float vertical_angle = 10.0f;  // get_rand(0, spread);
+  const float vertical_angle = 25.0f;  // get_rand(0, spread);
 
   auto dir = math::spherical_to_cartesian(glm::vec3(
       1, math::to_radians(horizontal_angle), math::to_radians(vertical_angle)));
@@ -119,7 +131,7 @@ inline Particle EmitParticle() {
   Particle out_particle(origin, white);
   out_particle.velocity = (dir * magnitude);
 
-  const double mag_intensity = math::inverse_lerp(0, 360, horizontal_angle);
+  // const double mag_intensity = math::inverse_lerp(0, 360, horizontal_angle);
 
   // float h = mag_intensity * 255.0f;
   // float s = 1.0f;
@@ -127,9 +139,9 @@ inline Particle EmitParticle() {
   // glm::vec3 hsv(h, s, v);
   // out_particle.color = glm::rgbColor(hsv);
 
-  out_particle.color =
-      glm::mix(glm::vec3(1, 1, 1), glm::vec3(0, 0, 1), mag_intensity);
-
+  // out_particle.color = glm::mix(glm::vec3(0, 1, 1), glm::vec3(0, 0.5,
+  // 1), 1.0);
+  out_particle.color = {0, 0.25, 1};
   return out_particle;
 }
 
