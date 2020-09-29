@@ -65,6 +65,7 @@ target_sources(RandomParticleEngine
     src/sys_time.h
     src/coordinates.h
     src/math_concepts.h
+    src/math_core.h
 
 )
 target_include_directories(RandomParticleEngine PRIVATE src) 

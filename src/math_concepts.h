@@ -1,3 +1,4 @@
+#pragma once
 #include <concepts>
 #include <numeric>
 #include <cassert>
