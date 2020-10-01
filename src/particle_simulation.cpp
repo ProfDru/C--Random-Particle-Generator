@@ -112,7 +112,7 @@ inline Particle EmitParticle() {
   const float magnitude = 10.0f;  // get_rand(min_mag, max_mag);
 
   const float horizontal_angle = get_rand(0, 360);
-  const float vertical_angle = 25.0f;  // get_rand(0, spread);
+  const float vertical_angle = 15.0f;  // get_rand(0, spread);
 
   auto dir = math::spherical_to_cartesian(glm::vec3(
       1, math::to_radians(horizontal_angle), math::to_radians(vertical_angle)));

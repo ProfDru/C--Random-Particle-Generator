@@ -82,6 +82,7 @@ GLFWwindow* InitWindow() {
   glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
   glfwWindowHint(GLFW_REFRESH_RATE, 120);
   glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+  glEnable(GL_PROGRAM_POINT_SIZE);
 
   printf("Initializing GLEW...\n");
   bool did_init = InitGlew();
@@ -113,7 +114,7 @@ void Scene::Start() {
   glfwSetInputMode(this->current_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
   // Set Point Size
-  glPointSize(10.0f);
+  // glPointSize(10.0f);
 
   // initiate draw loop
   printf("Beginning Draw Loop. \n");
