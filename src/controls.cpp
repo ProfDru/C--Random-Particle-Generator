@@ -1,13 +1,22 @@
 #include <controls.h>
 #include <numeric>
 #include <utils.h>
+#include <sys_time.h>
 
 namespace rpg {
 static double last_time = 0;
 
 float CalculateChangeInTime() {
-  double current_time = glfwGetTime();
-  return float(current_time - last_time);
+  double current_time = system::get_precise_time_ms() / 1000.0;
+
+  if (last_time == 0) {
+    last_time = current_time;
+    return 0;
+  } else {
+    auto return_value = float(current_time - last_time);
+    last_time = current_time;
+    return return_value;
+  }
 }
 
 inline bool DidPress(GLFWwindow* window, CONTROL_MAP key) {
@@ -54,8 +63,8 @@ inline glm::vec2 CalcDirection(GLFWwindow* window) {
 }
 
 MoveInfo Move(GLFWwindow* window) {
-  const float speed = 0.5f;
-  const float mouse_sensitivity = 0.05f;
+  const float speed = 2.5f;
+  const float mouse_sensitivity = 0.15f;
   const float change_in_time = CalculateChangeInTime();
   const float boost_multi = CalcBoostMultiplier(window);
 
@@ -69,7 +78,6 @@ MoveInfo Move(GLFWwindow* window) {
   glm::vec2 direction_change =
       CalcDirection(window) * mouse_sensitivity * change_in_time;
 
-  last_time = glfwGetTime();
   return (MoveInfo{movement_change, direction_change});
 }
 
