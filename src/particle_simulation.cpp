@@ -20,7 +20,7 @@
 namespace rpg::simulation {
 
 static double last_time = 0;
-static const float time_threshold = 0.001f;
+static const float time_threshold = 0.00001f;
 
 double get_time_since() {
   // Get the current time
