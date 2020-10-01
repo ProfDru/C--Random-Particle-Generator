@@ -10,5 +10,9 @@ out vec3 color;
 
 void main() {
   // Output color = color of the texture at the specified UV
+  vec2 circCoord = 2.0 * gl_PointCoord - 1.0;
+  if (dot(circCoord, circCoord) > 1.0) {
+    discard;
+  }
   color = particle_color;
 }

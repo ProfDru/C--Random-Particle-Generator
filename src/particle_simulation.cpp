@@ -48,11 +48,11 @@ void update_particle_position(Particle& p, float time) {
   physics::apply_velocity(p, time);
 
   if (p.pos.y <= 0 && p.velocity.y < 0) {
-    physics::bounce_basic(p, 5.0, get_rand(0.5, 0.6));
+    physics::bounce_basic(p, 5.0, 0.7);
 
     math::inverse_lerp(0.25, 2.0, math::magnitude(p.velocity));
 
-    if (math::magnitude(p.velocity) < 0.25f)
+    if (abs(p.velocity.y) < 4.0f)
       p.lifetime = 0;
     else
       p.lifetime += 3.0f;
@@ -109,7 +109,8 @@ int calc_num_shots(float time_since) {
 }
 
 inline Particle EmitParticle() {
-  const float magnitude = 10.0f;  // get_rand(min_mag, max_mag);
+  const float magnitude =
+      get_rand(5.0f, 15.0f);  // 10.0f;  // get_rand(min_mag, max_mag);
 
   const float horizontal_angle = get_rand(0, 360);
   const float vertical_angle = 15.0f;  // get_rand(0, spread);
@@ -121,16 +122,6 @@ inline Particle EmitParticle() {
   Particle out_particle(origin, white);
   out_particle.velocity = (dir * magnitude);
 
-  // const double mag_intensity = math::inverse_lerp(0, 360, horizontal_angle);
-
-  // float h = mag_intensity * 255.0f;
-  // float s = 1.0f;
-  // float v = 1.0f;
-  // glm::vec3 hsv(h, s, v);
-  // out_particle.color = glm::rgbColor(hsv);
-
-  // out_particle.color = glm::mix(glm::vec3(0, 1, 1), glm::vec3(0, 0.5,
-  // 1), 1.0);
   out_particle.color = {0, 0.25, 1};
   return out_particle;
 }
