@@ -43,25 +43,14 @@ inline float get_rand(float min, float max) {
   return RandomManager::random_range(min, max);
 }
 
-/*! \brief Accelerate a particle downward in accordance with the forces of
- * gravity */
-void apply_gravity(Particle& p, float time) {
-  p.velocity += (glm::vec3(0, -math::gravitational_constant, 0) * time);
-}
-
 /*! \brief Move particle based on it's velocity */
 void update_particle_position(Particle& p, float time) {
-  math::apply_velocity(p, time);
+  physics::apply_velocity(p, time);
 
   if (p.pos.y <= 0 && p.velocity.y < 0) {
-    // p.velocity.y *= -0.1;
-    // p.velocity.z *= 0.75;
-    // p.velocity.x *= 0.75;
+    physics::bounce_basic(p, 5.0, get_rand(0.5, 0.6));
 
-    math::bounce_basic(p, 5.0, get_rand(0.5, 0.6));
-    // p.color =
-    //    glm::mix(p.color, glm::vec3(1, 1, 1),
-    //            math::inverse_lerp(0.25, 2.0, math::magnitude(p.velocity)));
+    math::inverse_lerp(0.25, 2.0, math::magnitude(p.velocity));
 
     if (math::magnitude(p.velocity) < 0.25f)
       p.lifetime = 0;
@@ -85,7 +74,7 @@ bool sim_particle(Particle& p, float time) {
       1.0 - math::inverse_lerp(0.0, 10.0,
                                std::min(math::magnitude(p.velocity), 20.0));
   p.color = glm::rgbColor(glm::vec3(life_left * 255, 1.0f, 1.0f));
-  math::apply_gravity(p, time);
+  physics::apply_gravity(p, time);
   update_particle_position(p, time);
   return true;
 }
@@ -160,7 +149,7 @@ void create_particles(std::vector<Particle>& particles, float time) {
 
 void simulate_particles(std::vector<Particle>& particles) {
   // Convert milliseconds to seconds
-  const double time_diff = static_cast<double>(get_time_since()) / 1000.0;
+  const float time_diff = static_cast<float>(get_time_since()) / 1000.0f;
 
   // Don't update if the time is less than the threshold
   if (time_diff < time_threshold)

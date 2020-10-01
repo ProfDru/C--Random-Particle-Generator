@@ -4,7 +4,8 @@
 #include <physics/base.h>
 
 #include <array>
-namespace rpg::math {
+namespace rpg::physics {
+using namespace rpg::math;
 
 const double gravitational_constant = 9.81;
 const std::array<double, 3> Fg = {0, -gravitational_constant, 0};
@@ -39,4 +40,4 @@ inline constexpr auto calculate_energy_loss(Numeric auto e) {
   return (1 - pow(e, 2));
 }
 
-}  // namespace rpg::math
+}  // namespace rpg::physics

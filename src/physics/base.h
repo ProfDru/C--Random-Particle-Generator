@@ -2,7 +2,8 @@
 
 #include <math/vector3d.h>
 
-namespace rpg::math {
+namespace rpg::physics {
+using namespace rpg::math;
 
 inline void change_over_time(Vector3D auto& quantity,
                              const Vector3D auto& rate,
@@ -12,4 +13,4 @@ inline void change_over_time(Vector3D auto& quantity,
   quantity = add(quantity, change);
 }
 
-}  // namespace rpg::math
+}  // namespace rpg::physics

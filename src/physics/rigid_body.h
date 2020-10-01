@@ -4,7 +4,8 @@
 
 #include <concepts>
 
-namespace rpg::math {
+namespace rpg::physics {
+using namespace rpg::math;
 
 template <typename T>
 concept RigidBody = requires {
@@ -39,4 +40,4 @@ inline void bounce_basic(RigidBody auto& body,
   set_magnitude(body.velocity, velocity_after_bounce);
   set(body.velocity, 1, -get(body.velocity, 1));
 }
-}  // namespace rpg::math
+}  // namespace rpg::physics
