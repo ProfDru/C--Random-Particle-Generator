@@ -64,10 +64,12 @@ target_sources(RandomParticleEngine
     src/sys_time.h
 
     src/math/vector3d.h
-    src/math/physics.h
     src/math/units.h
     src/math/base.h
 
+    src/physics/base.h
+    src/physics/kinematics.h
+    src/physics/rigid_body.h
 )
 target_include_directories(RandomParticleEngine PRIVATE src) 
 
