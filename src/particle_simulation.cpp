@@ -6,7 +6,8 @@
 
 #include <math/vector3d.h>
 #include <math/units.h>
-#include <math/physics.h>
+
+#include <physics/rigid_body.h>
 
 #include <glm/gtx/polar_coordinates.hpp>
 #include <glm/gtc/matrix_transform.hpp>
