@@ -30,6 +30,15 @@ inline auto kinematic_energy(const RigidBody auto& body, Numeric auto mass) {
 inline void bounce_basic(RigidBody auto& body,
                          Numeric auto mass = 5.0,
                          Numeric auto e = 0) {
+  // Do nothing if the particle has no vertical momentum
+  const auto y_vel = abs(get(body.velocity, 1));
+  if (y_vel < 0.001) {
+    set(body.velocity, 1, 0);
+    set(body.pos, 1, 0);
+
+    return;
+  }
+
   const Numeric auto energy = kinematic_energy(body, mass);
 
   const auto energy_loss = calculate_energy_loss(e);
@@ -39,5 +48,6 @@ inline void bounce_basic(RigidBody auto& body,
       velocity_from_kinematic_energy(energy_after_bounce, mass);
   set_magnitude(body.velocity, velocity_after_bounce);
   set(body.velocity, 1, -get(body.velocity, 1));
+  set(body.pos, 1, 0);
 }
 }  // namespace rpg::physics

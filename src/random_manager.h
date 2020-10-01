@@ -1,22 +1,26 @@
 #include <concepts>
 #include <random>
+#include <algorithm>
+#include <math/base.h>
 
 namespace rpg::simulation {
 
 template <class T>
 class RandomNumberGen {
-  static inline T random_engine = T(0.0, 1.0);
+  static inline T random_engine = T(1);
 
  public:
   template <typename D>
+
   static inline float GetRandomNumber(D& device) {
-    return RandomNumberGen::random_engine(device);
+    const auto number = RandomNumberGen::random_engine(device);
+    return number;
   }
 };
 
 /*! \brief Manages the state of the current random number generator */
 class RandomManager {
-  static RandomNumberGen<std::uniform_real_distribution<>> RNG;
+  static RandomNumberGen<std::extreme_value_distribution<>> RNG;
   inline static std::random_device RD;
 
  public:

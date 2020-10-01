@@ -21,6 +21,8 @@ namespace rpg::simulation {
 
 static double last_time = 0;
 static const float time_threshold = 0.00001f;
+static const float start_lifetime = 5.0f;
+static const double time_scale = 1.0f;
 
 double get_time_since() {
   // Get the current time
@@ -36,11 +38,15 @@ double get_time_since() {
   auto return_time = current_time - last_time;
   last_time = current_time;
 
-  return return_time;
+  return return_time * time_scale;
 }
 
 inline float get_rand(float min, float max) {
   return RandomManager::random_range(min, max);
+}
+
+inline float get_rand_nolimits() {
+  return RandomManager::GetRandomNumber();
 }
 
 /*! \brief Move particle based on it's velocity */
@@ -48,14 +54,17 @@ void update_particle_position(Particle& p, float time) {
   physics::apply_velocity(p, time);
 
   if (p.pos.y <= 0 && p.velocity.y < 0) {
-    physics::bounce_basic(p, 5.0, get_rand(0.5, 0.6));
+    physics::bounce_basic(p, 5.0, 1.0f);
+    p.lifetime -= 5.0f;
 
-    math::inverse_lerp(0.25, 2.0, math::magnitude(p.velocity));
+    // math::inverse_lerp(0.25, 2.0, math::magnitude(p.velocity));
 
-    if (math::magnitude(p.velocity) < 0.25f)
-      p.lifetime = 0;
-    else
-      p.lifetime += 3.0f;
+    /*
+        if (abs(p.velocity.y) < 4.0f)
+          p.lifetime = 0;
+        else
+          p.lifetime += 3.0f;
+    */
   }
 }
 
@@ -70,10 +79,8 @@ bool sim_particle(Particle& p, float time) {
 
   p.lifetime -= time;
 
-  double life_left =
-      1.0 - math::inverse_lerp(0.0, 10.0,
-                               std::min(math::magnitude(p.velocity), 20.0));
-  p.color = glm::rgbColor(glm::vec3(life_left * 255, 1.0f, 1.0f));
+  double life_left = 1.0 - math::inverse_lerp(0.0, start_lifetime, p.lifetime);
+  p.color = glm::rgbColor(glm::vec3(life_left * 255, 1.0f, 1 - life_left));
   physics::apply_gravity(p, time);
   update_particle_position(p, time);
   return true;
@@ -108,11 +115,15 @@ int calc_num_shots(float time_since) {
   return shots;
 }
 
+static int ticks = 0;
 inline Particle EmitParticle() {
-  const float magnitude = 10.0f;  // get_rand(min_mag, max_mag);
+  const float magnitude =
+      get_rand_nolimits() * 10;  // get_rand(min_mag, max_mag);
 
-  const float horizontal_angle = get_rand(0, 360);
-  const float vertical_angle = 25.0f;  // get_rand(0, spread);
+  const float horizontal_angle =
+      static_cast<float>(ticks % 360);  // rand(0, 360);
+  ticks = (ticks % 360) + 1;
+  const float vertical_angle = 10.0;  // get_rand(0, spread);
 
   auto dir = math::spherical_to_cartesian(glm::vec3(
       1, math::to_radians(horizontal_angle), math::to_radians(vertical_angle)));
@@ -121,17 +132,8 @@ inline Particle EmitParticle() {
   Particle out_particle(origin, white);
   out_particle.velocity = (dir * magnitude);
 
-  // const double mag_intensity = math::inverse_lerp(0, 360, horizontal_angle);
-
-  // float h = mag_intensity * 255.0f;
-  // float s = 1.0f;
-  // float v = 1.0f;
-  // glm::vec3 hsv(h, s, v);
-  // out_particle.color = glm::rgbColor(hsv);
-
-  // out_particle.color = glm::mix(glm::vec3(0, 1, 1), glm::vec3(0, 0.5,
-  // 1), 1.0);
   out_particle.color = {0, 0.25, 1};
+  out_particle.lifetime = start_lifetime;
   return out_particle;
 }
 
