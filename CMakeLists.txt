@@ -63,6 +63,16 @@ target_sources(RandomParticleEngine
     src/random_manager.h
     src/sys_time.h
 
+    src/rendering/shader.h
+    src/rendering/shader.cpp
+    src/rendering/shader_manager.h
+    src/rendering/shader_manager.cpp
+    src/rendering/renderer.h
+    src/rendering/renderer.cpp
+    src/rendering/preloaded_shaders.h
+    src/rendering/shader_loader.cpp
+    src/rendering/shader_loader.h
+
     src/math/vector3d.h
     src/math/units.h
     src/math/base.h
@@ -70,6 +80,10 @@ target_sources(RandomParticleEngine
     src/physics/base.h
     src/physics/kinematics.h
     src/physics/rigid_body.h
+
+    src/entities/entity.h
+    src/entities/entity_registry.cpp
+    src/entities/entity_registry.h
 )
 target_include_directories(RandomParticleEngine PRIVATE src) 
 
