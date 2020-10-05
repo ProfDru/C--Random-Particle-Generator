@@ -13,7 +13,7 @@ namespace rpg::rendering {
 
 /*! \brief Determine whether a shader has been compiled or not */
 bool has_been_compiled(const Shader& shader) {
-  return shader.get_program_id() < 0;
+  return shader.get_program_id() >= 0;
 }
 
 /*! \brief Compiles the shader and updates it's id with the id assigned by
@@ -67,4 +67,13 @@ const Shader& ShaderManager::GetShaderforObject(int ent_id) const {
 
   return shaders[this->entity_map.at(ent_id)];
 }
+
+void ShaderManager::UpdateMVP(const float* MVP_ptr) {
+  for (const auto& shader : this->shaders) {
+    for (const auto& uniform : shader.uniforms)
+      if (uniform.T == ShaderUniform::type::MVP)
+        SetUniformMatrix(uniform.id, MVP_ptr);
+  }
+}
+
 }  // namespace rpg::rendering

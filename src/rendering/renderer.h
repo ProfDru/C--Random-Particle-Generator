@@ -1,7 +1,8 @@
+#pragma once
 
 #include <entities/entity.h>
 #include <rendering\shader_manager.h>
-#include <draw.h>
+#include <rendering\draw.h>
 
 #include <concepts>
 #include <string>
@@ -18,7 +19,7 @@ class Renderer {
   template <typename T>
   inline static void Render(
       const T& ent) requires std::derived_from<T, Entity> {
-    const auto& shader = shader_manager.GetShaderForObject(ent.id);
+    const auto& shader = shader_manager.GetShaderforObject(ent.GetID());
 
     Draw(ent, shader);
   }
@@ -27,9 +28,13 @@ class Renderer {
   template <typename T>
   inline static void AssignShader(
       const T& ent,
-      const Shader& shader) requires std::derived_from<T, Entity> {
-    shader_manager.RegisterShader(ent.id, shader);
+      Shader& shader) requires std::derived_from<T, Entity> {
+    shader_manager.RegisterShader(ent.GetID(), shader);
+  }
+
+  template <typename T>
+  inline static void UpdateMVP(const T& MVP) {
+    shader_manager.UpdateMVP(&MVP[0][0]);
   }
 };
-
 }  // namespace rpg::rendering

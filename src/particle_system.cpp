@@ -34,62 +34,31 @@ inline vector<GLfloat> CreateColorArray(const vector<Particle>& particles) {
   return color_arr;
 }
 
-void ParticleEngine::GenerateBuffers() {
-  // Position Buffer
-  glGenBuffers(1, &this->position_vbo);
-  glBindBuffer(GL_ARRAY_BUFFER, this->position_vbo);
-
-  // Color Buffer
-  glGenBuffers(1, &this->color_vbo);
-  glBindBuffer(GL_ARRAY_BUFFER, this->color_vbo);
-}
-
 ParticleEngine::ParticleEngine() {
   // Hardcode points for now
   this->particles = std::vector<Particle>();
-
-  this->shader = LoadShaders(this->shader_path);
-
-  this->GenerateBuffers();
 }
 
-void ParticleEngine::FillBuffers() {
-  const auto pos_arr = CreatePositionArray(this->particles);
-  glBindBuffer(GL_ARRAY_BUFFER, this->position_vbo);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * pos_arr.size(),
-               pos_arr.data(), GL_STREAM_DRAW);
-
-  const auto color_arr = CreateColorArray(this->particles);
-  glBindBuffer(GL_ARRAY_BUFFER, this->color_vbo);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * color_arr.size(),
-               color_arr.data(), GL_STREAM_DRAW);
-}
-
-void ParticleEngine::Draw() {
-  glUseProgram(this->shader.program_id);
-
-  // Update every frame for now
+void ParticleEngine::Update() {
   simulation::simulate_particles(this->particles);
-  this->FillBuffers();
-
-  glEnableVertexAttribArray(this->shader.pos_attr);
-  glEnableVertexAttribArray(this->shader.color_attr);
-
-  glBindBuffer(GL_ARRAY_BUFFER, this->position_vbo);
-  glVertexAttribPointer(this->shader.pos_attr, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-  glBindBuffer(GL_ARRAY_BUFFER, this->color_vbo);
-  glVertexAttribPointer(this->shader.color_attr, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-  glDrawArrays(GL_POINTS, 0, particles.size());
-
-  glDisableVertexAttribArray(this->shader.pos_attr);
-  glDisableVertexAttribArray(this->shader.color_attr);
 }
 
+std::vector<float> ParticleEngine::GetVertexBuffer() const {
+  return CreatePositionArray(particles);
+}
+
+std::vector<float> ParticleEngine::GetColorBuffer() const {
+  return CreateColorArray(this->particles);
+};
+
+int ParticleEngine::NumVertices() const {
+  return this->particles.size() * 3;
+}
+/*
 void ParticleEngine::SetCameraPosition(glm::mat4& MVP) {
   glUniformMatrix4fv(this->shader.mvp, 1, GL_FALSE, &(MVP[0][0]));
 }
+*/
 
 //~ParticleEngine(){
 

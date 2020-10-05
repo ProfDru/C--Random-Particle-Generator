@@ -24,4 +24,8 @@ int GetAttributeID(int program_id, const std::string& attribute_name);
 
 /*! \brief Generate a buffer and return the ID of it */
 int GenBuffer();
+
+/*! \brief Set the uniform of a shader */
+void SetUniformMatrix(int uniform_id, const float* matrix_start);
+
 }  // namespace rpg::rendering

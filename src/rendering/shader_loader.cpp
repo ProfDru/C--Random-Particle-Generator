@@ -132,4 +132,8 @@ int GenBuffer() {
   return static_cast<int>(buffer_id);
 }
 
+void SetUniformMatrix(int uniform_id, const float* matrix_start) {
+  glUniformMatrix4fv(uniform_id, 1, GL_FALSE, matrix_start);
+}
+
 }  // namespace rpg::rendering

@@ -1,3 +1,4 @@
+#pragma once
 #include <rendering\shader.h>
 
 #include <vector>
@@ -33,5 +34,8 @@ class ShaderManager {
 
   /*! \brief Get the id of the shader assigned to a specific entity */
   const Shader& GetShaderforObject(int ent_id) const;
+
+  /*! \brief Update the MVP for every shader that needs it */
+  void UpdateMVP(const float* MVP_ptr);
 };
 }  // namespace rpg::rendering

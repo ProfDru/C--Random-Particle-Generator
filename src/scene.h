@@ -4,8 +4,9 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <GLFW\glfw3.h>
 #include <optional>
+
+class GLFWwindow;
 
 namespace rpg {
 

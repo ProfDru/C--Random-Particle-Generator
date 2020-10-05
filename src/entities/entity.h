@@ -1,3 +1,4 @@
+#pragma once
 #include <concepts>
 
 namespace rpg {
@@ -7,10 +8,10 @@ class Entity {
   int id;
 
  public:
-  void SetID();
+  void SetID(int id);
 
   /*! \brief Get the ID of this entity */
   int GetID() const;
-}
+};
 
 }  // namespace rpg

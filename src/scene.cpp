@@ -1,6 +1,11 @@
+#include <scene.h>
+#include <rendering\renderer.h>
+#include <rendering\preloaded_shaders.h>
+#include <entities/entity.h>
+#include <entities/entity_registry.h>
+
 #include <GL\glew.h>
 #include <GLFW\glfw3.h>
-#include <scene.h>
 #include <controls.h>
 
 #include <cassert>
@@ -21,7 +26,7 @@ void GLAPIENTRY MessageCallback(GLenum source,
                                 GLuint id,
                                 GLenum severity,
                                 GLsizei length,
-                                const GLchar* message,
+                                const char* message,
                                 const void* userParam) {
   // return;
   if (severity != 0x826b)
@@ -116,6 +121,8 @@ void Scene::Start() {
   // Set Point Size
   // glPointSize(10.0f);
 
+  this->PI->SetID(Registry::GetNextID());
+
   // initiate draw loop
   printf("Beginning Draw Loop. \n");
   this->DrawLoop();
@@ -128,19 +135,22 @@ void Scene::DrawLoop() {
   // Set the backgorun color
   glClearColor(0.1f, 0.1f, 0.1f, 0.0f);
 
+  rendering::Renderer::AssignShader(*(this->PI), rendering::ParticleShader);
+
   do {
+    PI->Update();
+
     // Poll keyboard events
     auto moves = this->paused ? MoveInfo() : Move(this->current_window);
     this->main_camera.Move(moves.position_change, moves.direction_change);
 
-    auto MVP = this->main_camera.CalculateMVP();
-    this->PI->SetCameraPosition(MVP);
-
     // Clear the screen
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // Draw the particle engine
-    this->PI->Draw();
+    auto MVP = this->main_camera.CalculateMVP();
+    rendering::Renderer::UpdateMVP(MVP);
+
+    rendering::Renderer::Render(*(this->PI));
 
     glfwSwapBuffers(current_window);
     this->paused = ShouldPause(this->current_window, this->paused);

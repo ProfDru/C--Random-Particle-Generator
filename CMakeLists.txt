@@ -84,6 +84,7 @@ target_sources(RandomParticleEngine
     src/physics/rigid_body.h
 
     src/entities/entity.h
+    src/entities/entity.cpp
     src/entities/entity_registry.cpp
     src/entities/entity_registry.h
 )

@@ -48,6 +48,8 @@ inline void HandleAttribute(const T& ent, const ShaderAttribute& attr) {
 template <typename T>
 inline void Draw(const T& ent, const Shader& shader) {
   // Fill buffers and enable each attribute
+  UseProgram(shader.get_program_id());
+
   for (const auto& attr : shader.attributes)
     HandleAttribute(ent, attr);
 

@@ -1,3 +1,4 @@
+#pragma once
 #include <string>
 #include <vector>
 #include <concepts>
@@ -50,7 +51,7 @@ struct Shader {
 
   Shader(const std::string& path,
          const std::vector<ShaderUniform>& uniforms,
-         const std::vector<ShaderAttribute> attributes);
+         const std::vector<ShaderAttribute>& attributes);
 
   inline int get_program_id() const { return program_id; }
   inline void set_program_id(int new_id) { this->program_id = new_id; }
