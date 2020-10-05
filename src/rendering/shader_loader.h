@@ -21,4 +21,7 @@ int LoadShaders(const std::string& path);
 int GetUniformID(int program_id, const std::string& uniform_name);
 
 int GetAttributeID(int program_id, const std::string& attribute_name);
+
+/*! \brief Generate a buffer and return the ID of it */
+int GenBuffer();
 }  // namespace rpg::rendering

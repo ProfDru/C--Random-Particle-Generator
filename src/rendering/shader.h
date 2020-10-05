@@ -30,7 +30,8 @@ struct ShaderAttribute {
 
   type T;
   std::string name;
-  int id;
+  int id = -1;
+  int vbo = -1;
 
   ShaderAttribute(std::string name, type t);
 };

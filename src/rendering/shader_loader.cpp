@@ -124,4 +124,12 @@ int GetAttributeID(int program_id, const string& attribute_name) {
   return glGetAttribLocation(program_id, attribute_name.c_str());
 }
 
+int GenBuffer() {
+  GLuint buffer_id = -1;
+  glGenBuffers(1, &buffer_id);
+  glBindBuffer(GL_ARRAY_BUFFER, buffer_id);
+
+  return static_cast<int>(buffer_id);
+}
+
 }  // namespace rpg::rendering

@@ -72,6 +72,8 @@ target_sources(RandomParticleEngine
     src/rendering/preloaded_shaders.h
     src/rendering/shader_loader.cpp
     src/rendering/shader_loader.h
+    src/rendering/draw.h
+    src/rendering/draw.cpp
 
     src/math/vector3d.h
     src/math/units.h

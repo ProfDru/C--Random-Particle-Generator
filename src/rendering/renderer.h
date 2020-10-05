@@ -1,6 +1,7 @@
 
 #include <entities/entity.h>
 #include <rendering\shader_manager.h>
+#include <draw.h>
 
 #include <concepts>
 #include <string>
@@ -17,7 +18,9 @@ class Renderer {
   template <typename T>
   inline static void Render(
       const T& ent) requires std::derived_from<T, Entity> {
-    const auto& Shader = shader_manager.GetShaderForObject(ent.id);
+    const auto& shader = shader_manager.GetShaderForObject(ent.id);
+
+    Draw(ent, shader);
   }
 
   /*! \brief Assign a specific shader to a specific entity. */

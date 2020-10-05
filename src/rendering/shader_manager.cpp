@@ -32,8 +32,10 @@ void ShaderManager::CompileShader(Shader& shader) {
   // Get the ID for all of it's uniforms and attributes
   for (auto& uniform : shader.uniforms)
     uniform.id = GetUniformID(program_id, uniform.name);
-  for (auto& attribute : shader.attributes)
+  for (auto& attribute : shader.attributes) {
     attribute.id = GetAttributeID(program_id, attribute.name);
+    attribute.vbo = GenBuffer();
+  }
 
   // Add it to our vector and name dictionary
   const int next_id = this->shaders.size();
