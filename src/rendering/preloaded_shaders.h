@@ -13,4 +13,11 @@ static Shader ParticleShader(
         ShaderAttribute("vcolor", ShaderAttribute::type::color),
         ShaderAttribute("vpos", ShaderAttribute::type::vertex)});
 
+static Shader RainbowShader(
+    "shaders/RainbowParticle",
+    "shaders/particle",
+    std::vector<ShaderUniform>{ShaderUniform("MVP", ShaderUniform::type::MVP)},
+    std::vector<ShaderAttribute>{
+        ShaderAttribute("vpos", ShaderAttribute::type::vertex)});
+
 }  // namespace rpg::rendering

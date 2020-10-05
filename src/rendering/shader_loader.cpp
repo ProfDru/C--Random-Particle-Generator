@@ -1,3 +1,4 @@
+#include <rendering/shader_loader.h>
 #include <GL/glew.h>
 
 #include <iostream>
@@ -18,9 +19,10 @@ inline string ReadFile(const string& fileName) {
   ifstream ifs(fileName.c_str(),
                std::ios::in | std::ios::binary | std::ios::ate);
 
-  if (!ifs.is_open())
+  if (!ifs.is_open()) {
+    std::cerr << "Couldn't find file " << fileName << std::endl;
     throw std::runtime_error("File could not be found");
-
+  }
   ifstream::pos_type fileSize = ifs.tellg();
   ifs.seekg(0, std::ios::beg);
 
@@ -93,8 +95,13 @@ inline GLuint LinkShaders(GLuint frag_id, GLuint vert_id) {
 }
 
 int LoadShaders(const std::string& path) {
-  string frag_code = ReadFile(path + ".frag");
-  string vert_code = ReadFile(path + ".vert");
+  return LoadShaders(path + ".vert", path + ".frag");
+}
+
+int LoadShaders(const std::string& vertex_path,
+                const std::string& fragment_path) {
+  string frag_code = ReadFile(fragment_path);
+  string vert_code = ReadFile(vertex_path);
 
   if (frag_code.empty() || vert_code.empty())
     throw std::invalid_argument(

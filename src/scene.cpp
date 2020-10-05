@@ -147,7 +147,7 @@ void Scene::DrawLoop() {
   // Set the backgorun color
   glClearColor(0.1f, 0.1f, 0.1f, 0.0f);
 
-  rendering::Renderer::AssignShader(*(this->PI), rendering::ParticleShader);
+  rendering::Renderer::AssignShader(*(this->PI), rendering::RainbowShader);
   do {
     PI->Update();
     HandleMovement(this->main_camera, this->current_window);

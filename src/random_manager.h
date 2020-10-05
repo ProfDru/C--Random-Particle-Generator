@@ -7,7 +7,7 @@ namespace rpg::simulation {
 
 template <class T>
 class RandomNumberGen {
-  static inline T random_engine = T(1);
+  static inline T random_engine = T(0, 1);
 
  public:
   template <typename D>
@@ -20,7 +20,7 @@ class RandomNumberGen {
 
 /*! \brief Manages the state of the current random number generator */
 class RandomManager {
-  static RandomNumberGen<std::extreme_value_distribution<>> RNG;
+  static RandomNumberGen<std::uniform_real_distribution<>> RNG;
   inline static std::random_device RD;
 
  public:

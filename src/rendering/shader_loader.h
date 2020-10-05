@@ -4,6 +4,9 @@
 
 namespace rpg::rendering {
 
+int LoadShaders(const std::string& vertex_path,
+                const std::string& fragment_path);
+
 /*! \brief Load the fragment and vertex shaders at the given path
 
         \param path path to the vertex/fragment shader pair withut any

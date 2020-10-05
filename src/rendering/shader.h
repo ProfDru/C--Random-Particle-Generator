@@ -44,12 +44,18 @@ struct Shader {
 
  public:
   std::string name;
-  std::string path;
+  std::string vertex_path;
+  std::string fragment_path;
 
   std::vector<ShaderUniform> uniforms;
   std::vector<ShaderAttribute> attributes;
 
   Shader(const std::string& path,
+         const std::vector<ShaderUniform>& uniforms,
+         const std::vector<ShaderAttribute>& attributes);
+
+  Shader(const std::string& vertex_path,
+         const std::string& fragment_path,
          const std::vector<ShaderUniform>& uniforms,
          const std::vector<ShaderAttribute>& attributes);
 

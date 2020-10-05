@@ -26,7 +26,7 @@ void ShaderManager::CompileShader(Shader& shader) {
   assert(!has_been_compiled(shader));
 
   // Compile this shader and get the program ID from opengl
-  const int program_id = LoadShaders(shader.path);
+  const int program_id = LoadShaders(shader.vertex_path, shader.fragment_path);
   shader.set_program_id(program_id);
 
   // Get the ID for all of it's uniforms and attributes
