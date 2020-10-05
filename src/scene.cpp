@@ -128,6 +128,16 @@ void Scene::Start() {
   this->DrawLoop();
 }
 
+inline bool HandleMovement(Camera& camera, GLFWwindow* window) {
+  auto movement = Move(window);
+
+  if (!movement.empty()) {
+    camera.Move(movement.position_change, movement.direction_change);
+    glm::mat4 MVP = camera.CalculateMVP();
+    rendering::Renderer::UpdateMVP(MVP);
+  }
+}
+
 void Scene::DrawLoop() {
   // Ensure we can capture the escape key being pressed below
   glfwSetInputMode(this->current_window, GLFW_STICKY_KEYS, GL_TRUE);
@@ -136,20 +146,13 @@ void Scene::DrawLoop() {
   glClearColor(0.1f, 0.1f, 0.1f, 0.0f);
 
   rendering::Renderer::AssignShader(*(this->PI), rendering::ParticleShader);
-
+  glm::mat4 LastMVP;
   do {
     PI->Update();
-
-    // Poll keyboard events
-    auto moves = this->paused ? MoveInfo() : Move(this->current_window);
-    this->main_camera.Move(moves.position_change, moves.direction_change);
+    HandleMovement(this->main_camera, this->current_window);
 
     // Clear the screen
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    auto MVP = this->main_camera.CalculateMVP();
-    rendering::Renderer::UpdateMVP(MVP);
-
     rendering::Renderer::Render(*(this->PI));
 
     glfwSwapBuffers(current_window);

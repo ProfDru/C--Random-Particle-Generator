@@ -12,6 +12,11 @@ struct MoveInfo {
 
   inline MoveInfo(glm::vec2 pos_change, glm::vec2 dir_change)
       : position_change(pos_change), direction_change(dir_change){};
+
+  inline bool empty() {
+    return (this->position_change.length() <= 0 &&
+            this->direction_change.length() <= 0);
+  }
 };
 
 /*! \brief Maps GLFW keys to control statments */
