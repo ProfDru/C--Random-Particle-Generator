@@ -135,7 +135,9 @@ inline bool HandleMovement(Camera& camera, GLFWwindow* window) {
     camera.Move(movement.position_change, movement.direction_change);
     glm::mat4 MVP = camera.CalculateMVP();
     rendering::Renderer::UpdateMVP(MVP);
-  }
+    return true;
+  } else
+    return false;
 }
 
 void Scene::DrawLoop() {
@@ -146,7 +148,6 @@ void Scene::DrawLoop() {
   glClearColor(0.1f, 0.1f, 0.1f, 0.0f);
 
   rendering::Renderer::AssignShader(*(this->PI), rendering::ParticleShader);
-  glm::mat4 LastMVP;
   do {
     PI->Update();
     HandleMovement(this->main_camera, this->current_window);
@@ -162,10 +163,6 @@ void Scene::DrawLoop() {
   }  // End the loop if the escape key was pressed or the window was closed
   while (glfwGetKey(current_window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
          glfwWindowShouldClose(current_window) == 0);
-}
-
-Scene::~Scene() {
-  glfwTerminate();
 }
 
 }  // namespace rpg

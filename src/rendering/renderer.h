@@ -34,7 +34,7 @@ class Renderer {
 
   template <typename T>
   inline static void UpdateMVP(const T& MVP) {
-    shader_manager.UpdateMVP(&MVP[0][0]);
+    shader_manager.UpdateMVP(&(MVP[0][0]));
   }
 };
 }  // namespace rpg::rendering

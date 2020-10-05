@@ -28,7 +28,5 @@ class Scene {
       \details This will initiate the draw loop here
   */
   void Start();
-
-  ~Scene();
 };
 }  // namespace rpg
