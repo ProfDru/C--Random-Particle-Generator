@@ -1,5 +1,6 @@
 #include <rendering/shader_manager.h>
 #include <rendering/shader_loader.h>
+#include <rendering/draw.h>
 
 #include <unordered_map>
 #include <vector>
@@ -41,7 +42,7 @@ void ShaderManager::CompileShader(Shader& shader) {
 
 /*! \note Just a test of whether or not the shader exists */
 bool ShaderManager::HasShader(int shader_id) const {
-  return shader_id < shaders.size();
+  return shader_id < static_cast<int>(shaders.size());
 }
 
 /*! \note Just a test of whether or not the shader exists */
@@ -66,9 +67,21 @@ const Shader& ShaderManager::GetShaderforObject(int ent_id) const {
 
 void ShaderManager::UpdateMVP(const float* MVP_ptr) {
   for (const auto& shader : this->shaders) {
-    for (const auto& uniform : shader.uniforms)
+    UseProgram(shader.get_program_id());
+    for (const auto& uniform : shader.uniforms) {
       if (uniform.T == ShaderUniform::type::MVP)
         SetUniformMatrix(uniform.id, MVP_ptr);
+    }
+  }
+}
+
+void ShaderManager::UpdateScreenXY(float screen_x, float screen_y) {
+  for (const auto& shader : this->shaders) {
+    UseProgram(shader.get_program_id());
+    for (const auto& uniform : shader.uniforms) {
+      if (uniform.T == ShaderUniform::type::SCREEN_XY)
+        SetUniformVector2f(uniform.id, screen_x, screen_y);
+    }
   }
 }
 

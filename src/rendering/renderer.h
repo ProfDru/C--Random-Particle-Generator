@@ -36,5 +36,9 @@ class Renderer {
   inline static void UpdateMVP(const T& MVP) {
     shader_manager.UpdateMVP(&(MVP[0][0]));
   }
+
+  inline static void UpdateScreenXY(float screen_x, float screen_y) {
+    shader_manager.UpdateScreenXY(screen_x, screen_y);
+  }
 };
 }  // namespace rpg::rendering

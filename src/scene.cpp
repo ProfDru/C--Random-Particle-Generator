@@ -51,6 +51,7 @@ bool InitGlew() {
 
 void FramebufferSizeCallback(GLFWwindow* window, int width, int height) {
   glViewport(0, 0, width, height);
+  rendering::Renderer::UpdateScreenXY(width, height);
 }
 
 /*! \brief Initalize and return the glfw window*/
@@ -144,10 +145,14 @@ void Scene::DrawLoop() {
   // Ensure we can capture the escape key being pressed below
   glfwSetInputMode(this->current_window, GLFW_STICKY_KEYS, GL_TRUE);
 
-  // Set the backgorun color
+  // Set the background color
   glClearColor(0.1f, 0.1f, 0.1f, 0.0f);
 
-  rendering::Renderer::AssignShader(*(this->PI), rendering::RainbowShader);
+  rendering::Renderer::AssignShader(*(this->PI), rendering::ParticleShader);
+
+  // Call the size callback incase any shaders need it
+  FramebufferSizeCallback(this->current_window, 1280, 720);
+
   do {
     PI->Update();
     HandleMovement(this->main_camera, this->current_window);

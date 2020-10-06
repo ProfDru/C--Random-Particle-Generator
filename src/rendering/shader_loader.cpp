@@ -1,5 +1,7 @@
 #include <rendering/shader_loader.h>
+
 #include <GL/glew.h>
+#include <glm/vec2.hpp>
 
 #include <iostream>
 #include <fstream>
@@ -141,6 +143,11 @@ int GenBuffer() {
 
 void SetUniformMatrix(int uniform_id, const float* matrix_start) {
   glUniformMatrix4fv(uniform_id, 1, GL_FALSE, matrix_start);
+}
+
+void SetUniformVector2f(int uniform_id, float x, float y) {
+  glm::vec2 vec_xy(x, y);
+  glUniform2fv(uniform_id, 1, &vec_xy[0]);
 }
 
 }  // namespace rpg::rendering

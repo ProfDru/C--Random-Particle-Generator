@@ -31,4 +31,7 @@ int GenBuffer();
 /*! \brief Set the uniform of a shader */
 void SetUniformMatrix(int uniform_id, const float* matrix_start);
 
+/*! \brief Set the value of a uniform vector2f */
+void SetUniformVector2f(int uniform_id, float x, float y);
+
 }  // namespace rpg::rendering

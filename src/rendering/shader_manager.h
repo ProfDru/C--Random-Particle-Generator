@@ -37,5 +37,8 @@ class ShaderManager {
 
   /*! \brief Update the MVP for every shader that needs it */
   void UpdateMVP(const float* MVP_ptr);
+
+  /*! \brief Update the screen X/Y for every shader that needs it */
+  void UpdateScreenXY(float screen_x, float screen_y);
 };
 }  // namespace rpg::rendering
