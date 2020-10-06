@@ -1,11 +1,12 @@
 #pragma once
-#include <particle_system.h>
+#include <entities\particle_system.h>
 #include <camera.h>
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <GLFW\glfw3.h>
 #include <optional>
+
+class GLFWwindow;
 
 namespace rpg {
 
@@ -27,7 +28,5 @@ class Scene {
       \details This will initiate the draw loop here
   */
   void Start();
-
-  ~Scene();
 };
 }  // namespace rpg

@@ -42,26 +42,32 @@ add_subdirectory(external)
 add_executable(RandomParticleEngine)
 target_sources(RandomParticleEngine
     PRIVATE 
+
     src/scene.h
-    src/shader.h
-    src/particle_system.h
     src/controls.h
     src/utils.h
-    src/particle_simulation.h
-    src/particle.h
+
     src/random_manager.cpp
     src/sys_time.cpp
-
     src/camera.cpp
-    src/particle_system.cpp
     src/scene.cpp
     src/main.cpp
-    src/shader.cpp
     src/controls.cpp
-    src/particle_simulation.cpp
-    src/particle.cpp
+
     src/random_manager.h
     src/sys_time.h
+
+    src/rendering/shader.h
+    src/rendering/shader.cpp
+    src/rendering/shader_manager.h
+    src/rendering/shader_manager.cpp
+    src/rendering/renderer.h
+    src/rendering/renderer.cpp
+    src/rendering/preloaded_shaders.h
+    src/rendering/shader_loader.cpp
+    src/rendering/shader_loader.h
+    src/rendering/draw.h
+    src/rendering/draw.cpp
 
     src/math/vector3d.h
     src/math/units.h
@@ -70,6 +76,17 @@ target_sources(RandomParticleEngine
     src/physics/base.h
     src/physics/kinematics.h
     src/physics/rigid_body.h
+
+    src/entities/entity.h
+    src/entities/entity.cpp
+    src/entities/entity_registry.cpp
+    src/entities/entity_registry.h  
+    src/entities/particle_simulation.cpp
+    src/entities/particle.cpp
+    src/entities/particle_simulation.h
+    src/entities/particle.h
+	  src/entities/particle_system.cpp
+    src/entities/particle_system.h
 )
 target_include_directories(RandomParticleEngine PRIVATE src) 
 

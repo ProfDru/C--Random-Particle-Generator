@@ -1,6 +1,11 @@
+#include <scene.h>
+#include <rendering\renderer.h>
+#include <rendering\preloaded_shaders.h>
+#include <entities/entity.h>
+#include <entities/entity_registry.h>
+
 #include <GL\glew.h>
 #include <GLFW\glfw3.h>
-#include <scene.h>
 #include <controls.h>
 
 #include <cassert>
@@ -21,7 +26,7 @@ void GLAPIENTRY MessageCallback(GLenum source,
                                 GLuint id,
                                 GLenum severity,
                                 GLsizei length,
-                                const GLchar* message,
+                                const char* message,
                                 const void* userParam) {
   // return;
   if (severity != 0x826b)
@@ -46,6 +51,7 @@ bool InitGlew() {
 
 void FramebufferSizeCallback(GLFWwindow* window, int width, int height) {
   glViewport(0, 0, width, height);
+  rendering::Renderer::UpdateScreenXY(width, height);
 }
 
 /*! \brief Initalize and return the glfw window*/
@@ -116,31 +122,44 @@ void Scene::Start() {
   // Set Point Size
   // glPointSize(10.0f);
 
+  this->PI->SetID(Registry::GetNextID());
+
   // initiate draw loop
   printf("Beginning Draw Loop. \n");
   this->DrawLoop();
+}
+
+inline bool HandleMovement(Camera& camera, GLFWwindow* window) {
+  auto movement = Move(window);
+
+  if (!movement.empty()) {
+    camera.Move(movement.position_change, movement.direction_change);
+    glm::mat4 MVP = camera.CalculateMVP();
+    rendering::Renderer::UpdateMVP(MVP);
+    return true;
+  } else
+    return false;
 }
 
 void Scene::DrawLoop() {
   // Ensure we can capture the escape key being pressed below
   glfwSetInputMode(this->current_window, GLFW_STICKY_KEYS, GL_TRUE);
 
-  // Set the backgorun color
+  // Set the background color
   glClearColor(0.1f, 0.1f, 0.1f, 0.0f);
 
-  do {
-    // Poll keyboard events
-    auto moves = this->paused ? MoveInfo() : Move(this->current_window);
-    this->main_camera.Move(moves.position_change, moves.direction_change);
+  rendering::Renderer::AssignShader(*(this->PI), rendering::ParticleShader);
 
-    auto MVP = this->main_camera.CalculateMVP();
-    this->PI->SetCameraPosition(MVP);
+  // Call the size callback incase any shaders need it
+  FramebufferSizeCallback(this->current_window, 1280, 720);
+
+  do {
+    PI->Update();
+    HandleMovement(this->main_camera, this->current_window);
 
     // Clear the screen
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    // Draw the particle engine
-    this->PI->Draw();
+    rendering::Renderer::Render(*(this->PI));
 
     glfwSwapBuffers(current_window);
     this->paused = ShouldPause(this->current_window, this->paused);
@@ -149,10 +168,6 @@ void Scene::DrawLoop() {
   }  // End the loop if the escape key was pressed or the window was closed
   while (glfwGetKey(current_window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
          glfwWindowShouldClose(current_window) == 0);
-}
-
-Scene::~Scene() {
-  glfwTerminate();
 }
 
 }  // namespace rpg

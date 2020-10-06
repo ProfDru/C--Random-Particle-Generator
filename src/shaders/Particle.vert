@@ -10,10 +10,9 @@ out vec3 particle_color;
 
 // Constants. ModelViewProjection Matrix
 uniform mat4 MVP;
+uniform vec2 g_Resolution;
 
 const float point_size = 10.0;
-
-const vec2 g_Resolution = vec2(1280, 720);
 
 void main() {
   // Output position of the vertex, in clip space : MVP * position

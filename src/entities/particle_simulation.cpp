@@ -1,9 +1,9 @@
 
 #include <sys_time.h>
-#include <particle_simulation.h>
+#include <entities\particle_simulation.h>
 #include <random_manager.h>
-#include <math/base.h>
 
+#include <math/base.h>
 #include <math/vector3d.h>
 #include <math/units.h>
 
@@ -54,8 +54,8 @@ void update_particle_position(Particle& p, float time) {
   physics::apply_velocity(p, time);
 
   if (p.pos.y <= 0 && p.velocity.y < 0) {
-    physics::bounce_basic(p, 5.0, 1.0f);
-    p.lifetime -= 5.0f;
+    physics::bounce_basic(p, 5.0, 0.85f);
+    // p.lifetime -= 1.0f;
 
     // math::inverse_lerp(0.25, 2.0, math::magnitude(p.velocity));
 
@@ -115,15 +115,13 @@ int calc_num_shots(float time_since) {
   return shots;
 }
 
-static int ticks = 0;
 inline Particle EmitParticle() {
-  const float magnitude =
-      get_rand_nolimits() * 10;  // get_rand(min_mag, max_mag);
+  const float magnitude = get_rand(12.5, 15);  // get_rand(min_mag, max_mag);
 
   const float horizontal_angle =
-      static_cast<float>(ticks % 360);  // rand(0, 360);
-  ticks = (ticks % 360) + 1;
-  const float vertical_angle = 10.0;  // get_rand(0, spread);
+      get_rand(0, 360);               // rand(0, 360);
+                                      // ticks = (ticks % 360) + 1;
+  const float vertical_angle = 25.0;  // get_rand(0, spread);
 
   auto dir = math::spherical_to_cartesian(glm::vec3(
       1, math::to_radians(horizontal_angle), math::to_radians(vertical_angle)));

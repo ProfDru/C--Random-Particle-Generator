@@ -1,24 +1,17 @@
-#include "shader.h"
+#include <rendering/shader_loader.h>
 
 #include <GL/glew.h>
+#include <glm/vec2.hpp>
 
 #include <iostream>
 #include <fstream>
 #include <vector>
 #include <exception>
 #include <cassert>
-namespace rpg {
+namespace rpg::rendering {
 
 using std::ifstream;
 using std::string;
-
-Shader::Shader(GLuint program_id) {
-  this->program_id = program_id;
-
-  this->pos_attr = glGetAttribLocation(program_id, "vpos");
-  this->color_attr = glGetAttribLocation(program_id, "vcolor");
-  this->mvp = glGetUniformLocation(program_id, "MVP");
-}
 
 /*! \brief Get a string containing all the characters in a file
     \remarks Taken from a stack overflow post
@@ -28,9 +21,10 @@ inline string ReadFile(const string& fileName) {
   ifstream ifs(fileName.c_str(),
                std::ios::in | std::ios::binary | std::ios::ate);
 
-  if (!ifs.is_open())
+  if (!ifs.is_open()) {
+    std::cerr << "Couldn't find file " << fileName << std::endl;
     throw std::runtime_error("File could not be found");
-
+  }
   ifstream::pos_type fileSize = ifs.tellg();
   ifs.seekg(0, std::ios::beg);
 
@@ -102,9 +96,14 @@ inline GLuint LinkShaders(GLuint frag_id, GLuint vert_id) {
   return program_id;
 }
 
-Shader LoadShaders(const std::string& path) {
-  string frag_code = ReadFile(path + ".frag");
-  string vert_code = ReadFile(path + ".vert");
+int LoadShaders(const std::string& path) {
+  return LoadShaders(path + ".vert", path + ".frag");
+}
+
+int LoadShaders(const std::string& vertex_path,
+                const std::string& fragment_path) {
+  string frag_code = ReadFile(fragment_path);
+  string vert_code = ReadFile(vertex_path);
 
   if (frag_code.empty() || vert_code.empty())
     throw std::invalid_argument(
@@ -123,6 +122,32 @@ Shader LoadShaders(const std::string& path) {
   glDeleteShader(vert_shader_id);
   glDeleteShader(frag_shader_id);
 
-  return Shader(program_id);
+  return program_id;
 }
-}  // namespace rpg
+
+int GetUniformID(int program_id, const string& uniform_name) {
+  return glGetUniformLocation(program_id, uniform_name.c_str());
+}
+
+int GetAttributeID(int program_id, const string& attribute_name) {
+  return glGetAttribLocation(program_id, attribute_name.c_str());
+}
+
+int GenBuffer() {
+  GLuint buffer_id = -1;
+  glGenBuffers(1, &buffer_id);
+  glBindBuffer(GL_ARRAY_BUFFER, buffer_id);
+
+  return static_cast<int>(buffer_id);
+}
+
+void SetUniformMatrix(int uniform_id, const float* matrix_start) {
+  glUniformMatrix4fv(uniform_id, 1, GL_FALSE, matrix_start);
+}
+
+void SetUniformVector2f(int uniform_id, float x, float y) {
+  glm::vec2 vec_xy(x, y);
+  glUniform2fv(uniform_id, 1, &vec_xy[0]);
+}
+
+}  // namespace rpg::rendering
