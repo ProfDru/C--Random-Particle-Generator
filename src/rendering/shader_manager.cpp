@@ -16,10 +16,6 @@ bool has_been_compiled(const Shader& shader) {
   return shader.get_program_id() >= 0;
 }
 
-/*! \brief Compiles the shader and updates it's id with the id assigned by
- * opengl */
-void compile_shader(Shader& shader) {}
-
 ShaderManager::ShaderManager(){};
 
 void ShaderManager::CompileShader(Shader& shader) {
