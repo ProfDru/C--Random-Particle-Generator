@@ -1,7 +1,7 @@
 #pragma once
 #include <entities/entity.h>
 
-#include <particle.h>
+#include <entities\particle.h>
 
 #include <vector>
 #include <string>

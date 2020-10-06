@@ -1,5 +1,6 @@
 
-#include <particle.h>
+#pragma once
+#include <entities\particle.h>
 
 #include <vector>
 namespace rpg::simulation {

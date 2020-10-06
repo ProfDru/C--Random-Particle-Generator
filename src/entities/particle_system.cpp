@@ -1,13 +1,12 @@
-#include <particle_system.h>
-#include <particle_simulation.h>
-#include <shader.h>
+#include <entities\particle_system.h>
+#include <entities\particle_simulation.h>
 
 using std::vector;
 namespace rpg {
 
 /*! \brief Creates a position array from an array of particles */
-inline vector<GLfloat> CreatePositionArray(const vector<Particle>& particles) {
-  std::vector<GLfloat> pos_arr(particles.size() * 3);
+inline vector<float> CreatePositionArray(const vector<Particle>& particles) {
+  std::vector<float> pos_arr(particles.size() * 3);
   for (long long unsigned int i = 0; i < particles.size(); i++) {
     const auto offset = i * 3;
     const Particle& particle = particles[i];
@@ -20,8 +19,8 @@ inline vector<GLfloat> CreatePositionArray(const vector<Particle>& particles) {
 }
 
 /*! \brief Creates a color array from an array of particles */
-inline vector<GLfloat> CreateColorArray(const vector<Particle>& particles) {
-  std::vector<GLfloat> color_arr(particles.size() * 3);
+inline vector<float> CreateColorArray(const vector<Particle>& particles) {
+  std::vector<float> color_arr(particles.size() * 3);
 
   for (long long unsigned int i = 0; i < particles.size(); i++) {
     const auto offset = i * 3;

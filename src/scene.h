@@ -1,5 +1,5 @@
 #pragma once
-#include <particle_system.h>
+#include <entities\particle_system.h>
 #include <camera.h>
 
 #include <stdlib.h>
