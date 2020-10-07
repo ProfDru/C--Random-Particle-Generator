@@ -1,6 +1,10 @@
-#include <GLFW/glfw3.h>
+#pragma once
+#include <glm/glm.hpp>
+
 #include <array>
 #include <numeric>
+class GLFWwindow;
+
 namespace rpg {
 
 static int window_width = 1280;

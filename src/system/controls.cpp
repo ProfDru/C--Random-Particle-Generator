@@ -1,9 +1,26 @@
 #include <system\controls.h>
+
+#include <GLFW\glfw3.h>
+
 #include <numeric>
 #include <utils.h>
 #include <sys_time.h>
 
 namespace rpg {
+
+/*! \brief Maps GLFW keys to control statments */
+enum class CONTROL_MAP {
+  FORWARD = GLFW_KEY_W,
+  BACKWARD = GLFW_KEY_S,
+  RIGHT = GLFW_KEY_D,
+  LEFT = GLFW_KEY_A,
+
+  BOOST = GLFW_KEY_LEFT_SHIFT,
+  BRAKE = GLFW_KEY_LEFT_CONTROL,
+
+  PAUSE = GLFW_KEY_TAB
+};
+
 static double last_time = 0;
 
 float CalculateChangeInTime() {

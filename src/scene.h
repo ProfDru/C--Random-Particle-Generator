@@ -1,6 +1,7 @@
 #pragma once
 #include <entities\particle_system.h>
 #include <camera.h>
+#include <window\window.h>
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -17,8 +18,7 @@ class Scene {
   bool paused = false;
 
  private:
-  GLFWwindow* current_window;
-
+  Window current_window;
   /*! \brief Draw in a loop and pass info to the camera */
   void DrawLoop();
 

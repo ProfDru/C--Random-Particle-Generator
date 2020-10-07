@@ -1,7 +1,9 @@
+#pragma once
 #include <vector>
 
-#include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
+
+class GLFWwindow;
 
 namespace rpg {
 
@@ -19,19 +21,6 @@ struct MoveInfo {
     return (this->position_change.length() <= 0 &&
             this->direction_change.length() <= 0);
   }
-};
-
-/*! \brief Maps GLFW keys to control statments */
-enum class CONTROL_MAP {
-  FORWARD = GLFW_KEY_W,
-  BACKWARD = GLFW_KEY_S,
-  RIGHT = GLFW_KEY_D,
-  LEFT = GLFW_KEY_A,
-
-  BOOST = GLFW_KEY_LEFT_SHIFT,
-  BRAKE = GLFW_KEY_LEFT_CONTROL,
-
-  PAUSE = GLFW_KEY_TAB
 };
 
 /*! \brief Determine the change in the camera's position and rotation based on
