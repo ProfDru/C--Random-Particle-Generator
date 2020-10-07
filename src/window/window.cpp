@@ -10,11 +10,20 @@
 
 namespace rpg {
 
-/*! \brief Ge tthe wrapper object for this window */
+/*! \brief Get the wrapper object for this window.
+
+        \remarks This just allows for getting the window pointer and casting it
+   with les verbosity
+*/
 rpg::Window* GetWindow(GLFWwindow* window) {
   return reinterpret_cast<rpg::Window*>(glfwGetWindowUserPointer(window));
 }
 
+/*! \brief Execute this window's resize callback, and resize it's viewport
+
+        \todo Should this be calling glviewport?
+
+*/
 void FramebufferSizeCallback(GLFWwindow* window, int width, int height) {
   glViewport(0, 0, width, height);
 
@@ -115,7 +124,7 @@ void EnableDebugging(GLFWwindow* win) {
 }
 
 void Window::SetKeyCallback(std::function<void(int, int, int, int)> func) {
-  this->key_callback = key_callback;
+  this->key_callback = func;
 }
 
 /*! \brief Set the callback function for when inputs are updated*/
@@ -126,11 +135,6 @@ void Window::SetResizeCallback(std::function<void(float, float)> func) {
 /*! \brief Set the callback for when the mouse is moved */
 void Window::SetMouseCallback(std::function<void(float, float)> func) {
   this->mouse_callback = func;
-}
-
-inline void ClearScreen(GLFWwindow* window) {
-  // Clear the current buffer
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void Window::Init(float width, float height) {
@@ -149,8 +153,7 @@ void Window::Init(float width, float height) {
 }
 
 void Window::Clear() {
-  // Call the size callback incase any shaders need it
-  ClearScreen(this->win);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void Window::UpdateSize() {
