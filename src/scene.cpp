@@ -12,8 +12,13 @@
 
 namespace rpg {
 
+void ScreenResizeCallback(float x, float y) {
+  rpg::rendering::Renderer::UpdateScreenXY(x, y);
+}
+
 void Scene::Start() {
   // Initialize the window
+  this->current_window.SetResizeCallback(ScreenResizeCallback);
   this->current_window.Init(1280, 720);
 
   // Create a particle engine and camera
@@ -48,7 +53,6 @@ void Scene::DrawLoop() {
 
   bool keep_drawing = true;
 
-  rendering::Renderer::Render(*(this->PI));
   this->current_window.UpdateSize();
 
   while (keep_drawing) {

@@ -1,6 +1,5 @@
 #include <window/window.h>
 #include <utils.h>
-#include <rendering\renderer.h>
 
 #include <GL\glew.h>
 #include <GLFW\glfw3.h>
@@ -11,14 +10,24 @@
 
 namespace rpg {
 
-/*! \brief Called by glfw when there's an issue */
-void ErrorCallBack(int, const char* err_str) {
-  std::cerr << "] GLFW Error: " << err_str << std::endl;
+/*! \brief Ge tthe wrapper object for this window */
+rpg::Window* GetWindow(GLFWwindow* window) {
+  return reinterpret_cast<rpg::Window*>(glfwGetWindowUserPointer(window));
 }
 
 void FramebufferSizeCallback(GLFWwindow* window, int width, int height) {
   glViewport(0, 0, width, height);
-  rendering::Renderer::UpdateScreenXY(width, height);
+
+  auto win = GetWindow(window);
+  win->height = height;
+  win->width = width;
+  win->window_resize_callback(static_cast<float>(width),
+                              static_cast<float>(height));
+}
+
+/*! \brief Called by glfw when there's an issue */
+void ErrorCallBack(int, const char* err_str) {
+  std::cerr << "] GLFW Error: " << err_str << std::endl;
 }
 
 /*! \brief Called by OpenGL when there's an error. */
@@ -105,13 +114,19 @@ void EnableDebugging(GLFWwindow* win) {
   glfwSetFramebufferSizeCallback(win, FramebufferSizeCallback);
 }
 
-void Window::SetKeyCallback(std::function<void(int, int, int, int)> func) {}
+void Window::SetKeyCallback(std::function<void(int, int, int, int)> func) {
+  this->key_callback = key_callback;
+}
 
 /*! \brief Set the callback function for when inputs are updated*/
-void Window::SetResizeCallback(std::function<void(float, float)> func) {}
+void Window::SetResizeCallback(std::function<void(float, float)> func) {
+  this->window_resize_callback = func;
+}
 
 /*! \brief Set the callback for when the mouse is moved */
-void Window::SetMouseCallback(std::function<void(float, float)> func) {}
+void Window::SetMouseCallback(std::function<void(float, float)> func) {
+  this->mouse_callback = func;
+}
 
 inline void ClearScreen(GLFWwindow* window) {
   // Clear the current buffer
@@ -123,8 +138,11 @@ void Window::Init(float width, float height) {
   this->height = height;
 
   this->win = InitWindow(width, height);
+
   EnableDebugging(this->win);
   glfwSetInputMode(this->win, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+  glfwSetWindowUserPointer(this->win, this);
 
   glClearColor(this->clear_color[0], this->clear_color[1], this->clear_color[2],
                1);

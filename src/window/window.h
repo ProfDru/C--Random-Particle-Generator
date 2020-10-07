@@ -5,12 +5,13 @@ class GLFWwindow;
 
 namespace rpg {
 class Window {
+ public:
   std::function<void(double, double)> mouse_callback;
   std::function<void(int, int, int, int)> key_callback;
   std::function<void(float, float)> window_resize_callback;
 
- public:
   float width, height;
+
   std::array<float, 3> clear_color = {0.1, 0.1, 0.1};
   GLFWwindow* win;
 
