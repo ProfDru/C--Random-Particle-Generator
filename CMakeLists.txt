@@ -33,10 +33,18 @@ function(build_depend_from_git depend_name url)
 endfunction()
 
 # Setup dependencies
+#set(NANOGUI_BUILD_GLFW false)
+#set(NANOGUI_BUILD_PYTHON false)
+#set(NANOGUI_BUILD_SHARED false)
+#set(NANOGUI_BACKEND OpenGL)
+#set(NANOGUI_BUILD_EXAMPLES False)
+
 find_package(OpenGL REQUIRED)
 find_package(GLM REQUIRED)
 build_depend_from_git(glfw https://github.com/glfw/glfw)
 add_subdirectory(external)
+#build_depend_from_git(nanogui https://github.com/mitsuba-renderer/nanogui)
+
 
 # Setup main
 add_executable(RandomParticleEngine)
@@ -44,7 +52,6 @@ target_sources(RandomParticleEngine
     PRIVATE 
 
     src/scene.h
-    src/controls.h
     src/utils.h
 
     src/random_manager.cpp
@@ -52,11 +59,15 @@ target_sources(RandomParticleEngine
     src/camera.cpp
     src/scene.cpp
     src/main.cpp
-    src/controls.cpp
 
     src/random_manager.h
     src/sys_time.h
 
+    src/system/controls.cpp
+    src/system/controls.h
+    src/system/control_enums.h
+    src/system/bindings.h
+    
     src/rendering/shader.h
     src/rendering/shader.cpp
     src/rendering/shader_manager.h
@@ -68,6 +79,13 @@ target_sources(RandomParticleEngine
     src/rendering/shader_loader.h
     src/rendering/draw.h
     src/rendering/draw.cpp
+
+    src/window/hud_manager.cpp
+    src/window/hud_manager.h
+    src/window/hud_window.cpp
+    src/window/hud_window.h
+    src/window/window.cpp
+    src/window/window.h
 
     src/math/vector3d.h
     src/math/units.h
@@ -87,6 +105,9 @@ target_sources(RandomParticleEngine
     src/entities/particle.h
 	  src/entities/particle_system.cpp
     src/entities/particle_system.h
+
+    src/glfw_bindings.h
+
 )
 target_include_directories(RandomParticleEngine PRIVATE src) 
 
@@ -95,6 +116,7 @@ target_link_libraries(RandomParticleEngine PRIVATE
     ${OPENGL_LIBRARY}
     glfw
     glew_s
+#    nanogui
 )
 
 set_property(

@@ -6,7 +6,7 @@
 
 #include <GL\glew.h>
 #include <GLFW\glfw3.h>
-#include <controls.h>
+#include <system\controls.h>
 
 #include <cassert>
 #include <exception>
