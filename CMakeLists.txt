@@ -63,10 +63,13 @@ target_sources(RandomParticleEngine
     src/random_manager.h
     src/sys_time.h
 
-    src/system/controls.cpp
-    src/system/controls.h
+    src/system/kbm_movement.cpp
+    src/system/kbm_movement.h
     src/system/control_enums.h
+    src/system/bindings.cpp
     src/system/bindings.h
+    src/system/control_manager.h
+    src/system/control_manager.cpp
     
     src/rendering/shader.h
     src/rendering/shader.cpp
@@ -107,6 +110,7 @@ target_sources(RandomParticleEngine
     src/entities/particle_system.h
 
     src/glfw_bindings.h
+    src/glfw_bindings.cpp
 
 )
 target_include_directories(RandomParticleEngine PRIVATE src) 

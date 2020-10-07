@@ -1,5 +1,8 @@
+#pragma once
 #include <system/control_enums.h>
+
 #include <vector>
+#include <functional>
 
 namespace rpg::input {
 
@@ -10,9 +13,15 @@ struct Bind {
 };
 
 class Bindings {
+ private:
+  std::vector<ACTION> control_map;
+
  public:
   /*! \brief Create an empty set of bindings */
   Bindings();
+
+  /*! \brief Create a new binding set from an array of binds */
+  Bindings(const std::vector<Bind>& binds);
 
   /*! \brief Get the action for this keycode */
   ACTION GetAction(int keycode) const;

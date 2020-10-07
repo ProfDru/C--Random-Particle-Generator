@@ -7,7 +7,7 @@ namespace rpg {
 class Window {
  public:
   std::function<void(double, double)> mouse_callback;
-  std::function<void(int, int, int, int)> key_callback;
+  std::function<void(bool, int)> key_callback;
   std::function<void(float, float)> window_resize_callback;
 
   float width, height;
@@ -19,7 +19,7 @@ class Window {
   void Init(float width = 1280, float height = 720);
 
   /*! \brief Set the callback function for when inputs are updated*/
-  void SetKeyCallback(std::function<void(int, int, int, int)> func);
+  void SetKeyCallback(std::function<void(bool, int)> func);
 
   /*! \brief Set the callback function for when inputs are updated*/
   void SetResizeCallback(std::function<void(float, float)> func);

@@ -1,5 +1,6 @@
+#pragma once
 namespace rpg::input {
-enum class KEY_STATE { MINUS, PLUS };
+enum class KEY_STATE { MINUS, PLUS, SIZE };
 
 enum class ACTION {
   NONE,
@@ -13,7 +14,8 @@ enum class ACTION {
   BRAKE,
   PAUSE,
   QUIT,
-  USE
+  USE,
+  SIZE
 };
 
 }  // namespace rpg::input

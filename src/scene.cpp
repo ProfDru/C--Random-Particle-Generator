@@ -3,7 +3,9 @@
 #include <rendering\preloaded_shaders.h>
 #include <entities/entity.h>
 #include <entities/entity_registry.h>
-#include <system\controls.h>
+
+#include <system/control_manager.h>
+#include <system\kbm_movement.h>
 #include <utils.h>
 
 #include <cassert>
@@ -19,6 +21,10 @@ void ScreenResizeCallback(float x, float y) {
 void Scene::Start() {
   // Initialize the window
   this->current_window.SetResizeCallback(ScreenResizeCallback);
+  this->current_window.SetMouseCallback(
+      rpg::input::InputManager::UpdateCursorXY);
+  this->current_window.SetKeyCallback(
+      rpg::input::InputManager::RecordChangeInKeyState);
   this->current_window.Init(1280, 720);
 
   // Create a particle engine and camera
@@ -36,7 +42,7 @@ void Scene::Start() {
 }
 
 inline bool HandleMovement(Camera& camera, GLFWwindow* window) {
-  auto movement = Move(window);
+  auto movement = Move();
 
   if (!movement.empty()) {
     camera.Move(movement.position_change, movement.direction_change);

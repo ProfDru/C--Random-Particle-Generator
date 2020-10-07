@@ -34,6 +34,31 @@ void FramebufferSizeCallback(GLFWwindow* window, int width, int height) {
                               static_cast<float>(height));
 }
 
+/*! \brief Calls the window's callback and resets the mouse's position to
+    the screen center
+
+  \todo Update this to handle pausing
+*/
+void MouseCallback(GLFWwindow* window, double x_pos, double y_pos) {
+  auto win = GetWindow(window);
+  win->mouse_callback(x_pos, y_pos);
+}
+
+void KeyCallback(GLFWwindow* window,
+                 int key,
+                 int scancode,
+                 int action,
+                 int mods) {
+  auto win = GetWindow(window);
+
+  // Ignore repeats
+  if (action == GLFW_REPEAT)
+    return;
+
+  const bool is_key_down = action == GLFW_PRESS;
+  win->key_callback(is_key_down, key);
+}
+
 /*! \brief Called by glfw when there's an issue */
 void ErrorCallBack(int, const char* err_str) {
   std::cerr << "] GLFW Error: " << err_str << std::endl;
@@ -118,12 +143,9 @@ void EnableDebugging(GLFWwindow* win) {
 
   glEnable(GL_DEBUG_OUTPUT);
   glDebugMessageCallback(MessageCallback, 0);
-
-  glfwSetWindowSizeCallback(win, WindowResizeCallback);
-  glfwSetFramebufferSizeCallback(win, FramebufferSizeCallback);
 }
 
-void Window::SetKeyCallback(std::function<void(int, int, int, int)> func) {
+void Window::SetKeyCallback(std::function<void(bool, int)> func) {
   this->key_callback = func;
 }
 
@@ -144,12 +166,17 @@ void Window::Init(float width, float height) {
   this->win = InitWindow(width, height);
 
   EnableDebugging(this->win);
-  glfwSetInputMode(this->win, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+  glfwSetInputMode(this->win, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
   glfwSetWindowUserPointer(this->win, this);
 
   glClearColor(this->clear_color[0], this->clear_color[1], this->clear_color[2],
                1);
+
+  glfwSetWindowSizeCallback(win, WindowResizeCallback);
+  glfwSetFramebufferSizeCallback(win, FramebufferSizeCallback);
+  glfwSetCursorPosCallback(win, MouseCallback);
+  glfwSetKeyCallback(win, KeyCallback);
 }
 
 void Window::Clear() {
@@ -163,6 +190,9 @@ void Window::UpdateSize() {
 bool Window::Redraw() {
   glfwSwapBuffers(this->win);
   glfwPollEvents();
+
+  auto screen_center = ScreenCenter();
+  glfwSetCursorPos(this->win, screen_center.x, screen_center.y);
 
   //! \todo Handle this with controls
   return glfwGetKey(this->win, GLFW_KEY_ESCAPE) != GLFW_PRESS &&

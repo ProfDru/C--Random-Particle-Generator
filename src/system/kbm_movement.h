@@ -25,9 +25,6 @@ struct MoveInfo {
 
 /*! \brief Determine the change in the camera's position and rotation based on
  * inputs. */
-MoveInfo Move(GLFWwindow* window);
-
-/*! \brief determine if the user should pause or not */
-bool ShouldPause(GLFWwindow* window, bool paused_state);
+MoveInfo Move();
 
 }  // namespace rpg
