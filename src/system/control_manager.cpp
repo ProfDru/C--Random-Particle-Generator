@@ -30,7 +30,6 @@ void InputManager::RecordChangeInKeyState(bool is_down, int key_code) {
 
   if (action != ACTION::NONE && action != ACTION::SIZE) {
     KEY_STATE new_state = is_down ? KEY_STATE::PLUS : KEY_STATE::MINUS;
-    printf("KEY %i IS %i \n", key_code, is_down);
     SetState(action, new_state);
   }
 }
