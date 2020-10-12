@@ -19,13 +19,15 @@ void ScreenResizeCallback(float x, float y) {
 }
 
 void Scene::Start() {
-  // Initialize the window
+  // Initialize the window and set all callbacks
   this->current_window.SetResizeCallback(ScreenResizeCallback);
   this->current_window.SetMouseCallback(
       rpg::input::InputManager::UpdateCursorXY);
   this->current_window.SetKeyCallback(
       rpg::input::InputManager::RecordChangeInKeyState);
   this->current_window.Init(1280, 720);
+  this->current_window.SetWindowFocusCallback(
+      rpg::input::InputManager::SetWindowFocus);
 
   // Create a particle engine and camera
   printf("Creating Particle Engine and Camera...");
@@ -37,13 +39,11 @@ void Scene::Start() {
 
   // Initiate draw loop
   printf("Beginning Draw Loop. \n");
-
   this->DrawLoop();
 }
 
 inline bool HandleMovement(Camera& camera, GLFWwindow* window) {
   auto movement = Move();
-
   if (!movement.empty()) {
     camera.Move(movement.position_change, movement.direction_change);
     glm::mat4 MVP = camera.CalculateMVP();
@@ -64,7 +64,6 @@ void Scene::DrawLoop() {
   while (keep_drawing) {
     PI->Update();
     HandleMovement(this->main_camera, this->current_window.win);
-
     this->current_window.Clear();
     rendering::Renderer::Render(*(this->PI));
     keep_drawing = this->current_window.Redraw();

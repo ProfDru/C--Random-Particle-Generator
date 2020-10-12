@@ -34,6 +34,15 @@ void FramebufferSizeCallback(GLFWwindow* window, int width, int height) {
                               static_cast<float>(height));
 }
 
+void WindowFocusCallback(GLFWwindow* window, int focused) {
+  auto win = GetWindow(window);
+  win->window_focused_callback(focused);
+  win->has_focus = focused;
+
+  // Stop capturing mouse if unfocused
+  win->CaptureMouse(focused);
+}
+
 /*! \brief Calls the window's callback and resets the mouse's position to
     the screen center
 
@@ -145,6 +154,11 @@ void EnableDebugging(GLFWwindow* win) {
   glDebugMessageCallback(MessageCallback, 0);
 }
 
+void Window::CaptureMouse(bool should_capture) {
+  auto input_mode = should_capture ? GLFW_CURSOR_HIDDEN : GLFW_CURSOR_NORMAL;
+  glfwSetInputMode(this->win, GLFW_CURSOR, input_mode);
+}
+
 void Window::SetKeyCallback(std::function<void(bool, int)> func) {
   this->key_callback = func;
 }
@@ -159,6 +173,11 @@ void Window::SetMouseCallback(std::function<void(float, float)> func) {
   this->mouse_callback = func;
 }
 
+/*! \brief Set the callback for when the mouse is moved */
+void Window::SetWindowFocusCallback(std::function<void(bool)> func) {
+  this->window_focused_callback = func;
+}
+
 void Window::Init(float width, float height) {
   this->width = width;
   this->height = height;
@@ -166,7 +185,7 @@ void Window::Init(float width, float height) {
   this->win = InitWindow(width, height);
 
   EnableDebugging(this->win);
-  glfwSetInputMode(this->win, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+  CaptureMouse(true);
 
   glfwSetWindowUserPointer(this->win, this);
 
@@ -177,6 +196,7 @@ void Window::Init(float width, float height) {
   glfwSetFramebufferSizeCallback(win, FramebufferSizeCallback);
   glfwSetCursorPosCallback(win, MouseCallback);
   glfwSetKeyCallback(win, KeyCallback);
+  glfwSetWindowFocusCallback(win, WindowFocusCallback);
 }
 
 void Window::Clear() {

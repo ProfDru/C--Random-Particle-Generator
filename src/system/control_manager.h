@@ -12,6 +12,9 @@ class InputManager {
 
   inline static double cursor_x = 0;
   inline static double cursor_y = 0;
+  inline static bool is_capturing_mouse =
+      true;  //< If false, the mouse isn't being tracked
+  inline static bool is_paused = false;
 
   /*! \brief Update the state of an action */
   static void SetState(ACTION action, KEY_STATE state);
@@ -38,8 +41,20 @@ class InputManager {
   static double GetCursorX();
   static double GetCursorY();
 
+  /*! \brief Set whether the window is in focus or not */
+  static void SetWindowFocus(bool is_focused);
+
   /*! \brief Update the X and Y position of the cursor */
   static void UpdateCursorXY(double x, double y);
+
+  /*! \brief Toggle paused on or off */
+  static void Pause();
+
+  /*! \brief Determine if the scene is paused or not */
+  static bool IsPaused();
+
+  /*! \brief Determine if the mouse is being tracked or not */
+  static bool IsTrackingMouse();
 
   /*! \brief Get an array of the all actions that are currently active.*/
   static std::vector<ACTION> GetCurrentActions();

@@ -5,7 +5,7 @@
 
 namespace rpg::input {
 std::vector<KEY_STATE> InputManager::action_states =
-    std::vector<KEY_STATE>(128, KEY_STATE::MINUS);
+    std::vector<KEY_STATE>(512, KEY_STATE::MINUS);
 
 Bindings InputManager::current_bindings = Bindings();
 
@@ -28,14 +28,15 @@ void InputManager::SetBindings(const Bindings& binds) {
 void InputManager::RecordChangeInKeyState(bool is_down, int key_code) {
   ACTION action = current_bindings.GetAction(key_code);
 
-  if (action != ACTION::NONE && action != ACTION::SIZE) {
+  if (action != ACTION::NONE) {
     KEY_STATE new_state = is_down ? KEY_STATE::PLUS : KEY_STATE::MINUS;
     SetState(action, new_state);
   }
 }
 
 bool InputManager::IsActive(ACTION action) {
-  return GetKeyState(action) == KEY_STATE::PLUS;
+  const auto key_state = GetKeyState(action);
+  return key_state == KEY_STATE::PLUS;
 }
 
 double InputManager::GetCursorX() {
@@ -46,8 +47,26 @@ double InputManager::GetCursorY() {
   return InputManager::cursor_y;
 }
 
-void InputManager::UpdateCursorXY(double x, double y) {
-  cursor_x = x;
-  cursor_y = y;
+void InputManager::SetWindowFocus(bool is_focused) {
+  input::InputManager::is_capturing_mouse = is_focused;
 }
+
+void InputManager::UpdateCursorXY(double x, double y) {
+  if (is_capturing_mouse && !is_paused) {
+    cursor_x = x;
+    cursor_y = y;
+  }
+}
+
+void InputManager::Pause() {
+  is_paused = !is_paused;
+}
+
+bool InputManager::IsPaused() {
+  return is_paused;
+}
+bool InputManager::IsTrackingMouse() {
+  return !is_paused && is_capturing_mouse;
+}
+
 }  // namespace rpg::input

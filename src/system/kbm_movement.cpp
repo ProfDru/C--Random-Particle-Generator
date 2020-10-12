@@ -13,6 +13,7 @@ using rpg::input::InputManager;
 namespace rpg {
 
 static double last_time = 0;
+static bool pause_pressed_last_frame = false;
 
 float CalculateChangeInTime() {
   double current_time = system::get_precise_time_ms() / 1000.0;
@@ -27,7 +28,7 @@ float CalculateChangeInTime() {
   }
 }
 
-inline bool DidPress(ACTION act) {
+bool DidPress(ACTION act) {
   return InputManager::IsActive(act);
 }
 
@@ -71,6 +72,17 @@ inline glm::vec2 CalcDirection() {
   return change_in_cursor;
 }
 
+inline bool PauseLogic() {
+  const bool pause_pressed = DidPress(rpg::input::ACTION::PAUSE);
+  if (!pause_pressed)
+    pause_pressed_last_frame = false;
+  else if (pause_pressed && !pause_pressed_last_frame) {
+    pause_pressed_last_frame = true;
+    InputManager::Pause();
+  }
+  return true;
+}
+
 MoveInfo Move() {
   const float speed = 2.5f;
   const float mouse_sensitivity = 0.15f;
@@ -82,14 +94,16 @@ MoveInfo Move() {
     return MoveInfo();
   }
 
-  glm::vec2 movement_change =
-      CalcMovement() * speed * change_in_time * boost_multi;
-  glm::vec2 direction_change =
-      CalcDirection() * mouse_sensitivity * change_in_time;
-
-  return (MoveInfo{movement_change, direction_change});
+  PauseLogic();
+  if (!InputManager::IsTrackingMouse())
+    return MoveInfo();
+  else {
+    glm::vec2 movement_change =
+        CalcMovement() * speed * change_in_time * boost_multi;
+    glm::vec2 direction_change =
+        CalcDirection() * mouse_sensitivity * change_in_time;
+    return (MoveInfo{movement_change, direction_change});
+  }
 }
-
-static bool pause_pressed_last_frame = false;
 
 }  // namespace rpg

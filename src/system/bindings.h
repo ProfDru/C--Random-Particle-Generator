@@ -8,8 +8,8 @@ namespace rpg::input {
 
 /*! \brief An ordered way of storing actions */
 struct Bind {
-  int keycode;
-  ACTION act;
+  int keycode = 0;
+  ACTION act = ACTION::NONE;
 };
 
 class Bindings {

@@ -10,5 +10,6 @@ Bindings GLFW_binds::binds = Bindings({{GLFW_KEY_W, ACTION::FORWARD},
                                        {GLFW_KEY_D, ACTION::RIGHT},
                                        {GLFW_KEY_SPACE, ACTION::UP},
                                        {GLFW_KEY_LEFT_CONTROL, ACTION::BRAKE},
-                                       {GLFW_KEY_LEFT_SHIFT, ACTION::BOOST}});
+                                       {GLFW_KEY_LEFT_SHIFT, ACTION::BOOST},
+                                       {GLFW_KEY_GRAVE_ACCENT, ACTION::PAUSE}});
 }

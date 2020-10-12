@@ -26,7 +26,8 @@ ACTION Bindings::GetAction(int key_code) const {
 }
 
 void Bindings::AssignAction(ACTION act, int keycode) {
-  this->control_map[keycode] = act;
+  if (keycode < this->control_map.size())
+    this->control_map[keycode] = act;
 }
 
 }  // namespace rpg::input
