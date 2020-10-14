@@ -10,8 +10,8 @@ if(CMAKE_EXPORT_COMPILE_COMMANDS)
 endif()
 
 # Compile Options
-set(CMAKE_CXX_CLANG_TIDY "C:\\msys64\\mingw64\\bin\\clang-tidy.exe" -p=${CMAKE_BINARY_DIR})
-# Disable clang tidy for now. There's an issue using this with this toolchain since it can't find opengl
+# set(CMAKE_CXX_CLANG_TIDY "C:\\msys64\\mingw64\\bin\\clang-tidy.exe" -p=${CMAKE_BINARY_DIR})
+
 # headers
 set(CXX_STANDARD 20)
 
@@ -33,17 +33,18 @@ function(build_depend_from_git depend_name url)
 endfunction()
 
 # Setup dependencies
-#set(NANOGUI_BUILD_GLFW false)
-#set(NANOGUI_BUILD_PYTHON false)
-#set(NANOGUI_BUILD_SHARED false)
-#set(NANOGUI_BACKEND OpenGL)
-#set(NANOGUI_BUILD_EXAMPLES False)
+set(BUILD_SHARED_LIBS OFF)
+set(ATB_BUILD_EXAMPLES OFF)
+set(ATB_GUIRENDERER_USE_CORE_GL ON)
+set(ATB_GUIRENDERER_USE_D3D11 OFF)
 
 find_package(OpenGL REQUIRED)
 find_package(GLM REQUIRED)
 build_depend_from_git(glfw https://github.com/glfw/glfw)
 add_subdirectory(external)
-#build_depend_from_git(nanogui https://github.com/mitsuba-renderer/nanogui)
+build_depend_from_git(AntTweakBar https://github.com/tschw/AntTweakBar)
+
+
 
 
 # Setup main
@@ -120,7 +121,7 @@ target_link_libraries(RandomParticleEngine PRIVATE
     ${OPENGL_LIBRARY}
     glfw
     glew_s
-#    nanogui
+    AntTweakBar
 )
 
 set_property(
