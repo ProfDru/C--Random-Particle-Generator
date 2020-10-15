@@ -218,6 +218,7 @@ void Window::UpdateSize() {
 }
 
 bool Window::Redraw() {
+  HudManager::Draw();
   glfwSwapBuffers(this->win);
   glfwPollEvents();
 
