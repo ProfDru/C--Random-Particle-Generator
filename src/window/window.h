@@ -5,8 +5,17 @@ class GLFWwindow;
 
 namespace rpg {
 class Window {
+ private:
+  /*! \brief Determine if the mouse should be tracked, and enable or disable
+     tracking accordingly */
+  void UpdateTracking();
+
+  /*! \brief Start or stop capturing mouse input */
+  void CaptureMouse(bool should_capture);
+
  public:
   bool has_focus = true;
+  bool track_mouse = true;
   std::function<void(double, double)> mouse_callback;
   std::function<void(bool, int)> key_callback;
   std::function<void(float, float)> window_resize_callback;
@@ -38,8 +47,12 @@ class Window {
   /*! \brief Clear the current screen */
   void Clear();
 
-  /*! \brief Start or stop capturing mouse input */
-  void CaptureMouse(bool should_capture);
+  /*! \brief Enable / Disable mouse tracking.  */
+  void TrackMouse(bool should_track);
+
+  /*! \brief Update the focus state of the window, and enable mouse control if
+   * aaksed for */
+  void SetFocus(bool new_focus);
 
   /*! \brief Update the current display.
 

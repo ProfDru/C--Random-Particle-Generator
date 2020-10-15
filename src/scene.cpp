@@ -27,7 +27,7 @@ void Scene::Start() {
       rpg::input::InputManager::RecordChangeInKeyState);
   this->current_window.Init(1280, 720);
   this->current_window.SetWindowFocusCallback(
-      rpg::input::InputManager::SetWindowFocus);
+      rpg::input::InputManager::TrackMouse);
 
   // Create a particle engine and camera
   printf("Creating Particle Engine and Camera...");
@@ -64,6 +64,7 @@ void Scene::DrawLoop() {
   while (keep_drawing) {
     PI->Update();
     HandleMovement(this->main_camera, this->current_window.win);
+    current_window.TrackMouse(input::InputManager::IsPaused());
     this->current_window.Clear();
     rendering::Renderer::Render(*(this->PI));
     keep_drawing = this->current_window.Redraw();

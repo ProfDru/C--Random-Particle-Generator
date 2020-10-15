@@ -47,12 +47,12 @@ double InputManager::GetCursorY() {
   return InputManager::cursor_y;
 }
 
-void InputManager::SetWindowFocus(bool is_focused) {
+void InputManager::TrackMouse(bool is_focused) {
   input::InputManager::is_capturing_mouse = is_focused;
 }
 
 void InputManager::UpdateCursorXY(double x, double y) {
-  if (is_capturing_mouse && !is_paused) {
+  if (is_capturing_mouse) {
     cursor_x = x;
     cursor_y = y;
   }
@@ -66,7 +66,7 @@ bool InputManager::IsPaused() {
   return is_paused;
 }
 bool InputManager::IsTrackingMouse() {
-  return !is_paused && is_capturing_mouse;
+  return is_capturing_mouse;
 }
 
 }  // namespace rpg::input

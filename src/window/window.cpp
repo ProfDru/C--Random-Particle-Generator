@@ -38,11 +38,8 @@ void FramebufferSizeCallback(GLFWwindow* window, int width, int height) {
 
 void WindowFocusCallback(GLFWwindow* window, int focused) {
   auto win = GetWindow(window);
-  win->window_focused_callback(focused);
-  win->has_focus = focused;
 
-  // Stop capturing mouse if unfocused
-  win->CaptureMouse(focused);
+  win->SetFocus(focused);
 }
 
 void MouseClickCallback(GLFWwindow* window, int button, int action, int mods) {
@@ -162,8 +159,27 @@ void EnableDebugging(GLFWwindow* win) {
   glDebugMessageCallback(MessageCallback, 0);
 }
 
+void Window::SetFocus(bool new_focus) {
+  this->has_focus = new_focus;
+  UpdateTracking();
+}
+
+void Window::TrackMouse(bool should_track) {
+  if (this->track_mouse != should_track) {
+    this->track_mouse = should_track;
+    UpdateTracking();
+  }
+}
+
+void Window::UpdateTracking() {
+  bool should_capture = this->has_focus && this->track_mouse;
+  window_focused_callback(should_capture);
+  CaptureMouse(should_capture);
+}
+
 void Window::CaptureMouse(bool should_capture) {
   auto input_mode = should_capture ? GLFW_CURSOR_HIDDEN : GLFW_CURSOR_NORMAL;
+
   glfwSetInputMode(this->win, GLFW_CURSOR, input_mode);
 }
 
@@ -189,7 +205,6 @@ void Window::SetWindowFocusCallback(std::function<void(bool)> func) {
 void Window::Init(float width, float height) {
   this->width = width;
   this->height = height;
-
   this->win = InitWindow(width, height);
   HudManager::Init(this->width, this->height);
 
@@ -219,11 +234,13 @@ void Window::UpdateSize() {
 
 bool Window::Redraw() {
   HudManager::Draw();
+
   glfwSwapBuffers(this->win);
   glfwPollEvents();
 
   auto screen_center = ScreenCenter();
-  glfwSetCursorPos(this->win, screen_center.x, screen_center.y);
+  if (this->has_focus && this->track_mouse)
+    glfwSetCursorPos(this->win, screen_center.x, screen_center.y);
 
   //! \todo Handle this with controls
   return glfwGetKey(this->win, GLFW_KEY_ESCAPE) != GLFW_PRESS &&

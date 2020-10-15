@@ -42,7 +42,7 @@ class InputManager {
   static double GetCursorY();
 
   /*! \brief Set whether the window is in focus or not */
-  static void SetWindowFocus(bool is_focused);
+  static void TrackMouse(bool is_focused);
 
   /*! \brief Update the X and Y position of the cursor */
   static void UpdateCursorXY(double x, double y);
