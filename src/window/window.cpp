@@ -1,5 +1,6 @@
 #include <window/window.h>
 #include <utils.h>
+#include <window/hud_manager.h>
 
 #include <GL\glew.h>
 #include <GLFW\glfw3.h>
@@ -26,6 +27,7 @@ rpg::Window* GetWindow(GLFWwindow* window) {
 */
 void FramebufferSizeCallback(GLFWwindow* window, int width, int height) {
   glViewport(0, 0, width, height);
+  HudManager::WindowResizecallback(height, width);
 
   auto win = GetWindow(window);
   win->height = height;
@@ -43,12 +45,18 @@ void WindowFocusCallback(GLFWwindow* window, int focused) {
   win->CaptureMouse(focused);
 }
 
+void MouseClickCallback(GLFWwindow* window, int button, int action, int mods) {
+  HudManager::MouseClickCallback(action, button);
+}
+
 /*! \brief Calls the window's callback and resets the mouse's position to
     the screen center
 
   \todo Update this to handle pausing
 */
 void MouseCallback(GLFWwindow* window, double x_pos, double y_pos) {
+  HudManager::MousePosCallback(x_pos, y_pos);
+
   auto win = GetWindow(window);
   win->mouse_callback(x_pos, y_pos);
 }
@@ -58,12 +66,12 @@ void KeyCallback(GLFWwindow* window,
                  int scancode,
                  int action,
                  int mods) {
-  auto win = GetWindow(window);
+  HudManager::KeyCallBack(key, mods);
 
+  auto win = GetWindow(window);
   // Ignore repeats
   if (action == GLFW_REPEAT)
     return;
-
   const bool is_key_down = action == GLFW_PRESS;
   win->key_callback(is_key_down, key);
 }
@@ -192,6 +200,7 @@ void Window::Init(float width, float height) {
   glClearColor(this->clear_color[0], this->clear_color[1], this->clear_color[2],
                1);
 
+  // Setup callbacks
   glfwSetWindowSizeCallback(win, WindowResizeCallback);
   glfwSetFramebufferSizeCallback(win, FramebufferSizeCallback);
   glfwSetCursorPosCallback(win, MouseCallback);
