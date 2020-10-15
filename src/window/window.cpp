@@ -191,6 +191,7 @@ void Window::Init(float width, float height) {
   this->height = height;
 
   this->win = InitWindow(width, height);
+  HudManager::Init(this->width, this->height);
 
   EnableDebugging(this->win);
   CaptureMouse(true);
