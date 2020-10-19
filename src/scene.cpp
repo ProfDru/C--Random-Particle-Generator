@@ -6,6 +6,7 @@
 
 #include <window/hud_manager.h>
 #include <window/hud/label.h>
+#include <window/hud/button.h>
 #include <window/hud/widget.h>
 
 #include <system/control_manager.h>
@@ -18,13 +19,21 @@
 
 namespace rpg {
 
+static bool should_print = false;
+
+void ButtonPressExample() {
+  std::cout << "Press button" << std::endl;
+}
+
 void SetupHud() {
   hud::Label* hello = new hud::Label("Hello!", "Virtual Functions!");
-  hud::Label* world = new hud::Label("Hello2", "Work!");
+  hud::Button* button =
+      new hud::Button("button!", "Click here!", ButtonPressExample,
+                      hud::Button::MODE::ONE_FRAME);
 
   HudManager::CreateWindow("Example");
   HudManager::AddWidget("Example", hello);
-  HudManager::AddWidget("Example", world);
+  HudManager::AddWidget("Example", button);
 }
 
 void ScreenResizeCallback(float x, float y) {

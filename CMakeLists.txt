@@ -90,6 +90,8 @@ target_sources(RandomParticleEngine
     src/window/hud/widget.cpp
     src/window/hud/label.h
     src/window/hud/label.cpp
+    src/window/hud/button.h
+    src/window/hud/button.cpp
 
     src/math/vector3d.h
     src/math/units.h

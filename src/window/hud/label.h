@@ -1,3 +1,5 @@
+#pragma once
+
 #include <window/hud/widget.h>
 
 #include <string>
@@ -8,7 +10,7 @@ class Label : public Widget {
 
   Label(const std::string& name, const std::string& text);
 
-  void Draw() override;
+  virtual void Draw() override;
 
   void UpdateText(std::string& new_text);
 
