@@ -116,6 +116,7 @@ target_link_libraries(RandomParticleEngine PRIVATE
     ${OPENGL_LIBRARY}
     glfw
     glew_s
+    imgui_glfw_opengl3
 )
 
 set_property(
