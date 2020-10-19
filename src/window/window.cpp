@@ -179,7 +179,6 @@ void Window::UpdateTracking() {
 
 void Window::CaptureMouse(bool should_capture) {
   auto input_mode = should_capture ? GLFW_CURSOR_HIDDEN : GLFW_CURSOR_NORMAL;
-      should_capture ? GLFW_CURSOR_HIDDEN : GLFW_CURSOR_NORMAL;
 
   glfwSetInputMode(this->win, GLFW_CURSOR, input_mode);
 }
@@ -207,7 +206,7 @@ void Window::Init(float width, float height) {
   this->width = width;
   this->height = height;
   this->win = InitWindow(width, height);
-  HudManager::Init(this->width, this->height);
+  HudManager::Init(this->win);
 
   EnableDebugging(this->win);
   CaptureMouse(true);

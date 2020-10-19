@@ -2,6 +2,8 @@
 
 #include <string>
 
+class GLFWwindow;
+
 namespace rpg {
 class HudManager {
  private:
@@ -10,20 +12,13 @@ class HudManager {
 
  public:
   /*! \brief Initialize the hud and create the bar */
-  static void Init(float window_x, float window_y);
+  static void Init(GLFWwindow* win);
 
   /*! \brief Draw the to the screen */
   static void Draw();
 
-  /*! \brief Create a slider for the given floating point number*/
-  static void AddSlider(float* num,
-                        std::string name,
-                        float min = 0,
-                        float max = 1,
-                        float step = 0.01,
-                        std::string label = "",
-                        std::string group = "Default");
-
+  // These are unused for now, but may be useful in the future since I probably
+  // want to block click events at times
   static bool KeyCallBack(int key, int mods);
   static bool MouseClickCallback(int mouse_action, int mouse_button);
   static bool MousePosCallback(int mouseX, int mouseY);

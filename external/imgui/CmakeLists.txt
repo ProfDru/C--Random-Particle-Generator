@@ -22,7 +22,7 @@ target_sources(
 
 target_include_directories(imgui_glfw_opengl3
     PUBLIC
-    imgui_glfw_opengl3
+    .
 )
 
 target_link_libraries(imgui_glfw_opengl3 PRIVATE glfw glew_s ${OPENGL_LIBRARY})
