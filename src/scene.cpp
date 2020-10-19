@@ -8,6 +8,7 @@
 #include <window/hud/label.h>
 #include <window/hud/button.h>
 #include <window/hud/widget.h>
+#include <window/hud/slider.h>
 
 #include <system/control_manager.h>
 #include <system\kbm_movement.h>
@@ -19,10 +20,10 @@
 
 namespace rpg {
 
-static bool should_print = false;
+static float cool_number = 1.0f;
 
 void ButtonPressExample() {
-  std::cout << "Press button" << std::endl;
+  std::cout << "Number is " << cool_number << std::endl;
 }
 
 void SetupHud() {
@@ -30,10 +31,12 @@ void SetupHud() {
   hud::Button* button =
       new hud::Button("button!", "Click here!", ButtonPressExample,
                       hud::Button::MODE::ONE_FRAME);
+  hud::Slider* slider = new hud::Slider("Slider!", "Slider!", &cool_number);
 
   HudManager::CreateWindow("Example");
   HudManager::AddWidget("Example", hello);
   HudManager::AddWidget("Example", button);
+  HudManager::AddWidget("Example", slider);
 }
 
 void ScreenResizeCallback(float x, float y) {
