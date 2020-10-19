@@ -4,6 +4,10 @@
 #include <entities/entity.h>
 #include <entities/entity_registry.h>
 
+#include <window/hud_manager.h>
+#include <window/hud/label.h>
+#include <window/hud/widget.h>
+
 #include <system/control_manager.h>
 #include <system\kbm_movement.h>
 #include <utils.h>
@@ -13,6 +17,15 @@
 #include <iostream>
 
 namespace rpg {
+
+void SetupHud() {
+  hud::Label* hello = new hud::Label("Hello!", "Virtual Functions!");
+  hud::Label* world = new hud::Label("Hello2", "Work!");
+
+  HudManager::CreateWindow("Example");
+  HudManager::AddWidget("Example", hello);
+  HudManager::AddWidget("Example", world);
+}
 
 void ScreenResizeCallback(float x, float y) {
   rpg::rendering::Renderer::UpdateScreenXY(x, y);
@@ -36,6 +49,9 @@ void Scene::Start() {
 
   // Set the ID of the particle system
   this->PI->SetID(Registry::GetNextID());
+
+  // Add hud widgets
+  SetupHud();
 
   // Initiate draw loop
   printf("Beginning Draw Loop. \n");

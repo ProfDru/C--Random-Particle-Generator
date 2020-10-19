@@ -81,10 +81,15 @@ target_sources(RandomParticleEngine
 
     src/window/hud_manager.cpp
     src/window/hud_manager.h
-    src/window/hud_window.cpp
-    src/window/hud_window.h
     src/window/window.cpp
     src/window/window.h
+
+    src/window/hud/hud_window.cpp
+    src/window/hud/hud_window.h
+    src/window/hud/widget.h
+    src/window/hud/widget.cpp
+    src/window/hud/label.h
+    src/window/hud/label.cpp
 
     src/math/vector3d.h
     src/math/units.h

@@ -8,13 +8,28 @@ namespace rpg {
 
 const char* glsl_version = "#version 440";
 
+std::unordered_map<std::string, hud::Window> HudManager::windows =
+    std::unordered_map<std::string, hud::Window>();
+
 void DrawWindow(const std::string& title) {
   ImGui::Begin(title.c_str());
   ImGui::Text("Hello World!");
   ImGui::End();
 }
 
-void HudManager::SetParam(const std::string& param, const std::string& val) {}
+void HudManager::CreateWindow(const std::string& name) {
+  HudManager::windows.insert(
+      std::pair<std::string, rpg::hud::Window>{name, hud::Window(name)});
+}
+
+void HudManager::AddWidget(const std::string& window_name,
+                           hud::Widget* widget) {
+  // throw if a window with this name doesn't exist
+  if (windows.count(window_name) == 0)
+    throw std::exception();
+
+  windows.at(window_name).AddWidget(widget);
+}
 
 void HudManager::Init(GLFWwindow* win) {
   ImGui::CreateContext();
@@ -34,7 +49,9 @@ void HudManager::Draw() {
   ImGui::NewFrame();
 
   // Call window code
-  DrawWindow("Settings");
+  // DrawWindow("Settings");
+  for (auto& win_pair : windows)
+    win_pair.second.Draw();
 
   // Tell ImGUI to render then send that data to opengl
   ImGui::Render();
