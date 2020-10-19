@@ -33,16 +33,11 @@ function(build_depend_from_git depend_name url)
 endfunction()
 
 # Setup dependencies
-set(BUILD_SHARED_LIBS OFF)
-set(ATB_BUILD_EXAMPLES OFF)
-set(ATB_GUIRENDERER_USE_CORE_GL ON)
-set(ATB_GUIRENDERER_USE_D3D11 OFF)
 
 find_package(OpenGL REQUIRED)
 find_package(GLM REQUIRED)
 build_depend_from_git(glfw https://github.com/glfw/glfw)
 add_subdirectory(external)
-build_depend_from_git(AntTweakBar https://github.com/tschw/AntTweakBar)
 
 
 
@@ -121,7 +116,6 @@ target_link_libraries(RandomParticleEngine PRIVATE
     ${OPENGL_LIBRARY}
     glfw
     glew_s
-    AntTweakBar
 )
 
 set_property(

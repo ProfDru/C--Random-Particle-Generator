@@ -1,14 +1,10 @@
 #pragma once
 
 #include <string>
-#include <AntTweakBar.h>
 
 namespace rpg {
 class HudManager {
  private:
-  inline static TwBar* main_bar = NULL;
-  inline static std::string name = "main";
-
   /*! \brief Change the value of a parameter for this bar */
   static void SetParam(const std::string& param, const std::string& val);
 
