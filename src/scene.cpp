@@ -9,6 +9,7 @@
 #include <window/hud/button.h>
 #include <window/hud/widget.h>
 #include <window/hud/slider.h>
+#include <window/hud/combo.h>
 
 #include <system/control_manager.h>
 #include <system\kbm_movement.h>
@@ -17,13 +18,16 @@
 #include <cassert>
 #include <exception>
 #include <iostream>
+#include <string>
 
 namespace rpg {
 
 static float cool_number = 1.0f;
+static int cool_integer = 1;
 
 void ButtonPressExample() {
-  std::cout << "Number is " << cool_number << std::endl;
+  std::cout << "Cool Number is " << cool_number << std::endl;
+  std::cout << "Cool Integer is " << cool_integer << std::endl;
 }
 
 void SetupHud() {
@@ -34,10 +38,15 @@ void SetupHud() {
   hud::Slider* slider = new hud::Slider("Slider!", "Slider!", &cool_number);
   slider->SetHelpMarker("Press the button to print the slider's value!");
 
+  hud::ComboBox* combo = new hud::ComboBox(
+      std::string("Example ComboBox"),
+      std::vector<std::string>{"Zero", "One", "Two", "Three"}, &cool_integer);
+
   HudManager::CreateWindow("Example");
   HudManager::AddWidget("Example", hello);
   HudManager::AddWidget("Example", button);
   HudManager::AddWidget("Example", slider);
+  HudManager::AddWidget("Example", combo);
 }
 
 void ScreenResizeCallback(float x, float y) {

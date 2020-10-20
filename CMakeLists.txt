@@ -94,6 +94,8 @@ target_sources(RandomParticleEngine
     src/window/hud/button.cpp
     src/window/hud/slider.h
     src/window/hud/slider.cpp
+    src/window/hud/combo.h
+    src/window/hud/combo.cpp
 
     src/math/vector3d.h
     src/math/units.h
