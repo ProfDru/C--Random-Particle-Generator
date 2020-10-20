@@ -39,11 +39,11 @@ bool InputManager::IsActive(ACTION action) {
   return key_state == KEY_STATE::PLUS;
 }
 
-double InputManager::GetCursorX() {
+float InputManager::GetCursorX() {
   return InputManager::cursor_x;
 }
 
-double InputManager::GetCursorY() {
+float InputManager::GetCursorY() {
   return InputManager::cursor_y;
 }
 
@@ -51,7 +51,7 @@ void InputManager::TrackMouse(bool is_focused) {
   input::InputManager::is_capturing_mouse = is_focused;
 }
 
-void InputManager::UpdateCursorXY(double x, double y) {
+void InputManager::UpdateCursorXY(float x, float y) {
   if (is_capturing_mouse) {
     cursor_x = x;
     cursor_y = y;

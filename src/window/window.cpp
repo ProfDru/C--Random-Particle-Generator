@@ -240,7 +240,8 @@ bool Window::Redraw() {
   glfwSwapBuffers(this->win);
   glfwPollEvents();
 
-  auto screen_center = Globals::ScreenCenter();
+  const auto screen_center = Globals::ScreenCenter();
+
   if (this->has_focus && this->track_mouse)
     glfwSetCursorPos(this->win, screen_center.x, screen_center.y);
 

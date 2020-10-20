@@ -10,8 +10,8 @@ class InputManager {
   /*! \brief Get the state of this action */
   static KEY_STATE GetKeyState(ACTION action);
 
-  inline static double cursor_x = 0;
-  inline static double cursor_y = 0;
+  inline static float cursor_x = 0;
+  inline static float cursor_y = 0;
   inline static bool is_capturing_mouse =
       true;  //< If false, the mouse isn't being tracked
   inline static bool is_paused = false;
@@ -38,14 +38,14 @@ class InputManager {
   static bool IsActive(ACTION action);
 
   /*! \brief Get the current Corsor XY Position */
-  static double GetCursorX();
-  static double GetCursorY();
+  static float GetCursorX();
+  static float GetCursorY();
 
   /*! \brief Set whether the window is in focus or not */
   static void TrackMouse(bool is_focused);
 
   /*! \brief Update the X and Y position of the cursor */
-  static void UpdateCursorXY(double x, double y);
+  static void UpdateCursorXY(float x, float y);
 
   /*! \brief Toggle paused on or off */
   static void Pause();

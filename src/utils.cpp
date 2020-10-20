@@ -2,10 +2,10 @@
 
 namespace rpg {
 
-int Globals::window_height = 720;
-int Globals::window_width = 1280;
+float Globals::window_height = 720;
+float Globals::window_width = 1280;
 
-void Globals::UpdateWindowSize(int width, int height) {
+void Globals::UpdateWindowSize(float width, float height) {
   window_width = width;
   window_height = height;
 }

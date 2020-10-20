@@ -9,10 +9,10 @@ class GLFWwindow;
 namespace rpg {
 class Globals {
  public:
-  static int window_width;
-  static int window_height;
+  static float window_width;
+  static float window_height;
 
-  static void UpdateWindowSize(int width, int height);
+  static void UpdateWindowSize(float width, float height);
   static float CalculateAspectRatio();
   static glm::vec2 ScreenCenter();
 };
