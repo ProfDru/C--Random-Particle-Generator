@@ -12,6 +12,8 @@ class GLFWwindow;
 namespace rpg {
 class HudManager {
  private:
+  inline static bool enable = true;  //< Whether or not to draw the UI
+
   //< Contains all windows and their names for access
   static std::unordered_map<std::string, hud::Window> windows;
 
@@ -30,6 +32,9 @@ class HudManager {
       \note This will assign ownership of the widget to the window.
   */
   static void AddWidget(const std::string& window_name, hud::Widget* widget);
+
+  /*! \brief Hide or show the UI */
+  static void SetEnabled(bool is_enabled);
 
   // These are unused for now, but may be useful in the future since I probably
   // want to block click events at times

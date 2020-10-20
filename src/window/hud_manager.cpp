@@ -43,19 +43,21 @@ void HudManager::Init(GLFWwindow* win) {
 }
 
 void HudManager::Draw() {
-  // Create new frame
-  ImGui_ImplOpenGL3_NewFrame();
-  ImGui_ImplGlfw_NewFrame();
-  ImGui::NewFrame();
+  if (HudManager::enable) {
+    // Create new frame
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
 
-  // Call window code
-  // DrawWindow("Settings");
-  for (auto& win_pair : windows)
-    win_pair.second.Draw();
+    // Call window code
+    // DrawWindow("Settings");
+    for (auto& win_pair : windows)
+      win_pair.second.Draw();
 
-  // Tell ImGUI to render then send that data to opengl
-  ImGui::Render();
-  ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    // Tell ImGUI to render then send that data to opengl
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+  }
 }
 
 bool HudManager::KeyCallBack(int key, int mods) {
@@ -73,6 +75,10 @@ bool HudManager::ScrollWheelCallback(int pos) {
 }
 bool HudManager::WindowResizecallback(int width, int height) {
   return false;
+}
+
+void HudManager::SetEnabled(bool draw) {
+  HudManager::enable = draw;
 }
 
 }  // namespace rpg

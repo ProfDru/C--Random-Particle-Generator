@@ -180,6 +180,7 @@ void Window::UpdateTracking() {
 void Window::CaptureMouse(bool should_capture) {
   auto input_mode = should_capture ? GLFW_CURSOR_HIDDEN : GLFW_CURSOR_NORMAL;
 
+  HudManager::SetEnabled(!should_capture);
   glfwSetInputMode(this->win, GLFW_CURSOR, input_mode);
 }
 
