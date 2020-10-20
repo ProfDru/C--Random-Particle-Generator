@@ -8,9 +8,10 @@ Window::Window(const std::string& name, float xpos, float ypos)
 void Window::Draw() {
   ImGui::Begin(this->name.c_str());
 
-  for (auto& widget : widgets)
+  for (auto& widget : widgets) {
     widget->Draw();
-
+    widget->DrawHelpMarker();
+  }
   ImGui::End();
 }
 

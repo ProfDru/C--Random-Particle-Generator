@@ -32,6 +32,7 @@ void SetupHud() {
       new hud::Button("button!", "Click here!", ButtonPressExample,
                       hud::Button::MODE::ONE_FRAME);
   hud::Slider* slider = new hud::Slider("Slider!", "Slider!", &cool_number);
+  slider->SetHelpMarker("Press the button to print the slider's value!");
 
   HudManager::CreateWindow("Example");
   HudManager::AddWidget("Example", hello);
