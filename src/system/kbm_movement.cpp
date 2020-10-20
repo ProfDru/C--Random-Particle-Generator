@@ -62,7 +62,7 @@ inline float CalcBoostMultiplier() {
 /*! \brief Calculate the difference between the cursor's position and the center
  * of the screen in pixels */
 inline glm::vec2 CalcDirection() {
-  auto win_center = ScreenCenter();
+  const auto win_center = Globals::ScreenCenter();
 
   const float cursor_x = InputManager::GetCursorX();
   const float cursor_y = InputManager::GetCursorY();

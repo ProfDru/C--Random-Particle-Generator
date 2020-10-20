@@ -49,6 +49,7 @@ target_sources(RandomParticleEngine
 
     src/scene.h
     src/utils.h
+    src/utils.cpp
 
     src/random_manager.cpp
     src/sys_time.cpp

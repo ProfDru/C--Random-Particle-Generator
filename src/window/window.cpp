@@ -27,7 +27,8 @@ rpg::Window* GetWindow(GLFWwindow* window) {
 */
 void FramebufferSizeCallback(GLFWwindow* window, int width, int height) {
   glViewport(0, 0, width, height);
-  HudManager::WindowResizecallback(height, width);
+  HudManager::WindowResizecallback(width, height);
+  Globals::UpdateWindowSize(width, height);
 
   auto win = GetWindow(window);
   win->height = height;
@@ -218,7 +219,6 @@ void Window::Init(float width, float height) {
                1);
 
   // Setup callbacks
-  glfwSetWindowSizeCallback(win, WindowResizeCallback);
   glfwSetFramebufferSizeCallback(win, FramebufferSizeCallback);
   glfwSetCursorPosCallback(win, MouseCallback);
   glfwSetKeyCallback(win, KeyCallback);
@@ -240,7 +240,7 @@ bool Window::Redraw() {
   glfwSwapBuffers(this->win);
   glfwPollEvents();
 
-  auto screen_center = ScreenCenter();
+  auto screen_center = Globals::ScreenCenter();
   if (this->has_focus && this->track_mouse)
     glfwSetCursorPos(this->win, screen_center.x, screen_center.y);
 

@@ -3,25 +3,18 @@
 
 #include <array>
 #include <numeric>
+#include <iostream>
 class GLFWwindow;
 
 namespace rpg {
+class Globals {
+ public:
+  static int window_width;
+  static int window_height;
 
-static int window_width = 1280;
-static int window_height = 720;
-
-inline void WindowResizeCallback(GLFWwindow* window, int width, int height) {
-  window_width = width;
-  window_height = height;
-}
-
-inline float CalculateAspectRatio() {
-  return static_cast<float>(window_width) / static_cast<float>(window_height);
-}
-
-inline glm::vec2 ScreenCenter() {
-  return glm::vec2{std::midpoint(0.0f, static_cast<float>(window_width)),
-                   std::midpoint(0.0f, static_cast<float>(window_height))};
-}
+  static void UpdateWindowSize(int width, int height);
+  static float CalculateAspectRatio();
+  static glm::vec2 ScreenCenter();
+};
 
 }  // namespace rpg
