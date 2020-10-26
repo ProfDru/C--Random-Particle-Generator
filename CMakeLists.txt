@@ -97,6 +97,8 @@ target_sources(RandomParticleEngine
     src/window/hud/slider.cpp
     src/window/hud/combo.h
     src/window/hud/combo.cpp
+    src/window/hud/fps_counter.h
+    src/window/hud/fps_counter.cpp
 
     src/math/vector3d.h
     src/math/units.h

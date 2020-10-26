@@ -11,6 +11,7 @@
 #include <window/hud/widget.h>
 #include <window/hud/slider.h>
 #include <window/hud/combo.h>
+#include <window/hud/fps_counter.h>
 
 #include <system/control_manager.h>
 #include <system\kbm_movement.h>
@@ -23,21 +24,15 @@
 
 namespace rpg {
 
-static float cool_number = 1.0f;
-static int cool_integer = 1;
-
-void ButtonPressExample() {
-  std::cout << "Cool Number is " << cool_number << std::endl;
-  std::cout << "Cool Integer is " << cool_integer << std::endl;
-}
-
 void SetupHud() {
   hud::Slider* time_slider =
       new hud::Slider("Simulation Timescale", "Simulation Timescale",
                       &rpg::simulation::time_scale);
+  hud::FPSCounter* fps = new hud::FPSCounter("FrameCounter");
 
   HudManager::CreateWindow("Options");
   HudManager::AddWidget("Options", time_slider);
+  HudManager::AddWidget("Options", fps);
 }
 
 void ScreenResizeCallback(float x, float y) {
