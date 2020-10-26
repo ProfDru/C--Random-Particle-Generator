@@ -3,9 +3,7 @@
 
 namespace rpg::hud {
 
-FPSCounter::FPSCounter(const std::string& name) : Label(name, name) {
-  this->name = name;
-}
+FPSCounter::FPSCounter(const std::string& name) : Label(name, name) {}
 
 void FPSCounter::Draw() {
   ImGui::Text("Drawtime = %.3f ms/frame, %.1f FPS",

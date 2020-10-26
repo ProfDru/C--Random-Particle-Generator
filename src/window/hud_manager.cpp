@@ -55,7 +55,6 @@ void HudManager::Draw() {
   ImGui::NewFrame();
 
   // Call window code
-  // DrawWindow("Settings");
   for (auto& win_pair : windows)
     win_pair.second.Draw(HudManager::enable);
 

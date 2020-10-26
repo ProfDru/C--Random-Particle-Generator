@@ -24,17 +24,24 @@
 
 namespace rpg {
 
-void SetupHud() {
+std::string GetParticleCount(const ParticleEngine* ps) {
+  return "Particle Count: " + std::to_string(ps->NumVertices());
+}
+
+void SetupHud(const ParticleEngine* PE) {
   hud::Slider* time_slider =
       new hud::Slider("Simulation Timescale", "Simulation Timescale",
                       &rpg::simulation::time_scale);
   hud::FPSCounter* fps = new hud::FPSCounter("FrameCounter");
+  hud::Label* particle_count =
+      new hud::Label("Particle Counter", std::bind(GetParticleCount, PE));
 
   HudManager::CreateWindow("Options");
   HudManager::AddWidget("Options", time_slider);
 
-  HudManager::CreateWindow("Framerate", 0, 670, true);
+  HudManager::CreateWindow("Framerate", 0, 640, true);
   HudManager::AddWidget("Framerate", fps);
+  HudManager::AddWidget("Framerate", particle_count);
 }
 
 void ScreenResizeCallback(float x, float y) {
@@ -61,7 +68,7 @@ void Scene::Start() {
   this->PI->SetID(Registry::GetNextID());
 
   // Add hud widgets
-  SetupHud();
+  SetupHud(&(*PI));
 
   // Initiate draw loop
   printf("Beginning Draw Loop. \n");
