@@ -9,7 +9,8 @@ void Window::Draw() {
   ImGui::SetNextWindowPos(ImVec2(x, y), ImGuiCond_Once);
 
   // Begin only returns true if the window isn't minimized
-  if (ImGui::Begin(this->name.c_str())) {
+  if (ImGui::Begin(this->name.c_str(), NULL,
+                   ImGuiWindowFlags_AlwaysAutoResize)) {
     for (auto& widget : widgets) {
       widget->Draw();
       widget->DrawHelpMarker();

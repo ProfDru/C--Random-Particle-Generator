@@ -3,6 +3,7 @@
 #include <rendering\preloaded_shaders.h>
 #include <entities/entity.h>
 #include <entities/entity_registry.h>
+#include <entities/particle_simulation.h>
 
 #include <window/hud_manager.h>
 #include <window/hud/label.h>
@@ -31,22 +32,12 @@ void ButtonPressExample() {
 }
 
 void SetupHud() {
-  hud::Label* hello = new hud::Label("Hello!", "Virtual Functions!");
-  hud::Button* button =
-      new hud::Button("button!", "Click here!", ButtonPressExample,
-                      hud::Button::MODE::ONE_FRAME);
-  hud::Slider* slider = new hud::Slider("Slider!", "Slider!", &cool_number);
-  slider->SetHelpMarker("Press the button to print the slider's value!");
+  hud::Slider* time_slider =
+      new hud::Slider("Simulation Timescale", "Simulation Timescale",
+                      &rpg::simulation::time_scale);
 
-  hud::ComboBox* combo = new hud::ComboBox(
-      std::string("Example ComboBox"),
-      std::vector<std::string>{"Zero", "One", "Two", "Three"}, &cool_integer);
-
-  HudManager::CreateWindow("Example");
-  HudManager::AddWidget("Example", hello);
-  HudManager::AddWidget("Example", button);
-  HudManager::AddWidget("Example", slider);
-  HudManager::AddWidget("Example", combo);
+  HudManager::CreateWindow("Options");
+  HudManager::AddWidget("Options", time_slider);
 }
 
 void ScreenResizeCallback(float x, float y) {
