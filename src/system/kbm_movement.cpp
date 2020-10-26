@@ -59,16 +59,20 @@ inline float CalcBoostMultiplier() {
   return boost_multiplier;
 }
 
+inline float magnitude(const glm::vec2& vector) {
+  return sqrt(pow(vector.x, 2) + pow(vector.y, 2));
+}
+
 /*! \brief Calculate the difference between the cursor's position and the center
  * of the screen in pixels */
 inline glm::vec2 CalcDirection() {
-  auto win_center = ScreenCenter();
+  const auto win_center = Globals::ScreenCenter();
 
   const float cursor_x = InputManager::GetCursorX();
   const float cursor_y = InputManager::GetCursorY();
 
-  glm::vec2 change_in_cursor(win_center.x - cursor_x, win_center.y - cursor_y);
-
+  glm::vec2 change_in_cursor(floor(win_center.x - cursor_x),
+                             floor(win_center.y - cursor_y));
   return change_in_cursor;
 }
 

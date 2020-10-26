@@ -39,20 +39,20 @@ bool InputManager::IsActive(ACTION action) {
   return key_state == KEY_STATE::PLUS;
 }
 
-double InputManager::GetCursorX() {
+float InputManager::GetCursorX() {
   return InputManager::cursor_x;
 }
 
-double InputManager::GetCursorY() {
+float InputManager::GetCursorY() {
   return InputManager::cursor_y;
 }
 
-void InputManager::SetWindowFocus(bool is_focused) {
+void InputManager::TrackMouse(bool is_focused) {
   input::InputManager::is_capturing_mouse = is_focused;
 }
 
-void InputManager::UpdateCursorXY(double x, double y) {
-  if (is_capturing_mouse && !is_paused) {
+void InputManager::UpdateCursorXY(float x, float y) {
+  if (is_capturing_mouse) {
     cursor_x = x;
     cursor_y = y;
   }
@@ -66,7 +66,7 @@ bool InputManager::IsPaused() {
   return is_paused;
 }
 bool InputManager::IsTrackingMouse() {
-  return !is_paused && is_capturing_mouse;
+  return is_capturing_mouse;
 }
 
 }  // namespace rpg::input

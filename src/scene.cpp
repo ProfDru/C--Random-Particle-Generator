@@ -3,6 +3,15 @@
 #include <rendering\preloaded_shaders.h>
 #include <entities/entity.h>
 #include <entities/entity_registry.h>
+#include <entities/particle_simulation.h>
+
+#include <window/hud_manager.h>
+#include <window/hud/label.h>
+#include <window/hud/button.h>
+#include <window/hud/widget.h>
+#include <window/hud/slider.h>
+#include <window/hud/combo.h>
+#include <window/hud/fps_counter.h>
 
 #include <system/control_manager.h>
 #include <system\kbm_movement.h>
@@ -11,8 +20,29 @@
 #include <cassert>
 #include <exception>
 #include <iostream>
+#include <string>
 
 namespace rpg {
+
+std::string GetParticleCount(const ParticleEngine* ps) {
+  return "Particle Count: " + std::to_string(ps->NumVertices());
+}
+
+void SetupHud(const ParticleEngine* PE) {
+  hud::Slider* time_slider =
+      new hud::Slider("Simulation Timescale", "Simulation Timescale",
+                      &rpg::simulation::time_scale);
+  hud::FPSCounter* fps = new hud::FPSCounter("FrameCounter");
+  hud::Label* particle_count =
+      new hud::Label("Particle Counter", std::bind(GetParticleCount, PE));
+
+  HudManager::CreateWindow("Options");
+  HudManager::AddWidget("Options", time_slider);
+
+  HudManager::CreateWindow("Framerate", 0, 640, true);
+  HudManager::AddWidget("Framerate", fps);
+  HudManager::AddWidget("Framerate", particle_count);
+}
 
 void ScreenResizeCallback(float x, float y) {
   rpg::rendering::Renderer::UpdateScreenXY(x, y);
@@ -27,7 +57,7 @@ void Scene::Start() {
       rpg::input::InputManager::RecordChangeInKeyState);
   this->current_window.Init(1280, 720);
   this->current_window.SetWindowFocusCallback(
-      rpg::input::InputManager::SetWindowFocus);
+      rpg::input::InputManager::TrackMouse);
 
   // Create a particle engine and camera
   printf("Creating Particle Engine and Camera...");
@@ -36,6 +66,9 @@ void Scene::Start() {
 
   // Set the ID of the particle system
   this->PI->SetID(Registry::GetNextID());
+
+  // Add hud widgets
+  SetupHud(&(*PI));
 
   // Initiate draw loop
   printf("Beginning Draw Loop. \n");
@@ -64,6 +97,7 @@ void Scene::DrawLoop() {
   while (keep_drawing) {
     PI->Update();
     HandleMovement(this->main_camera, this->current_window.win);
+    current_window.TrackMouse(input::InputManager::IsPaused());
     this->current_window.Clear();
     rendering::Renderer::Render(*(this->PI));
     keep_drawing = this->current_window.Redraw();

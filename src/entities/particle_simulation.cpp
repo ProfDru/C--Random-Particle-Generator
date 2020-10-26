@@ -22,7 +22,7 @@ namespace rpg::simulation {
 static double last_time = 0;
 static const float time_threshold = 0.00001f;
 static const float start_lifetime = 5.0f;
-static const double time_scale = 1.0f;
+float time_scale = 1.0f;
 
 double get_time_since() {
   // Get the current time

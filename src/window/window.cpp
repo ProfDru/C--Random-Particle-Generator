@@ -1,5 +1,6 @@
 #include <window/window.h>
 #include <utils.h>
+#include <window/hud_manager.h>
 
 #include <GL\glew.h>
 #include <GLFW\glfw3.h>
@@ -26,6 +27,8 @@ rpg::Window* GetWindow(GLFWwindow* window) {
 */
 void FramebufferSizeCallback(GLFWwindow* window, int width, int height) {
   glViewport(0, 0, width, height);
+  HudManager::WindowResizecallback(width, height);
+  Globals::UpdateWindowSize(width, height);
 
   auto win = GetWindow(window);
   win->height = height;
@@ -36,11 +39,12 @@ void FramebufferSizeCallback(GLFWwindow* window, int width, int height) {
 
 void WindowFocusCallback(GLFWwindow* window, int focused) {
   auto win = GetWindow(window);
-  win->window_focused_callback(focused);
-  win->has_focus = focused;
 
-  // Stop capturing mouse if unfocused
-  win->CaptureMouse(focused);
+  win->SetFocus(focused);
+}
+
+void MouseClickCallback(GLFWwindow* window, int button, int action, int mods) {
+  HudManager::MouseClickCallback(action, button);
 }
 
 /*! \brief Calls the window's callback and resets the mouse's position to
@@ -49,6 +53,8 @@ void WindowFocusCallback(GLFWwindow* window, int focused) {
   \todo Update this to handle pausing
 */
 void MouseCallback(GLFWwindow* window, double x_pos, double y_pos) {
+  HudManager::MousePosCallback(x_pos, y_pos);
+
   auto win = GetWindow(window);
   win->mouse_callback(x_pos, y_pos);
 }
@@ -58,12 +64,12 @@ void KeyCallback(GLFWwindow* window,
                  int scancode,
                  int action,
                  int mods) {
-  auto win = GetWindow(window);
+  HudManager::KeyCallBack(key, mods);
 
+  auto win = GetWindow(window);
   // Ignore repeats
   if (action == GLFW_REPEAT)
     return;
-
   const bool is_key_down = action == GLFW_PRESS;
   win->key_callback(is_key_down, key);
 }
@@ -154,8 +160,28 @@ void EnableDebugging(GLFWwindow* win) {
   glDebugMessageCallback(MessageCallback, 0);
 }
 
+void Window::SetFocus(bool new_focus) {
+  this->has_focus = new_focus;
+  UpdateTracking();
+}
+
+void Window::TrackMouse(bool should_track) {
+  if (this->track_mouse != should_track) {
+    this->track_mouse = should_track;
+    UpdateTracking();
+  }
+}
+
+void Window::UpdateTracking() {
+  bool should_capture = this->has_focus && this->track_mouse;
+  window_focused_callback(should_capture);
+  CaptureMouse(should_capture);
+}
+
 void Window::CaptureMouse(bool should_capture) {
   auto input_mode = should_capture ? GLFW_CURSOR_HIDDEN : GLFW_CURSOR_NORMAL;
+
+  HudManager::SetEnabled(!should_capture);
   glfwSetInputMode(this->win, GLFW_CURSOR, input_mode);
 }
 
@@ -181,8 +207,8 @@ void Window::SetWindowFocusCallback(std::function<void(bool)> func) {
 void Window::Init(float width, float height) {
   this->width = width;
   this->height = height;
-
   this->win = InitWindow(width, height);
+  HudManager::Init(this->win);
 
   EnableDebugging(this->win);
   CaptureMouse(true);
@@ -192,11 +218,12 @@ void Window::Init(float width, float height) {
   glClearColor(this->clear_color[0], this->clear_color[1], this->clear_color[2],
                1);
 
-  glfwSetWindowSizeCallback(win, WindowResizeCallback);
+  // Setup callbacks
   glfwSetFramebufferSizeCallback(win, FramebufferSizeCallback);
   glfwSetCursorPosCallback(win, MouseCallback);
   glfwSetKeyCallback(win, KeyCallback);
   glfwSetWindowFocusCallback(win, WindowFocusCallback);
+  glfwSetMouseButtonCallback(win, MouseClickCallback);
 }
 
 void Window::Clear() {
@@ -208,11 +235,15 @@ void Window::UpdateSize() {
 }
 
 bool Window::Redraw() {
+  HudManager::Draw();
+
   glfwSwapBuffers(this->win);
   glfwPollEvents();
 
-  auto screen_center = ScreenCenter();
-  glfwSetCursorPos(this->win, screen_center.x, screen_center.y);
+  const auto screen_center = Globals::ScreenCenter();
+
+  if (this->has_focus && this->track_mouse)
+    glfwSetCursorPos(this->win, screen_center.x, screen_center.y);
 
   //! \todo Handle this with controls
   return glfwGetKey(this->win, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
