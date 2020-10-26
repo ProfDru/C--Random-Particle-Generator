@@ -25,7 +25,10 @@ class HudManager {
   static void Draw();
 
   /*! \brief Create a new window with the specified name */
-  static void CreateWindow(const std::string& name);
+  static void CreateWindow(const std::string& name,
+                           float x_pos = 0,
+                           float y_pos = 0,
+                           bool is_hud = false);
 
   /*! \brief Add a widget to an existing window.
 

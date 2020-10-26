@@ -32,7 +32,9 @@ void SetupHud() {
 
   HudManager::CreateWindow("Options");
   HudManager::AddWidget("Options", time_slider);
-  HudManager::AddWidget("Options", fps);
+
+  HudManager::CreateWindow("Framerate", 0, 670, true);
+  HudManager::AddWidget("Framerate", fps);
 }
 
 void ScreenResizeCallback(float x, float y) {

@@ -17,9 +17,12 @@ void DrawWindow(const std::string& title) {
   ImGui::End();
 }
 
-void HudManager::CreateWindow(const std::string& name) {
-  HudManager::windows.insert(
-      std::pair<std::string, rpg::hud::Window>{name, hud::Window(name)});
+void HudManager::CreateWindow(const std::string& name,
+                              float x_pos,
+                              float y_pos,
+                              bool is_hud) {
+  HudManager::windows.insert(std::pair<std::string, rpg::hud::Window>{
+      name, hud::Window(name, is_hud, x_pos, y_pos)});
 }
 
 void HudManager::AddWidget(const std::string& window_name,
@@ -43,21 +46,19 @@ void HudManager::Init(GLFWwindow* win) {
 }
 
 void HudManager::Draw() {
-  if (HudManager::enable) {
-    // Create new frame
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplGlfw_NewFrame();
-    ImGui::NewFrame();
+  // Create new frame
+  ImGui_ImplOpenGL3_NewFrame();
+  ImGui_ImplGlfw_NewFrame();
+  ImGui::NewFrame();
 
-    // Call window code
-    // DrawWindow("Settings");
-    for (auto& win_pair : windows)
-      win_pair.second.Draw();
+  // Call window code
+  // DrawWindow("Settings");
+  for (auto& win_pair : windows)
+    win_pair.second.Draw(HudManager::enable);
 
-    // Tell ImGUI to render then send that data to opengl
-    ImGui::Render();
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-  }
+  // Tell ImGUI to render then send that data to opengl
+  ImGui::Render();
+  ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
 bool HudManager::KeyCallBack(int key, int mods) {
