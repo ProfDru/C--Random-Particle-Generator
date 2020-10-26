@@ -46,6 +46,9 @@ void HudManager::Init(GLFWwindow* win) {
 }
 
 void HudManager::Draw() {
+  if (!HudManager::enable)
+    ImGui::SetMouseCursor(ImGuiMouseCursor_None);
+
   // Create new frame
   ImGui_ImplOpenGL3_NewFrame();
   ImGui_ImplGlfw_NewFrame();
