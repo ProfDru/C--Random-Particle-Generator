@@ -10,21 +10,29 @@
 class GLFWwindow;
 
 namespace rpg {
+
+/*! \brief Contains and manages state for all functionality relevant to drawing
+  the Heads Up Display/GUI
+ */
 class HudManager {
  private:
-  inline static bool enable = true;  //< Whether or not to draw the UI
+  inline static bool enable = true;  //< Whether or not to draw GUI windows
 
-  //< Contains all windows and their names for access
+  //< Contains all windows and their names for later access
   static std::unordered_map<std::string, hud::Window> windows;
 
  public:
-  /*! \brief Initialize the hud and create the bar */
+  /*! \brief Initialize the HUD Context.
+
+    \warning The GUI will not function unless this function is called with the
+    active GLFW display before attempting to draw it
+  */
   static void Init(GLFWwindow* win);
 
-  /*! \brief Draw the to the screen */
+  /*! \brief Draw the GUI/HUD. */
   static void Draw();
 
-  /*! \brief Create a new window with the specified name */
+  /*! \brief Create and begin drawing a new window. */
   static void CreateWindow(const std::string& name,
                            float x_pos = 0,
                            float y_pos = 0,
@@ -33,6 +41,8 @@ class HudManager {
   /*! \brief Add a widget to an existing window.
 
       \note This will assign ownership of the widget to the window.
+
+      \see hud::Window::AddWidget
   */
   static void AddWidget(const std::string& window_name, hud::Widget* widget);
 
