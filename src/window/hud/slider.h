@@ -5,14 +5,23 @@
 
 #include <string>
 #include <functional>
-
 namespace rpg::hud {
 class Slider : public Label {
-  float* var;
-  float min, max;
-  // std::function<void(float)> callback;
+  enum class SliderType { INT, FLOAT };
+
+  int* int_ptr;
+  float* float_ptr;
+  SliderType type;
+  float max, min;
 
  public:
+  Slider(const std::string& name, int* var, float min = 0.0f, float max = 1.0f);
+
+  Slider(const std::string& name,
+         float* var,
+         float min = 0.0f,
+         float max = 1.0f);
+
   Slider(const std::string& name,
          const std::string& label,
          float* var,
@@ -22,5 +31,5 @@ class Slider : public Label {
   void Draw();
 
   ~Slider(){};
-};
+};  // namespace rpg::hud
 }  // namespace rpg::hud
