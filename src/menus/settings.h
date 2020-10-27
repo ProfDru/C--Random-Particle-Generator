@@ -4,6 +4,6 @@
 namespace rpg::menus {
 
 /*! \brief Create and add the particle menu to the hudmanager*/
-void InitParticleMenu(const rpg::ParticleEngine* PE);
+void InitParticleMenu(rpg::ParticleEngine* PE);
 
 }  // namespace rpg::menus

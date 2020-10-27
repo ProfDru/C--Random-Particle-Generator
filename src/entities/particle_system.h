@@ -12,14 +12,13 @@ namespace rpg {
 
 class ParticleEngine : public Entity {
   glm::vec3 pos = {0, 0, 0};
-
   std::vector<Particle> particles;
 
+ public:
   int max_patricles = 10000;
   float particle_lifetime = 5.0f;
+  float angle = 20.0f;
 
- private:
- public:
   /*! \brief Construct the particle engine */
   ParticleEngine();
 

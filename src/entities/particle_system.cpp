@@ -39,7 +39,9 @@ ParticleEngine::ParticleEngine() {
 }
 
 void ParticleEngine::Update() {
-  simulation::simulate_particles(this->particles);
+  simulation::simulate_particles(this->particles,
+                                 static_cast<float>(this->max_patricles),
+                                 this->angle, this->particle_lifetime, 1.0f);
 }
 
 std::vector<float> ParticleEngine::GetVertexBuffer() const {

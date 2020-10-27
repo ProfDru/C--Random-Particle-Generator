@@ -81,6 +81,7 @@ bool sim_particle(Particle& p, float time) {
 
   double life_left = 1.0 - math::inverse_lerp(0.0, start_lifetime, p.lifetime);
   p.color = glm::rgbColor(glm::vec3(life_left * 255, 1.0f, 1 - life_left));
+
   physics::apply_gravity(p, time);
   update_particle_position(p, time);
   return true;
@@ -88,8 +89,6 @@ bool sim_particle(Particle& p, float time) {
 
 static float overflow = 0.0f;
 const static float fire_rate = 0.0005f;
-static const int max_patricles = 50000;
-static const float spread = 45.0f;
 
 const float max_mag = 3.0f;
 const float min_mag = 1.0f;
@@ -115,13 +114,13 @@ int calc_num_shots(float time_since) {
   return shots;
 }
 
-inline Particle EmitParticle() {
+inline Particle EmitParticle(float angle, float lifetime) {
   const float magnitude = get_rand(12.5, 15);  // get_rand(min_mag, max_mag);
 
   const float horizontal_angle =
-      get_rand(0, 360);               // rand(0, 360);
-                                      // ticks = (ticks % 360) + 1;
-  const float vertical_angle = 25.0;  // get_rand(0, spread);
+      get_rand(0, 360);                // rand(0, 360);
+                                       // ticks = (ticks % 360) + 1;
+  const float vertical_angle = angle;  // get_rand(0, spread);
 
   auto dir = math::spherical_to_cartesian(glm::vec3(
       1, math::to_radians(horizontal_angle), math::to_radians(vertical_angle)));
@@ -131,37 +130,46 @@ inline Particle EmitParticle() {
   out_particle.velocity = (dir * magnitude);
 
   out_particle.color = {0, 0.25, 1};
-  out_particle.lifetime = start_lifetime;
+  out_particle.lifetime = lifetime;
   return out_particle;
 }
 
-void create_particles(std::vector<Particle>& particles, float time) {
+void create_particles(std::vector<Particle>& particles,
+                      float time,
+                      float angle,
+                      float lifetime,
+                      int max_particles) {
   const int num_shots = calc_num_shots(time);
 
   int particle_budget =
-      std::min(max_patricles - static_cast<int>(particles.size()), num_shots);
+      std::min(max_particles - static_cast<int>(particles.size()), num_shots);
 
   if (particle_budget > 0)
     for (int i = 0; i < particle_budget; i++) {
-      particles.push_back(EmitParticle());
+      particles.push_back(EmitParticle(angle, lifetime));
     }
 }
 
-void simulate_particles(std::vector<Particle>& particles) {
+void simulate_particles(std::vector<Particle>& particles,
+                        float max_particles,
+                        float angle,
+                        float lifetime,
+                        float timescale) {
   // Convert milliseconds to seconds
-  const float time_diff = static_cast<float>(get_time_since()) / 1000.0f;
+  const float time_diff =
+      static_cast<float>(get_time_since()) / 1000.0f * timescale;
 
   // Don't update if the time is less than the threshold
   if (time_diff < time_threshold)
     return;
 
   particles.erase(std::remove_if(particles.begin(), particles.end(),
-                                 [time_diff](Particle& p) -> bool {
+                                 [time_diff, lifetime](Particle& p) -> bool {
                                    return !sim_particle(p, time_diff);
                                  }),
                   particles.end());
 
-  create_particles(particles, time_diff);
+  create_particles(particles, time_diff, angle, lifetime, max_particles);
 }
 
 }  // namespace rpg::simulation
