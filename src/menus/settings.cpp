@@ -10,6 +10,9 @@
 #include <window/hud/button.h>
 #include <window/hud/fps_counter.h>
 
+using namespace rpg::hud;
+using std::string;
+using std::vector;
 namespace rpg::menus {
 
 std::string GetParticleCount(const ParticleEngine* ps) {
@@ -17,13 +20,13 @@ std::string GetParticleCount(const ParticleEngine* ps) {
 }
 
 void InitParticleMenu(const rpg::ParticleEngine* PE) {
-  std::vector<rpg::hud::Widget*> options_widgets = {
-      new hud::Slider("Simulation Timescale", "Simulation Timescale",
-                      &rpg::simulation::time_scale)};
+  vector<Widget*> options_widgets = {new Slider("Simulation Timescale",
+                                                "Simulation Timescale",
+                                                &rpg::simulation::time_scale)};
 
-  std::vector<rpg::hud::Widget*> fps_widgets{
-      new hud::FPSCounter("FrameCounter"),
-      new hud::Label("Particle Counter", std::bind(GetParticleCount, PE))};
+  vector<Widget*> fps_widgets{
+      new FPSCounter("FrameCounter"),
+      new Label("Particle Counter", std::bind(GetParticleCount, PE))};
 
   HudManager::CreateWindow("Options");
 
