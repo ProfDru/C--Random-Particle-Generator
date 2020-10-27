@@ -1,6 +1,8 @@
 #include <entities\particle_system.h>
 #include <entities\particle_simulation.h>
 
+#include <functional>
+
 using std::vector;
 namespace rpg {
 
@@ -33,15 +35,77 @@ inline vector<float> CreateColorArray(const vector<Particle>& particles) {
   return color_arr;
 }
 
+/*! \brief calculate the number of new particles to create this frame */
+int ParticleEngine::queued_shots(float time_since) {
+  // Use overflow from the previous shot queue
+  const float shot_time = this->overflow + time_since;
+
+  // Calculate the maximum number of shots we can fire in the amount of time
+  // since our firerate
+  int shots = std::floor(shot_time / fire_rate);
+
+  if (shots > 0)
+    overflow = (shot_time - (static_cast<float>(shots) * fire_rate));
+  else
+    overflow += time_since;
+
+  return shots;
+}
+
+void ParticleEngine::emit_particle(int num_particles) {
+  for (int i = 0; i < num_particles; i++) {
+    // Simulate this particle for the time between it should have been
+    // fired and the time it was fired
+    const float sim_time =
+        (static_cast<float>(i) * this->fire_rate) + this->overflow;
+
+    Particle P = simulation::fire_particle(this->magnitude, this->angle,
+                                           this->particle_lifetime);
+
+    simulation::sim_particle(P, sim_time);
+
+    particles.push_back(P);
+  }
+}
+
+void ParticleEngine::create_new_particles(float time) {
+  const int num_shots = queued_shots(time);
+
+  // Limit max number of particles by max_particles and shot time
+  const int particle_budget = std::min(
+      this->max_particles - static_cast<int>(particles.size()), num_shots);
+
+  emit_particle(particle_budget);
+}
+
 ParticleEngine::ParticleEngine() {
-  // Hardcode points for now
   this->particles = std::vector<Particle>();
+  this->last_update = 0;
+}
+/*! \brief Remove dead particles from the particle system */
+void remove_particles(std::vector<Particle>& particles) {
+  particles.erase(
+      std::remove_if(particles.begin(), particles.end(),
+                     [](Particle& p) -> bool { return (p.lifetime <= 0); }),
+      particles.end());
 }
 
 void ParticleEngine::Update() {
-  simulation::simulate_particles(this->particles,
-                                 static_cast<float>(this->max_patricles),
-                                 this->angle, this->particle_lifetime, 1.0f);
+  // Get time
+
+  float time = simulation::get_time_since(last_update) / 1000.0f;
+  if (time > update_threshold) {
+    // Apply simulation step to all particles
+    for (auto& p : particles)
+      simulation::sim_particle(p, time);
+
+    // Remove dead particles
+    remove_particles(this->particles);
+
+    // Create new particles
+    create_new_particles(time);
+  }
+  last_update = simulation::get_time();
 }
 
 std::vector<float> ParticleEngine::GetVertexBuffer() const {

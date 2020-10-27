@@ -12,4 +12,13 @@ void simulate_particles(std::vector<Particle>& P,
                         float lifetime,
                         float timescale = 1.0f);
 
+void sim_particle(Particle& p, float time_diff);
+
+double get_time_since(double last_time);
+
+double get_time();
+
+Particle fire_particle(float magnitude, float vertical_angle, float lifetime);
+
+bool has_lifetime(const Particle& p);
 }  // namespace rpg::simulation

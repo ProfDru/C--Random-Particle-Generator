@@ -26,7 +26,7 @@ void InitParticleMenu(rpg::ParticleEngine* PE) {
       new Slider("Simulation Timescale", &rpg::simulation::time_scale),
 
       new Label("Particle System", "Particle System"),
-      new Slider("Number of Particles", &PE->max_patricles, 1, 100000),
+      new Slider("Number of Particles", &PE->max_particles, 1, 100000),
       new Slider("Particle Lifetime", &PE->particle_lifetime, 0.1, 60),
       new Slider("Horizontal Angle", &PE->angle, 0, 90)};
 
