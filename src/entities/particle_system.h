@@ -27,6 +27,8 @@ class ParticleEngine : public Entity {
   /*! \brief Emit as many particles as possible */
   void emit_particle(int num_particles);
 
+  void simulate_particles(float time);
+
  public:
   // EMITTER
   int max_particles = 10000;

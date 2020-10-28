@@ -70,6 +70,9 @@ void ParticleEngine::emit_particle(int num_particles) {
     const float sim_time =
         (static_cast<float>(i) * this->fire_rate) + this->overflow;
 
+    if (sim_time >= this->particle_lifetime)
+      break;
+
     Particle P = simulation::fire_particle(this->magnitude, this->angle,
                                            this->particle_lifetime);
 
@@ -102,20 +105,32 @@ void remove_particles(std::vector<Particle>& particles) {
       particles.end());
 }
 
+void ParticleEngine::simulate_particles(float time) {
+  // Apply simulation step to all particles
+  for (auto& p : particles)
+    UpdateParticle(p, time, true, this->coeff_of_restitution);
+
+  // Remove dead particles
+  remove_particles(this->particles);
+
+  // Create new particles
+  create_new_particles(time);
+}
+
 void ParticleEngine::Update() {
   // Get time
   float time = simulation::get_time_since(last_update) / 1000.0f;
 
   if (time > update_threshold) {
-    // Apply simulation step to all particles
-    for (auto& p : particles)
-      UpdateParticle(p, time, true, this->coeff_of_restitution);
+    // Step through physics in discreet steps
+    const double max_time = 0.016;
+    const int steps = floor(time / max_time);
+    const double remainder = time - (steps * max_time);
+    if (steps > 0)
+      for (int i = 0; i < steps; i++)
+        simulate_particles(max_time);
 
-    // Remove dead particles
-    remove_particles(this->particles);
-
-    // Create new particles
-    create_new_particles(time);
+    simulate_particles(remainder);
 
     last_update = simulation::get_time();
   }
