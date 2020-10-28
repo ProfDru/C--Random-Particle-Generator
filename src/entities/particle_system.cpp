@@ -43,14 +43,14 @@ void UpdateParticle(Particle& P, float time) {
 
 int ParticleEngine::queued_shots(float time_since) {
   // Use overflow from the previous shot queue
-  const float shot_time = this->overflow + time_since;
+  const double shot_time = this->overflow + time_since;
 
   // Calculate the maximum number of shots we can fire in the amount of time
   // since our firerate
   int shots = std::floor(shot_time / fire_rate);
 
   if (shots > 0)
-    overflow = (shot_time - (static_cast<float>(shots) * fire_rate));
+    overflow = (shot_time - (static_cast<double>(shots) * fire_rate));
   else
     overflow += time_since;
 
@@ -85,6 +85,7 @@ void ParticleEngine::create_new_particles(float time) {
 
 ParticleEngine::ParticleEngine() {
   this->particles = std::vector<Particle>();
+  last_update = simulation::get_time();
 }
 
 /*! \brief Remove dead particles from the particle system */
@@ -109,8 +110,9 @@ void ParticleEngine::Update() {
 
     // Create new particles
     create_new_particles(time);
+
+    last_update = simulation::get_time();
   }
-  last_update = simulation::get_time();
 }
 
 std::vector<float> ParticleEngine::GetVertexBuffer() const {
