@@ -47,22 +47,16 @@ inline float get_rand_nolimits() {
   return RandomManager::GetRandomNumber();
 }
 
+void apply_gravity(Particle& P, float time) {
+  physics::apply_gravity(P, time);
+}
+
 /*! \brief Move particle based on it's velocity */
 void update_particle_position(Particle& p, float time) {
   physics::apply_velocity(p, time);
 
   if (p.pos.y <= 0 && p.velocity.y < 0) {
     physics::bounce_basic(p, 5.0, 0.85f);
-    // p.lifetime -= 1.0f;
-
-    // math::inverse_lerp(0.25, 2.0, math::magnitude(p.velocity));
-
-    /*
-        if (abs(p.velocity.y) < 4.0f)
-          p.lifetime = 0;
-        else
-          p.lifetime += 3.0f;
-    */
   }
 }
 
@@ -71,9 +65,7 @@ bool has_lifetime(const Particle& p) {
   return p.lifetime > 0.0f;
 }
 
-void sim_particle(Particle& p, float time) {
-  p.lifetime -= time;
-
+void update_position(Particle& p, float time) {
   physics::apply_gravity(p, time);
   update_particle_position(p, time);
 }

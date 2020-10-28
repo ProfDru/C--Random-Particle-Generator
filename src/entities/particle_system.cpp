@@ -35,7 +35,12 @@ inline vector<float> CreateColorArray(const vector<Particle>& particles) {
   return color_arr;
 }
 
-/*! \brief calculate the number of new particles to create this frame */
+void UpdateParticle(Particle& P, float time) {
+  P.lifetime -= time;
+  simulation::apply_gravity(P, time);
+  simulation::update_particle_position(P, time);
+}
+
 int ParticleEngine::queued_shots(float time_since) {
   // Use overflow from the previous shot queue
   const float shot_time = this->overflow + time_since;
@@ -62,7 +67,7 @@ void ParticleEngine::emit_particle(int num_particles) {
     Particle P = simulation::fire_particle(this->magnitude, this->angle,
                                            this->particle_lifetime);
 
-    simulation::sim_particle(P, sim_time);
+    UpdateParticle(P, sim_time);
 
     particles.push_back(P);
   }
@@ -80,8 +85,8 @@ void ParticleEngine::create_new_particles(float time) {
 
 ParticleEngine::ParticleEngine() {
   this->particles = std::vector<Particle>();
-  this->last_update = 0;
 }
+
 /*! \brief Remove dead particles from the particle system */
 void remove_particles(std::vector<Particle>& particles) {
   particles.erase(
@@ -92,12 +97,12 @@ void remove_particles(std::vector<Particle>& particles) {
 
 void ParticleEngine::Update() {
   // Get time
-
   float time = simulation::get_time_since(last_update) / 1000.0f;
+
   if (time > update_threshold) {
     // Apply simulation step to all particles
     for (auto& p : particles)
-      simulation::sim_particle(p, time);
+      UpdateParticle(p, time);
 
     // Remove dead particles
     remove_particles(this->particles);
@@ -119,12 +124,5 @@ std::vector<float> ParticleEngine::GetColorBuffer() const {
 int ParticleEngine::NumVertices() const {
   return this->particles.size() * 3;
 }
-/*
-void ParticleEngine::SetCameraPosition(glm::mat4& MVP) {
-  glUniformMatrix4fv(this->shader.mvp, 1, GL_FALSE, &(MVP[0][0]));
-}
-*/
-
-//~ParticleEngine(){
 
 }  // namespace rpg

@@ -14,6 +14,10 @@ void simulate_particles(std::vector<Particle>& P,
 
 void sim_particle(Particle& p, float time_diff);
 
+void apply_gravity(Particle& P, float time);
+
+void update_particle_position(Particle& P, float time);
+
 double get_time_since(double last_time);
 
 double get_time();
