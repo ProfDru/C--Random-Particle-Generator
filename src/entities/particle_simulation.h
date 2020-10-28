@@ -22,6 +22,11 @@ double get_time_since(double last_time);
 
 double get_time();
 
+bool simple_ground_bounce(Particle& P,
+                          float ground_height,
+                          float e = 0.8f,
+                          float mass = 5.0f);
+
 Particle fire_particle(float magnitude, float vertical_angle, float lifetime);
 
 bool has_lifetime(const Particle& p);

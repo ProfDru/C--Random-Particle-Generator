@@ -52,7 +52,7 @@ inline void bounce_basic(RigidBody auto& body,
   const double energy_after_bounce = energy - (energy_loss * energy);
 
   // Update the velocity of the body based on the new energy
-  const auto velocity_after_bounce =
+  const double velocity_after_bounce =
       velocity_from_kinematic_energy(energy_after_bounce, mass);
   set(body.velocity, 1, velocity_after_bounce);
 

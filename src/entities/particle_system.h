@@ -15,6 +15,7 @@ class ParticleEngine : public Entity {
   std::vector<Particle> particles;
   double overflow = 0.0;
   double last_update = 0.0;
+  double update_threshold = 0.00000001;
 
   /*! \brief Determine how many particles should be emitted based on the
    * firerate. */
@@ -27,12 +28,15 @@ class ParticleEngine : public Entity {
   void emit_particle(int num_particles);
 
  public:
+  // EMITTER
   int max_particles = 10000;
+  float fire_rate = 0.001;
   float particle_lifetime = 5.0f;
   float angle = 20.0f;
-  double fire_rate = 0.001;
   float magnitude = 10.0f;
-  double update_threshold = 0.00000001;
+
+  /// PARTICLE
+  float coeff_of_restitution = 0.8f;
 
   /*! \brief Construct the particle engine */
   ParticleEngine();

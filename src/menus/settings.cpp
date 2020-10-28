@@ -23,12 +23,18 @@ std::string GetParticleCount(ParticleEngine* ps) {
 void InitParticleMenu(rpg::ParticleEngine* PE) {
   vector<Widget*> options_widgets = {
       new Label("Simulation", "Simulation"),
-      new Slider("Simulation Timescale", &rpg::simulation::time_scale),
+      new Slider("Simulation Timescale", &rpg::simulation::time_scale, 0.0f,
+                 2.0f),
 
       new Label("Particle System", "Particle System"),
       new Slider("Number of Particles", &PE->max_particles, 1, 100000),
-      new Slider("Particle Lifetime", &PE->particle_lifetime, 0.1, 60),
-      new Slider("Horizontal Angle", &PE->angle, 0, 90)};
+      new Slider("Particle Lifetime", &PE->particle_lifetime, 0.1, 10),
+      new Slider("Horizontal Angle", &PE->angle, 0, 85),
+      new Slider("Magnitude", &PE->magnitude, 1, 20),
+      new Slider("Fire Rate", &PE->fire_rate, 0.00001, 0.1),
+
+      new Label("Particle Physics", "Particle Physics"),
+      new Slider("CoR", &PE->coeff_of_restitution, 0, 1)};
 
   vector<Widget*> fps_widgets{
       new FPSCounter("FrameCounter"),

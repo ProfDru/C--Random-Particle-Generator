@@ -31,8 +31,8 @@ inline auto kinematic_energy(const Vector3D auto& velocity, Numeric auto mass) {
   return kinematic_energy(velocity_magnitude, mass);
 }
 
-template <Numeric N = double>
-inline auto velocity_from_kinematic_energy(N kinematic_energy, N mass) {
+inline auto velocity_from_kinematic_energy(Numeric auto kinematic_energy,
+                                           Numeric auto mass) {
   return sqrt(2 * kinematic_energy / mass);
 }
 

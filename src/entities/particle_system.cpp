@@ -35,10 +35,16 @@ inline vector<float> CreateColorArray(const vector<Particle>& particles) {
   return color_arr;
 }
 
-void UpdateParticle(Particle& P, float time) {
+void UpdateParticle(Particle& P,
+                    float time,
+                    bool enable_bounce = true,
+                    float coeff_of_restitution = 0.8,
+                    float mass = 0.5) {
   P.lifetime -= time;
   simulation::apply_gravity(P, time);
   simulation::update_particle_position(P, time);
+  if (enable_bounce)
+    simulation::simple_ground_bounce(P, 0, coeff_of_restitution);
 }
 
 int ParticleEngine::queued_shots(float time_since) {
@@ -67,7 +73,7 @@ void ParticleEngine::emit_particle(int num_particles) {
     Particle P = simulation::fire_particle(this->magnitude, this->angle,
                                            this->particle_lifetime);
 
-    UpdateParticle(P, sim_time);
+    UpdateParticle(P, sim_time, true, this->coeff_of_restitution);
 
     particles.push_back(P);
   }
@@ -103,7 +109,7 @@ void ParticleEngine::Update() {
   if (time > update_threshold) {
     // Apply simulation step to all particles
     for (auto& p : particles)
-      UpdateParticle(p, time);
+      UpdateParticle(p, time, true, this->coeff_of_restitution);
 
     // Remove dead particles
     remove_particles(this->particles);

@@ -54,10 +54,17 @@ void apply_gravity(Particle& P, float time) {
 /*! \brief Move particle based on it's velocity */
 void update_particle_position(Particle& p, float time) {
   physics::apply_velocity(p, time);
+}
 
-  if (p.pos.y <= 0 && p.velocity.y < 0) {
-    physics::bounce_basic(p, 5.0, 0.85, 0);
+bool simple_ground_bounce(Particle& p,
+                          float ground_height,
+                          float e,
+                          float mass) {
+  if (p.pos.y <= ground_height && p.velocity.y < 0) {
+    physics::bounce_basic(p, mass, e, ground_height);
+    return true;
   }
+  return false;
 }
 
 /*! \brief Determine if this particle should die on this frame */
