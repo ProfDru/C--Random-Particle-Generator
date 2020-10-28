@@ -31,7 +31,7 @@ void InitParticleMenu(rpg::ParticleEngine* PE) {
       new Slider("Particle Lifetime", &PE->particle_lifetime, 0.1, 10),
       new Slider("Horizontal Angle", &PE->angle, 0, 85),
       new Slider("Magnitude", &PE->magnitude, 1, 20),
-      new Slider("Fire Rate", &PE->fire_rate, 0.00001, 0.1),
+      new Slider("Fire Rate", &PE->fire_rate, 0.001, 0.1),
 
       new Label("Particle Physics", "Particle Physics"),
       new Slider("CoR", &PE->coeff_of_restitution, 0, 1)};
