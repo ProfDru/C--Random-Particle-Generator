@@ -2,6 +2,8 @@
 #include <entities\particle_simulation.h>
 
 #include <functional>
+#include <cassert>
+#include <assert.h>
 
 using std::vector;
 namespace rpg {
@@ -83,11 +85,14 @@ void ParticleEngine::emit_particle(int num_particles) {
 }
 
 void ParticleEngine::create_new_particles(float time) {
+  if (NumVertices() >= max_particles)
+    return;
+
   const int num_shots = queued_shots(time);
 
   // Limit max number of particles by max_particles and shot time
-  const int particle_budget = std::min(
-      this->max_particles - static_cast<int>(particles.size()), num_shots);
+  const int remaining_vertices = std::max(max_particles - NumVertices(), 0);
+  const int particle_budget = std::clamp(num_shots, 0, remaining_vertices);
 
   emit_particle(particle_budget);
 }
