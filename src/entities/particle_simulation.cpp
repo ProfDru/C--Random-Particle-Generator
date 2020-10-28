@@ -56,7 +56,7 @@ void update_particle_position(Particle& p, float time) {
   physics::apply_velocity(p, time);
 
   if (p.pos.y <= 0 && p.velocity.y < 0) {
-    physics::bounce_basic(p, 5.0, 0.85f);
+    physics::bounce_basic(p, 5.0, 0.85, 0);
   }
 }
 
