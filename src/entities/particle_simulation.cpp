@@ -59,9 +59,9 @@ void update_particle_position(Particle& p, float time) {
 bool simple_ground_bounce(Particle& p,
                           float ground_height,
                           float e,
-                          float mass) {
+                          float time_since_last_update) {
   if (p.pos.y <= ground_height && p.velocity.y < 0) {
-    physics::bounce_basic(p, mass, e, ground_height);
+    physics::bounce_basic(p, 0.5, e, ground_height, time_since_last_update);
     return true;
   }
   return false;

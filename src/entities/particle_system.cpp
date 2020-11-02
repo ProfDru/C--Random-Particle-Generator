@@ -49,7 +49,7 @@ void UpdateParticle(Particle& P,
   simulation::update_particle_position(P, time);
 
   if (enable_bounce)
-    simulation::simple_ground_bounce(P, 0, coeff_of_restitution);
+    simulation::simple_ground_bounce(P, 0, coeff_of_restitution, time);
 }
 
 int ParticleEngine::queued_shots(float time_since) {
