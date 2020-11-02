@@ -10,6 +10,7 @@
 #include <window/hud/slider.h>
 #include <window/hud/button.h>
 #include <window/hud/fps_counter.h>
+#include <window/hud/group.h>
 
 using namespace rpg::hud;
 using std::string;
@@ -21,10 +22,10 @@ std::string GetParticleCount(ParticleEngine* ps) {
 }
 
 void InitParticleMenu(rpg::ParticleEngine* PE) {
-  vector<Widget*> options_widgets = {
-      new Label("Simulation", "Simulation"),
-      new Slider("Simulation Speed", &rpg::simulation::time_scale, 0.0f, 2.0f),
-      new Label("Particle System", "Particle System"),
+  vector<Widget*> simulation = {
+      new Slider("Simulation Speed", &rpg::simulation::time_scale, 0.0f, 2.0f)};
+
+  vector<Widget*> particle_system{
       new Slider(
           "Number of Particles", &PE->max_particles, 1, 100000,
           "Maximum number of particles that can be alive at any time. Once "
@@ -37,11 +38,17 @@ void InitParticleMenu(rpg::ParticleEngine* PE) {
           "Magnitude", &PE->magnitude, 1, 20,
           "The magnitude of a particle's initial velocity upon creation"),
       new Slider("Fire Rate", &PE->fire_rate, 0.001, 0.1,
-                 "The minimum time between creation of each particle."),
-      new Label("Particle Physics", "Particle Physics"),
+                 "The minimum time between creation of each particle.")};
+
+  vector<Widget*> physics = {
       new Slider("CoR", &PE->coeff_of_restitution, 0, 1,
                  "Coefficent of Restitution. Determines how much energy is "
                  "lost by a particle upon bouncing. ")};
+
+  std::vector<Widget*> options_widgets = {
+      new Group("Simulation", simulation, true),
+      new Group("Particle System", particle_system, true),
+      new Group("Particle Physics", physics, true)};
 
   vector<Widget*> fps_widgets{
       new FPSCounter("FrameCounter"),
