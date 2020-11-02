@@ -39,9 +39,6 @@ find_package(GLM REQUIRED)
 build_depend_from_git(glfw https://github.com/glfw/glfw)
 add_subdirectory(external)
 
-
-
-
 # Setup main
 add_executable(RandomParticleEngine)
 target_sources(RandomParticleEngine
@@ -99,6 +96,10 @@ target_sources(RandomParticleEngine
     src/window/hud/combo.cpp
     src/window/hud/fps_counter.h
     src/window/hud/fps_counter.cpp
+    
+    
+    src/menus/settings.cpp
+    src/menus/settings.h
 
     src/math/vector3d.h
     src/math/units.h

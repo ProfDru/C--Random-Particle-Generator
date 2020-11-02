@@ -19,14 +19,10 @@
 
 namespace rpg::simulation {
 
-static double last_time = 0;
-static const float time_threshold = 0.00001f;
-static const float start_lifetime = 5.0f;
 float time_scale = 1.0f;
 
-double get_time_since() {
-  // Get the current time
-  double current_time = rpg::system::get_precise_time_ms();
+double get_time_since(double last_time) {
+  const double current_time = get_time();
 
   // If last time was never set, just return 0 and set it
   if (last_time == 0) {
@@ -35,10 +31,12 @@ double get_time_since() {
   }
 
   // set the return value then update last time
-  auto return_time = current_time - last_time;
-  last_time = current_time;
+  const double return_time = current_time - static_cast<double>(last_time);
 
-  return return_time * time_scale;
+  return return_time * static_cast<double>(time_scale);
+}
+double get_time() {
+  return rpg::system::get_precise_time_ms();
 }
 
 inline float get_rand(float min, float max) {
@@ -49,23 +47,24 @@ inline float get_rand_nolimits() {
   return RandomManager::GetRandomNumber();
 }
 
+void apply_gravity(Particle& P, float time) {
+  physics::apply_gravity(P, time);
+}
+
 /*! \brief Move particle based on it's velocity */
 void update_particle_position(Particle& p, float time) {
   physics::apply_velocity(p, time);
+}
 
-  if (p.pos.y <= 0 && p.velocity.y < 0) {
-    physics::bounce_basic(p, 5.0, 0.85f);
-    // p.lifetime -= 1.0f;
-
-    // math::inverse_lerp(0.25, 2.0, math::magnitude(p.velocity));
-
-    /*
-        if (abs(p.velocity.y) < 4.0f)
-          p.lifetime = 0;
-        else
-          p.lifetime += 3.0f;
-    */
+bool simple_ground_bounce(Particle& p,
+                          float ground_height,
+                          float e,
+                          float mass) {
+  if (p.pos.y <= ground_height && p.velocity.y < 0) {
+    physics::bounce_basic(p, mass, e, ground_height);
+    return true;
   }
+  return false;
 }
 
 /*! \brief Determine if this particle should die on this frame */
@@ -73,23 +72,10 @@ bool has_lifetime(const Particle& p) {
   return p.lifetime > 0.0f;
 }
 
-bool sim_particle(Particle& p, float time) {
-  if (!has_lifetime(p))
-    return false;
-
-  p.lifetime -= time;
-
-  double life_left = 1.0 - math::inverse_lerp(0.0, start_lifetime, p.lifetime);
-  p.color = glm::rgbColor(glm::vec3(life_left * 255, 1.0f, 1 - life_left));
+void update_position(Particle& p, float time) {
   physics::apply_gravity(p, time);
   update_particle_position(p, time);
-  return true;
 }
-
-static float overflow = 0.0f;
-const static float fire_rate = 0.0005f;
-static const int max_patricles = 50000;
-static const float spread = 45.0f;
 
 const float max_mag = 3.0f;
 const float min_mag = 1.0f;
@@ -102,26 +88,13 @@ inline glm::vec3 make_random_color() {
   return glm::rgbColor(glm::vec3(saturation, 0.25f, 1.0f));
 }
 
-/*! \brief calculate the number of new particles to create this frame */
-int calc_num_shots(float time_since) {
-  const float shot_time = overflow + time_since;
-
-  int shots = std::floor(shot_time / fire_rate);
-  if (shots > 0)
-    overflow = (shot_time - (static_cast<float>(shots) * fire_rate));
-  else
-    overflow += time_since;
-
-  return shots;
-}
-
-inline Particle EmitParticle() {
+inline Particle EmitParticle(float angle, float lifetime) {
   const float magnitude = get_rand(12.5, 15);  // get_rand(min_mag, max_mag);
 
   const float horizontal_angle =
-      get_rand(0, 360);               // rand(0, 360);
-                                      // ticks = (ticks % 360) + 1;
-  const float vertical_angle = 25.0;  // get_rand(0, spread);
+      get_rand(0, 360);                // rand(0, 360);
+                                       // ticks = (ticks % 360) + 1;
+  const float vertical_angle = angle;  // get_rand(0, spread);
 
   auto dir = math::spherical_to_cartesian(glm::vec3(
       1, math::to_radians(horizontal_angle), math::to_radians(vertical_angle)));
@@ -131,37 +104,24 @@ inline Particle EmitParticle() {
   out_particle.velocity = (dir * magnitude);
 
   out_particle.color = {0, 0.25, 1};
-  out_particle.lifetime = start_lifetime;
+  out_particle.lifetime = lifetime;
   return out_particle;
 }
 
-void create_particles(std::vector<Particle>& particles, float time) {
-  const int num_shots = calc_num_shots(time);
+Particle fire_particle(float magnitude, float vertical_angle, float lifetime) {
+  const float horizontal_angle =
+      get_rand(0, 360);  // rand(0, 360);
+                         // ticks = (ticks % 360) + 1;
 
-  int particle_budget =
-      std::min(max_patricles - static_cast<int>(particles.size()), num_shots);
+  auto dir = math::spherical_to_cartesian(glm::vec3(
+      1, math::to_radians(horizontal_angle), math::to_radians(vertical_angle)));
+  dir = glm::rotateX(dir, math::to_radians<int, float>(-90));
 
-  if (particle_budget > 0)
-    for (int i = 0; i < particle_budget; i++) {
-      particles.push_back(EmitParticle());
-    }
-}
-
-void simulate_particles(std::vector<Particle>& particles) {
-  // Convert milliseconds to seconds
-  const float time_diff = static_cast<float>(get_time_since()) / 1000.0f;
-
-  // Don't update if the time is less than the threshold
-  if (time_diff < time_threshold)
-    return;
-
-  particles.erase(std::remove_if(particles.begin(), particles.end(),
-                                 [time_diff](Particle& p) -> bool {
-                                   return !sim_particle(p, time_diff);
-                                 }),
-                  particles.end());
-
-  create_particles(particles, time_diff);
+  Particle out_particle(origin, white);
+  out_particle.velocity = (dir * magnitude);
+  out_particle.color = {0, 0.25, 1};
+  out_particle.lifetime = lifetime;
+  return out_particle;
 }
 
 }  // namespace rpg::simulation
