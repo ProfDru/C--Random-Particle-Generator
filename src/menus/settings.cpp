@@ -12,6 +12,7 @@
 #include <window/hud/fps_counter.h>
 #include <window/hud/group.h>
 #include <window/hud/checkbox.h>
+#include <window/hud/optional_element.h>
 
 using namespace rpg::hud;
 using std::string;
@@ -42,10 +43,12 @@ void InitParticleMenu(rpg::ParticleEngine* PE) {
       new Slider("Fire Rate", &PE->fire_rate, 0.001, 0.1,
                  "The minimum time between creation of each particle.")};
 
-  vector<Widget*> physics = {
+  vector<Widget*> physics = {new AlternateWidget(
       new Slider("CoR", &PE->coeff_of_restitution, 0, 1,
                  "Coefficent of Restitution. Determines how much energy is "
-                 "lost by a particle upon bouncing. ")};
+                 "lost by a particle upon bouncing."),
+      new Label("Enable boucning to edit CoR.", "Enable bouncing to edit CoR."),
+      &PE->bounce)};
 
   std::vector<Widget*> options_widgets = {
       new Group("Simulation", simulation, true),
