@@ -15,18 +15,24 @@ class Slider : public Label {
   float max, min;
 
  public:
-  Slider(const std::string& name, int* var, float min = 0.0f, float max = 1.0f);
+  Slider(const std::string& name,
+         int* var,
+         float min = 0.0f,
+         float max = 1.0f,
+         const std::string& help_text = "");
 
   Slider(const std::string& name,
          float* var,
          float min = 0.0f,
-         float max = 1.0f);
+         float max = 1.0f,
+         const std::string& help_text = "");
 
   Slider(const std::string& name,
          const std::string& label,
          float* var,
          float min = 0.0f,
-         float max = 1.0f);
+         float max = 1.0f,
+         const std::string& help_text = "");
 
   void Draw();
 
