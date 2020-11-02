@@ -126,7 +126,7 @@ void remove_particles(std::vector<Particle>& particles) {
 void ParticleEngine::simulate_particles(float time) {
   // Apply simulation step to all particles
   for (auto& p : particles) {
-    UpdateParticle(p, time, true, this->coeff_of_restitution);
+    UpdateParticle(p, time, this->bounce, this->coeff_of_restitution);
     color_particle(p);
   }
 

@@ -98,6 +98,8 @@ target_sources(RandomParticleEngine
     src/window/hud/fps_counter.cpp
     src/window/hud/group.cpp
     src/window/hud/group.h
+    src/window/hud/checkbox.h
+    src/window/hud/checkbox.cpp
     
     
     src/menus/settings.cpp

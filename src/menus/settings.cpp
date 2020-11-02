@@ -11,6 +11,7 @@
 #include <window/hud/button.h>
 #include <window/hud/fps_counter.h>
 #include <window/hud/group.h>
+#include <window/hud/checkbox.h>
 
 using namespace rpg::hud;
 using std::string;
@@ -23,7 +24,8 @@ std::string GetParticleCount(ParticleEngine* ps) {
 
 void InitParticleMenu(rpg::ParticleEngine* PE) {
   vector<Widget*> simulation = {
-      new Slider("Simulation Speed", &rpg::simulation::time_scale, 0.0f, 2.0f)};
+      new Slider("Simulation Speed", &rpg::simulation::time_scale, 0.0f, 2.0f),
+      new CheckBox("Enable Bounce", &PE->bounce)};
 
   vector<Widget*> particle_system{
       new Slider(

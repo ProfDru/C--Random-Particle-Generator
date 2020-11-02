@@ -51,6 +51,7 @@ class ParticleEngine : public Entity {
 
   /// PARTICLE
   float coeff_of_restitution = 0.8f;
+  bool bounce = true;
 
   /*! \brief Construct the particle engine */
   ParticleEngine();
