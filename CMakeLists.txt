@@ -100,8 +100,9 @@ target_sources(RandomParticleEngine
     src/window/hud/group.h
     src/window/hud/checkbox.h
     src/window/hud/checkbox.cpp
-    
-    
+    src/window/hud/optional_element.h
+    src/window/hud/optional_element.cpp
+
     src/menus/settings.cpp
     src/menus/settings.h
 
