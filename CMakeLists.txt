@@ -104,6 +104,7 @@ target_sources(RandomParticleEngine
     src/math/vector3d.h
     src/math/units.h
     src/math/base.h
+    src/math/color.h
 
     src/physics/base.h
     src/physics/kinematics.h
@@ -119,6 +120,8 @@ target_sources(RandomParticleEngine
     src/entities/particle.h
 	  src/entities/particle_system.cpp
     src/entities/particle_system.h
+    src/entities/particle_color_algs.cpp
+    src/entities/particle_color_algs.h
 
     src/glfw_bindings.h
     src/glfw_bindings.cpp

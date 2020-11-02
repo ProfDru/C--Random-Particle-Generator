@@ -11,11 +11,14 @@
 namespace rpg {
 
 class ParticleEngine : public Entity {
+  enum class COLOR_MODE { CONSTANT = 0, LIFETIME = 1 };
+
   glm::vec3 pos = {0, 0, 0};
   std::vector<Particle> particles;
   double overflow = 0.0;
   double last_update = 0.0;
   double update_threshold = 0.00000001;
+  COLOR_MODE color_mode = COLOR_MODE::LIFETIME;
 
   /*! \brief Determine how many particles should be emitted based on the
    * firerate, time since last update, and number of alive particles. */
@@ -26,6 +29,9 @@ class ParticleEngine : public Entity {
 
   /*! \brief Emit as many particles as possible */
   void emit_particle(int num_particles);
+
+  /*! \brief color particle by this particle engine's color mode. */
+  void color_particle(Particle& P);
 
   /*! \brief Apply simulation to every live particle, detect and remove dead
    * particles, and create new particles */

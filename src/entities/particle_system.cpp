@@ -1,8 +1,10 @@
 #include <entities\particle_system.h>
 #include <entities\particle_simulation.h>
+#include <entities\particle_color_algs.h>
 
 #include <functional>
 #include <cassert>
+#include <math.h>
 #include <assert.h>
 
 using std::vector;
@@ -45,6 +47,7 @@ void UpdateParticle(Particle& P,
   P.lifetime -= time;
   simulation::apply_gravity(P, time);
   simulation::update_particle_position(P, time);
+
   if (enable_bounce)
     simulation::simple_ground_bounce(P, 0, coeff_of_restitution);
 }
@@ -63,6 +66,15 @@ int ParticleEngine::queued_shots(float time_since) {
     overflow += time_since;
 
   return shots;
+}
+void ParticleEngine::color_particle(Particle& P) {
+  switch (this->color_mode) {
+    case COLOR_MODE::LIFETIME:
+      simulation::rainbow_by_lifetime(P, this->particle_lifetime);
+      break;
+    default:
+      break;
+  }
 }
 
 void ParticleEngine::emit_particle(int num_particles) {
@@ -112,8 +124,10 @@ void remove_particles(std::vector<Particle>& particles) {
 
 void ParticleEngine::simulate_particles(float time) {
   // Apply simulation step to all particles
-  for (auto& p : particles)
+  for (auto& p : particles) {
     UpdateParticle(p, time, true, this->coeff_of_restitution);
+    color_particle(p);
+  }
 
   // Remove dead particles
   remove_particles(this->particles);
