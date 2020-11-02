@@ -91,6 +91,7 @@ void ParticleEngine::emit_particle(int num_particles) {
                                            this->particle_lifetime);
 
     UpdateParticle(P, sim_time, true, this->coeff_of_restitution);
+    color_particle(P);
 
     particles.push_back(P);
   }
