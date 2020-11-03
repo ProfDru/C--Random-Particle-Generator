@@ -104,6 +104,8 @@ target_sources(RandomParticleEngine
     src/window/hud/optional_element.cpp
     src/window/hud/color_picker.h
     src/window/hud/color_picker.cpp 
+    src/window/hud/multi_widget.cpp
+    src/window/hud/multi_widget.h
 
     src/menus/settings.cpp
     src/menus/settings.h

@@ -17,6 +17,7 @@
 #include <window/hud/optional_element.h>
 #include <window/hud/color_picker.h>
 #include <window/hud/combo.h>
+#include <window/hud/multi_widget.h>
 
 using namespace rpg::hud;
 using std::string;
@@ -28,11 +29,20 @@ std::string GetParticleCount(ParticleEngine* ps) {
 }
 
 void InitParticleMenu(rpg::ParticleEngine* PE) {
+  Group* single_color_picker = new Group(
+      "Color Picker",
+      {new ColorPicker("Particle Color", glm::value_ptr(PE->start_color))},
+      false);
+
+  MultiWidget* color_switcher =
+      new MultiWidget(vector<Widget*>{single_color_picker, NULL},
+                      reinterpret_cast<const int*>(&PE->color_mode));
+
   vector<Widget*> colors = {
       new ComboBox("ColorMode",
                    vector<string>{"Constant Color", "Rainbow by Lifetime"},
                    reinterpret_cast<int*>(&PE->color_mode)),
-      new ColorPicker("Particle Color", glm::value_ptr(PE->start_color))};
+      color_switcher};
 
   vector<Widget*> simulation = {
       new Slider("Simulation Speed", &rpg::simulation::time_scale, 0.0f, 2.0f),
