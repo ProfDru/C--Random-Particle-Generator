@@ -12,10 +12,15 @@ void rainbow_by_lifetime(Particle& P, float max_lifetime) {
 }
 
 glm::vec3 rainbow_by_param(float min, float max, float val) {
-  const float hue = rpg::math::inverse_lerp(min, max, val);
-  const float capped_hue = std::lerp(0.0, 0.9, hue);
+  const float violet_cutoff = 0.3;
 
-  glm::vec3 return_color = glm::vec3{capped_hue, 1.0f, 1.0f};
+  // Add red_cutoff to the hue to ensure it isn't in red if it's near zero
+  float hue = rpg::math::inverse_lerp(min, max, val);
+
+  const float capped_hue = 1.0 - std::lerp(violet_cutoff, 1.0, hue);
+  const float clamped_hue = std::clamp(capped_hue, 0.0f, 1.0f);
+
+  glm::vec3 return_color = glm::vec3{clamped_hue, 1.0f, 1.0f};
   rpg::math::color::hsv_to_rgb(return_color);
 
   return return_color;

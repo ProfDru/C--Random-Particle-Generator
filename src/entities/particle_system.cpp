@@ -7,6 +7,7 @@
 #include <math.h>
 #include <assert.h>
 #include <math.h>
+#include <numbers>
 
 using std::vector;
 namespace rpg {
@@ -70,8 +71,9 @@ int ParticleEngine::queued_shots(float time_since) {
 }
 
 inline float calculate_height(float magnitude, float angle) {
-  return magnitude * std::sin(angle);
+  return abs(magnitude * std::sin(std::numbers::pi * (90.0 - angle) / 180.0));
 }
+
 inline float find_apex(float magnitude, float angle) {
   const float y_component = calculate_height(magnitude, angle);
 
