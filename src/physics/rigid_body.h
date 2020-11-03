@@ -30,7 +30,8 @@ inline auto kinematic_energy(const RigidBody auto& body, Numeric auto mass) {
 inline void bounce_basic(RigidBody auto& body,
                          Numeric auto mass = 5.0,
                          Numeric auto e = 0,
-                         Numeric auto collision_pos = 0.0) {
+                         Numeric auto collision_pos = 0.0,
+                         Numeric auto time_since_last_update = -1) {
   // Do nothing if the particle has no vertical momentum
   const auto y_vel = abs(get(body.velocity, 1));
   if (y_vel < 0.001) {
@@ -40,8 +41,15 @@ inline void bounce_basic(RigidBody auto& body,
     return;
   }
 
-  const double distance_underground = abs(collision_pos - get(body.pos, 1));
-  const double time_since_collision = distance_underground / y_vel;
+  const auto distance_underground = abs(collision_pos - get(body.pos, 1));
+  const auto time_since_collision = distance_underground / y_vel;
+
+  // If time_since_last_update is unset, set it to time_since_collision to
+  // remove the check entirely
+  if (time_since_last_update == -1)
+    time_since_last_update = time_since_collision;
+  else if (time_since_collision > time_since_last_update)
+    return;
 
   // Rewind the particle to the time just before the point of collision
   physics::apply_velocity(body, -time_since_collision);
@@ -62,6 +70,7 @@ inline void bounce_basic(RigidBody auto& body,
 
   // replay the motion of the object since the time of impact with the new
   // velocity
-  physics::apply_velocity(body, time_since_collision);
+  physics::apply_velocity(
+      body, std::min(time_since_collision, time_since_last_update));
 }  // namespace rpg::physics
 }  // namespace rpg::physics

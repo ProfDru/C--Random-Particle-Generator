@@ -96,14 +96,24 @@ target_sources(RandomParticleEngine
     src/window/hud/combo.cpp
     src/window/hud/fps_counter.h
     src/window/hud/fps_counter.cpp
-    
-    
+    src/window/hud/group.cpp
+    src/window/hud/group.h
+    src/window/hud/checkbox.h
+    src/window/hud/checkbox.cpp
+    src/window/hud/optional_element.h
+    src/window/hud/optional_element.cpp
+    src/window/hud/color_picker.h
+    src/window/hud/color_picker.cpp 
+    src/window/hud/multi_widget.cpp
+    src/window/hud/multi_widget.h
+
     src/menus/settings.cpp
     src/menus/settings.h
 
     src/math/vector3d.h
     src/math/units.h
     src/math/base.h
+    src/math/color.h
 
     src/physics/base.h
     src/physics/kinematics.h
@@ -119,6 +129,8 @@ target_sources(RandomParticleEngine
     src/entities/particle.h
 	  src/entities/particle_system.cpp
     src/entities/particle_system.h
+    src/entities/particle_color_algs.cpp
+    src/entities/particle_color_algs.h
 
     src/glfw_bindings.h
     src/glfw_bindings.cpp

@@ -1,9 +1,13 @@
 #include <entities\particle_system.h>
 #include <entities\particle_simulation.h>
+#include <entities\particle_color_algs.h>
 
 #include <functional>
 #include <cassert>
+#include <math.h>
 #include <assert.h>
+#include <math.h>
+#include <numbers>
 
 using std::vector;
 namespace rpg {
@@ -45,8 +49,9 @@ void UpdateParticle(Particle& P,
   P.lifetime -= time;
   simulation::apply_gravity(P, time);
   simulation::update_particle_position(P, time);
+
   if (enable_bounce)
-    simulation::simple_ground_bounce(P, 0, coeff_of_restitution);
+    simulation::simple_ground_bounce(P, 0, coeff_of_restitution, time);
 }
 
 int ParticleEngine::queued_shots(float time_since) {
@@ -65,6 +70,58 @@ int ParticleEngine::queued_shots(float time_since) {
   return shots;
 }
 
+inline float calculate_height(float magnitude, float angle) {
+  return abs(magnitude * std::sin(std::numbers::pi * (90.0 - angle) / 180.0));
+}
+
+inline float find_apex(float magnitude, float angle) {
+  const float y_component = calculate_height(magnitude, angle);
+
+  float apex_time = y_component / 9.8;
+
+  return y_component * apex_time + (-9.8 * pow(apex_time, 2) / 2);
+}
+
+void ParticleEngine::color_particle(Particle& P) {
+  if (this->color_mode == COLOR_MODE::CONSTANT) {
+    P.color = this->start_color;
+    return;
+  } else {
+    // Determine the parameters needed for lerp
+    float min, max, val;
+    switch (this->color_param) {
+      case PARAMETER::LIFETIME:
+        min = 0;
+        max = this->particle_lifetime;
+        val = P.lifetime;
+        break;
+      case PARAMETER::VELOCITY:
+        min = 0;
+        max = calculate_height(this->magnitude, this->angle);
+        val = abs(P.velocity.y);
+        break;
+      case PARAMETER::DIST_FROM_GROUND:
+        min = 0;
+        max = find_apex(this->magnitude, this->angle);
+        val = P.pos.y;
+        break;
+      default:
+        min = 0;
+        max = 1;
+        val = 0;
+
+        break;
+    }
+
+    // Apply lerp color algorithm
+    if (this->color_mode == COLOR_MODE::RAINBOW)
+      P.color = simulation::rainbow_by_param(min, max, val);
+    else if (this->color_mode == COLOR_MODE::GRADIENT)
+      P.color = simulation::lerp_by_param(min, max, val, this->start_color,
+                                          this->end_color);
+  }
+}
+
 void ParticleEngine::emit_particle(int num_particles) {
   for (int i = 0; i < num_particles; i++) {
     // Simulate this particle for the time between it should have been
@@ -79,6 +136,7 @@ void ParticleEngine::emit_particle(int num_particles) {
                                            this->particle_lifetime);
 
     UpdateParticle(P, sim_time, true, this->coeff_of_restitution);
+    color_particle(P);
 
     particles.push_back(P);
   }
@@ -112,8 +170,10 @@ void remove_particles(std::vector<Particle>& particles) {
 
 void ParticleEngine::simulate_particles(float time) {
   // Apply simulation step to all particles
-  for (auto& p : particles)
-    UpdateParticle(p, time, true, this->coeff_of_restitution);
+  for (auto& p : particles) {
+    UpdateParticle(p, time, this->bounce, this->coeff_of_restitution);
+    color_particle(p);
+  }
 
   // Remove dead particles
   remove_particles(this->particles);

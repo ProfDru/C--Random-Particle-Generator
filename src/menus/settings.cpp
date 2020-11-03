@@ -6,10 +6,18 @@
 #include <entities/particle_simulation.h>
 #include <entities/particle_system.h>
 
+#include <glm/gtc/type_ptr.hpp>
+
 #include <window/hud/label.h>
 #include <window/hud/slider.h>
 #include <window/hud/button.h>
 #include <window/hud/fps_counter.h>
+#include <window/hud/group.h>
+#include <window/hud/checkbox.h>
+#include <window/hud/optional_element.h>
+#include <window/hud/color_picker.h>
+#include <window/hud/combo.h>
+#include <window/hud/multi_widget.h>
 
 using namespace rpg::hud;
 using std::string;
@@ -21,10 +29,30 @@ std::string GetParticleCount(ParticleEngine* ps) {
 }
 
 void InitParticleMenu(rpg::ParticleEngine* PE) {
-  vector<Widget*> options_widgets = {
-      new Label("Simulation", "Simulation"),
+  ColorPicker* start_color_picker =
+      new ColorPicker("Gradient Begin Color", glm::value_ptr(PE->start_color));
+  ColorPicker* end_color_picker =
+      new ColorPicker("Gradient End Color", glm::value_ptr(PE->end_color));
+  ComboBox* parameter_box = new ComboBox(
+      "Scale Parameter",
+      vector<string>{"Lifetime", "Distance from the ground", "Velocity"},
+      reinterpret_cast<int*>(&PE->color_param));
+
+  MultiWidget* color_pickers = new MultiWidget(
+      {start_color_picker, end_color_picker, parameter_box},
+      reinterpret_cast<const int*>(&PE->color_mode), {{0}, {2, 0, 1}, {2}});
+
+  vector<Widget*> colors = {
+      new ComboBox("ColorMode",
+                   vector<string>{"Constant Color", "Gradient", "Rainbow"},
+                   reinterpret_cast<int*>(&PE->color_mode)),
+      color_pickers};
+
+  vector<Widget*> simulation = {
       new Slider("Simulation Speed", &rpg::simulation::time_scale, 0.0f, 2.0f),
-      new Label("Particle System", "Particle System"),
+      new CheckBox("Enable Bounce", &PE->bounce)};
+
+  vector<Widget*> particle_system{
       new Slider(
           "Number of Particles", &PE->max_particles, 1, 100000,
           "Maximum number of particles that can be alive at any time. Once "
@@ -37,11 +65,20 @@ void InitParticleMenu(rpg::ParticleEngine* PE) {
           "Magnitude", &PE->magnitude, 1, 20,
           "The magnitude of a particle's initial velocity upon creation"),
       new Slider("Fire Rate", &PE->fire_rate, 0.001, 0.1,
-                 "The minimum time between creation of each particle."),
-      new Label("Particle Physics", "Particle Physics"),
+                 "The minimum time between creation of each particle.")};
+
+  vector<Widget*> physics = {new AlternateWidget(
       new Slider("CoR", &PE->coeff_of_restitution, 0, 1,
                  "Coefficent of Restitution. Determines how much energy is "
-                 "lost by a particle upon bouncing. ")};
+                 "lost by a particle upon bouncing."),
+      new Label("Enable boucning to edit CoR.", "Enable bouncing to edit CoR."),
+      &PE->bounce)};
+
+  std::vector<Widget*> options_widgets = {
+      new Group("Simulation", simulation, true),
+      new Group("Colors", colors, true),
+      new Group("Particle System", particle_system, true),
+      new Group("Particle Physics", physics, true)};
 
   vector<Widget*> fps_widgets{
       new FPSCounter("FrameCounter"),
