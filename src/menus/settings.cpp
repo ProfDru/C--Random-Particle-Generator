@@ -29,20 +29,24 @@ std::string GetParticleCount(ParticleEngine* ps) {
 }
 
 void InitParticleMenu(rpg::ParticleEngine* PE) {
-  Group* single_color_picker = new Group(
-      "Color Picker",
-      {new ColorPicker("Particle Color", glm::value_ptr(PE->start_color))},
-      false);
+  ColorPicker* start_color_picker =
+      new ColorPicker("Gradient Begin Color", glm::value_ptr(PE->start_color));
+  ColorPicker* end_color_picker =
+      new ColorPicker("Gradient End Color", glm::value_ptr(PE->end_color));
+  ComboBox* parameter_box = new ComboBox(
+      "Scale Parameter",
+      vector<string>{"Lifetime", "Distance from the ground", "Velocity"},
+      reinterpret_cast<int*>(&PE->color_param));
 
-  MultiWidget* color_switcher =
-      new MultiWidget(vector<Widget*>{single_color_picker, NULL},
-                      reinterpret_cast<const int*>(&PE->color_mode));
+  MultiWidget* color_pickers = new MultiWidget(
+      {start_color_picker, end_color_picker, parameter_box},
+      reinterpret_cast<const int*>(&PE->color_mode), {{0}, {2, 0, 1}, {2}});
 
   vector<Widget*> colors = {
       new ComboBox("ColorMode",
-                   vector<string>{"Constant Color", "Rainbow by Lifetime"},
+                   vector<string>{"Constant Color", "Gradient", "Rainbow"},
                    reinterpret_cast<int*>(&PE->color_mode)),
-      color_switcher};
+      color_pickers};
 
   vector<Widget*> simulation = {
       new Slider("Simulation Speed", &rpg::simulation::time_scale, 0.0f, 2.0f),

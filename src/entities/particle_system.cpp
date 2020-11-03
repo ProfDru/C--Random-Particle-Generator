@@ -6,6 +6,7 @@
 #include <cassert>
 #include <math.h>
 #include <assert.h>
+#include <math.h>
 
 using std::vector;
 namespace rpg {
@@ -67,16 +68,55 @@ int ParticleEngine::queued_shots(float time_since) {
 
   return shots;
 }
+
+inline float calculate_height(float magnitude, float angle) {
+  return magnitude * std::sin(angle);
+}
+inline float find_apex(float magnitude, float angle) {
+  const float y_component = calculate_height(magnitude, angle);
+
+  float apex_time = y_component / 9.8;
+
+  return y_component * apex_time + (-9.8 * pow(apex_time, 2) / 2);
+}
+
 void ParticleEngine::color_particle(Particle& P) {
-  switch (this->color_mode) {
-    case COLOR_MODE::LIFETIME:
-      simulation::rainbow_by_lifetime(P, this->particle_lifetime);
-      break;
-    case COLOR_MODE::CONSTANT:
-      P.color = this->start_color;
-      break;
-    default:
-      break;
+  if (this->color_mode == COLOR_MODE::CONSTANT) {
+    P.color = this->start_color;
+    return;
+  } else {
+    // Determine the parameters needed for lerp
+    float min, max, val;
+    switch (this->color_param) {
+      case PARAMETER::LIFETIME:
+        min = 0;
+        max = this->particle_lifetime;
+        val = P.lifetime;
+        break;
+      case PARAMETER::VELOCITY:
+        min = 0;
+        max = calculate_height(this->magnitude, this->angle);
+        val = abs(P.velocity.y);
+        break;
+      case PARAMETER::DIST_FROM_GROUND:
+        min = 0;
+        max = find_apex(this->magnitude, this->angle);
+        val = P.pos.y;
+        break;
+      default:
+        min = 0;
+        max = 1;
+        val = 0;
+
+        break;
+    }
+
+    // Apply lerp color algorithm
+    if (this->color_mode == COLOR_MODE::RAINBOW)
+      P.color = simulation::rainbow_by_param(min, max, val);
+    else if (this->color_mode == COLOR_MODE::GRADIENT)
+      P.color = simulation::lerp_by_param(min, max, val, this->start_color,
+                                          this->end_color);
   }
 }
 
