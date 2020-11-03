@@ -1,4 +1,6 @@
 # C++ Random Particle Generator (RPG)
+![Rainbow](demo_screenshots/rainbow_velocity_with_gui.png)
+
 
 ## Description
 
@@ -9,6 +11,7 @@ This project is inspired by the particle generator example from [OpenGL-Tutorial
 Depending on how this project progresses, it may be factored into several libraries for later reuse. 
 
 ## Goals
+![Pink Purple](demo_screenshots/pink_purple.png)
 
 The primary purpose of this application is to improve my familiarity with the following topics:
 
@@ -20,6 +23,7 @@ The primary purpose of this application is to improve my familiarity with the fo
 
 ## Build Instructions
 
+![Cool Shot](demo_screenshots/cool_shot.png)
 Will be formalized once version 1.0 is complete.
 
 ### Dependencies
