@@ -102,6 +102,8 @@ target_sources(RandomParticleEngine
     src/window/hud/checkbox.cpp
     src/window/hud/optional_element.h
     src/window/hud/optional_element.cpp
+    src/window/hud/color_picker.h
+    src/window/hud/color_picker.cpp 
 
     src/menus/settings.cpp
     src/menus/settings.h

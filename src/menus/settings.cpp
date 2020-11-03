@@ -6,6 +6,8 @@
 #include <entities/particle_simulation.h>
 #include <entities/particle_system.h>
 
+#include <glm/gtc/type_ptr.hpp>
+
 #include <window/hud/label.h>
 #include <window/hud/slider.h>
 #include <window/hud/button.h>
@@ -13,6 +15,8 @@
 #include <window/hud/group.h>
 #include <window/hud/checkbox.h>
 #include <window/hud/optional_element.h>
+#include <window/hud/color_picker.h>
+#include <window/hud/combo.h>
 
 using namespace rpg::hud;
 using std::string;
@@ -24,6 +28,12 @@ std::string GetParticleCount(ParticleEngine* ps) {
 }
 
 void InitParticleMenu(rpg::ParticleEngine* PE) {
+  vector<Widget*> colors = {
+      new ComboBox("ColorMode",
+                   vector<string>{"Constant Color", "Rainbow by Lifetime"},
+                   reinterpret_cast<int*>(&PE->color_mode)),
+      new ColorPicker("Particle Color", glm::value_ptr(PE->start_color))};
+
   vector<Widget*> simulation = {
       new Slider("Simulation Speed", &rpg::simulation::time_scale, 0.0f, 2.0f),
       new CheckBox("Enable Bounce", &PE->bounce)};
@@ -52,6 +62,7 @@ void InitParticleMenu(rpg::ParticleEngine* PE) {
 
   std::vector<Widget*> options_widgets = {
       new Group("Simulation", simulation, true),
+      new Group("Colors", colors, true),
       new Group("Particle System", particle_system, true),
       new Group("Particle Physics", physics, true)};
 

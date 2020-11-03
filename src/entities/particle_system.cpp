@@ -72,6 +72,9 @@ void ParticleEngine::color_particle(Particle& P) {
     case COLOR_MODE::LIFETIME:
       simulation::rainbow_by_lifetime(P, this->particle_lifetime);
       break;
+    case COLOR_MODE::CONSTANT:
+      P.color = this->start_color;
+      break;
     default:
       break;
   }
