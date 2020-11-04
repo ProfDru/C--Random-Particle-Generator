@@ -185,20 +185,10 @@ void ParticleEngine::simulate_particles(float time) {
 void ParticleEngine::Update() {
   // Get time
   this->fire_rate = 1.0 / static_cast<double>(this->particles_per_second);
-
-  if (time > update_threshold) {
-    // Step through physics in discreet steps
-    const double max_time = 0.016;
-    const int steps = floor(time / max_time);
-    const double remainder = time - (steps * max_time);
-    if (steps > 0)
-      for (int i = 0; i < steps; i++)
-        simulate_particles(max_time);
-
-    simulate_particles(remainder);
-
-    last_update = simulation::get_time();
-  }
+  const double time = simulation::get_time_since(last_update) / 1000.0;
+  const double this_update = simulation::get_time();
+  simulate_particles(time);
+  last_update = this_update;
 }
 
 std::vector<float> ParticleEngine::GetVertexBuffer() const {

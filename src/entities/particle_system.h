@@ -17,7 +17,6 @@ class ParticleEngine : public Entity {
   std::vector<Particle> particles;
   double overflow = 0.0;
   double last_update = 0.0;
-  double update_threshold = 0.00000001;
 
   /*! \brief Determine how many particles should be emitted based on the
    * firerate, time since last update, and number of alive particles. */
@@ -42,6 +41,8 @@ class ParticleEngine : public Entity {
       15000;  //< Maximum number of particles alive at any given time
   float fire_rate =
       0.001;  //< Minimum delay between the creation of each particle
+
+  int particles_per_second = 1000;
   float particle_lifetime = 5.0f;  //< Maximum length of time a particle can be
                                    // alive before being cleaned up
   float angle = 20.0f;  //< Angle between y+ and the ground to fire particles in
