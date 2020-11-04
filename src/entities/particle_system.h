@@ -17,6 +17,7 @@ class ParticleEngine : public Entity {
   std::vector<Particle> particles;
   double overflow = 0.0;
   double last_update = 0.0;
+  const double update_threshold = 0.01 / 1000.0;
 
   /*! \brief Determine how many particles should be emitted based on the
    * firerate, time since last update, and number of alive particles. */

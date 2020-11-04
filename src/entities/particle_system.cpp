@@ -186,10 +186,11 @@ void ParticleEngine::Update() {
   // Get time
   this->fire_rate = 1.0 / static_cast<double>(this->particles_per_second);
   const double time = simulation::get_time_since(last_update) / 1000.0;
-
-  const double this_update = simulation::get_time();
-  simulate_particles(time);
-  last_update = this_update;
+  if (time > update_threshold) {
+    const double this_update = simulation::get_time();
+    simulate_particles(time);
+    last_update = this_update;
+  }
 }
 
 std::vector<float> ParticleEngine::GetVertexBuffer() const {
