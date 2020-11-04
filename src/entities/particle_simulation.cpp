@@ -35,6 +35,7 @@ double get_time_since(double last_time) {
 
   return return_time * static_cast<double>(time_scale);
 }
+
 double get_time() {
   return rpg::system::get_precise_time_ms();
 }
@@ -47,66 +48,25 @@ inline float get_rand_nolimits() {
   return RandomManager::GetRandomNumber();
 }
 
-void apply_gravity(Particle& P, float time) {
-  physics::apply_gravity(P, time);
-}
-
 /*! \brief Move particle based on it's velocity */
-void update_particle_position(Particle& p, float time) {
-  physics::apply_velocity(p, time);
+void update_particle_position(Particle& p, double time) {
+  physics::update_position_with_gravity(p.pos, p.velocity, time);
 }
 
 bool simple_ground_bounce(Particle& p,
                           float ground_height,
                           float e,
-                          float time_since_last_update) {
+                          double time_since_last_update) {
   if (p.pos.y <= ground_height && p.velocity.y < 0) {
-    physics::bounce_basic(p, 0.5, e, ground_height, time_since_last_update);
+    physics::bounce_basic(p, 0.5, e, static_cast<double>(ground_height),
+                          time_since_last_update);
     return true;
   }
   return false;
 }
 
-/*! \brief Determine if this particle should die on this frame */
-bool has_lifetime(const Particle& p) {
-  return p.lifetime > 0.0f;
-}
-
-void update_position(Particle& p, float time) {
-  physics::apply_gravity(p, time);
-  update_particle_position(p, time);
-}
-
-const float max_mag = 3.0f;
-const float min_mag = 1.0f;
 const glm::vec3 origin(0, 0, 0);
 const glm::vec3 white(255, 255, 255);
-
-inline glm::vec3 make_random_color() {
-  float saturation = RandomManager::random_range(0, 255);
-
-  return glm::rgbColor(glm::vec3(saturation, 0.25f, 1.0f));
-}
-
-inline Particle EmitParticle(float angle, float lifetime) {
-  const float magnitude = get_rand(12.5, 15);  // get_rand(min_mag, max_mag);
-
-  const float horizontal_angle =
-      get_rand(0, 360);                // rand(0, 360);
-                                       // ticks = (ticks % 360) + 1;
-  const float vertical_angle = angle;  // get_rand(0, spread);
-
-  auto dir = math::spherical_to_cartesian(glm::vec3(
-      1, math::to_radians(horizontal_angle), math::to_radians(vertical_angle)));
-  dir = glm::rotateX(dir, math::to_radians<int, float>(-90));
-
-  Particle out_particle(origin, white);
-  out_particle.velocity = (dir * magnitude);
-
-  out_particle.color = {0, 0.25, 1};
-  out_particle.lifetime = lifetime;
-  return out_particle;
-}
 
 Particle fire_particle(float magnitude, float vertical_angle, float lifetime) {
   const float horizontal_angle =

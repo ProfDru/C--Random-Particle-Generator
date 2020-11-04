@@ -42,19 +42,19 @@ inline vector<float> CreateColorArray(const vector<Particle>& particles) {
 }
 
 void UpdateParticle(Particle& P,
-                    float time,
+                    double time,
                     bool enable_bounce = true,
                     float coeff_of_restitution = 0.8,
                     float mass = 0.5) {
   P.lifetime -= time;
-  simulation::apply_gravity(P, time);
+  // simulation::apply_gravity(P, time);
   simulation::update_particle_position(P, time);
 
   if (enable_bounce)
     simulation::simple_ground_bounce(P, 0, coeff_of_restitution, time);
 }
 
-int ParticleEngine::queued_shots(float time_since) {
+int ParticleEngine::queued_shots(double time_since) {
   // Use overflow from the previous shot queue
   const double shot_time = this->overflow + time_since;
 
@@ -126,8 +126,8 @@ void ParticleEngine::emit_particle(int num_particles) {
   for (int i = 0; i < num_particles; i++) {
     // Simulate this particle for the time between it should have been
     // fired and the time it was fired
-    const float sim_time =
-        (static_cast<float>(i) * this->fire_rate) + this->overflow;
+    const double sim_time =
+        (static_cast<double>(i) * this->fire_rate) + this->overflow;
 
     if (sim_time >= this->particle_lifetime)
       break;
@@ -142,7 +142,7 @@ void ParticleEngine::emit_particle(int num_particles) {
   }
 }
 
-void ParticleEngine::create_new_particles(float time) {
+void ParticleEngine::create_new_particles(double time) {
   if (NumVertices() >= max_particles)
     return;
 
@@ -168,7 +168,7 @@ void remove_particles(std::vector<Particle>& particles) {
       particles.end());
 }
 
-void ParticleEngine::simulate_particles(float time) {
+void ParticleEngine::simulate_particles(double time) {
   // Apply simulation step to all particles
   for (auto& p : particles) {
     UpdateParticle(p, time, this->bounce, this->coeff_of_restitution);
@@ -184,20 +184,12 @@ void ParticleEngine::simulate_particles(float time) {
 
 void ParticleEngine::Update() {
   // Get time
-  float time = simulation::get_time_since(last_update) / 1000.0f;
-
+  this->fire_rate = 1.0 / static_cast<double>(this->particles_per_second);
+  const double time = simulation::get_time_since(last_update) / 1000.0;
   if (time > update_threshold) {
-    // Step through physics in discreet steps
-    const double max_time = 0.016;
-    const int steps = floor(time / max_time);
-    const double remainder = time - (steps * max_time);
-    if (steps > 0)
-      for (int i = 0; i < steps; i++)
-        simulate_particles(max_time);
-
-    simulate_particles(remainder);
-
-    last_update = simulation::get_time();
+    const double this_update = simulation::get_time();
+    simulate_particles(time);
+    last_update = this_update;
   }
 }
 

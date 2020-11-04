@@ -17,14 +17,14 @@ class ParticleEngine : public Entity {
   std::vector<Particle> particles;
   double overflow = 0.0;
   double last_update = 0.0;
-  double update_threshold = 0.00000001;
+  const double update_threshold = 0.01 / 1000.0;
 
   /*! \brief Determine how many particles should be emitted based on the
    * firerate, time since last update, and number of alive particles. */
-  int queued_shots(float time_since);
+  int queued_shots(double time_since);
 
   /*! \brief Create and emit particles based on how much time passed.. */
-  void create_new_particles(float time);
+  void create_new_particles(double time);
 
   /*! \brief Emit as many particles as possible */
   void emit_particle(int num_particles);
@@ -34,14 +34,16 @@ class ParticleEngine : public Entity {
 
   /*! \brief Apply simulation to every live particle, detect and remove dead
    * particles, and create new particles */
-  void simulate_particles(float time);
+  void simulate_particles(double time);
 
  public:
   // EMITTER
   int max_particles =
       15000;  //< Maximum number of particles alive at any given time
-  float fire_rate =
+  double fire_rate =
       0.001;  //< Minimum delay between the creation of each particle
+
+  int particles_per_second = 1000;
   float particle_lifetime = 5.0f;  //< Maximum length of time a particle can be
                                    // alive before being cleaned up
   float angle = 20.0f;  //< Angle between y+ and the ground to fire particles in
