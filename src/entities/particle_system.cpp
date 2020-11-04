@@ -47,7 +47,7 @@ void UpdateParticle(Particle& P,
                     float coeff_of_restitution = 0.8,
                     float mass = 0.5) {
   P.lifetime -= time;
-  simulation::apply_gravity(P, time);
+  // simulation::apply_gravity(P, time);
   simulation::update_particle_position(P, time);
 
   if (enable_bounce)

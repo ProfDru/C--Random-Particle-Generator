@@ -53,7 +53,7 @@ void apply_gravity(Particle& P, float time) {
 
 /*! \brief Move particle based on it's velocity */
 void update_particle_position(Particle& p, float time) {
-  physics::apply_velocity(p, time);
+  physics::update_position_with_gravity(p.pos, p.velocity, time);
 }
 
 bool simple_ground_bounce(Particle& p,
@@ -61,7 +61,8 @@ bool simple_ground_bounce(Particle& p,
                           float e,
                           float time_since_last_update) {
   if (p.pos.y <= ground_height && p.velocity.y < 0) {
-    physics::bounce_basic(p, 0.5, e, ground_height, time_since_last_update);
+    physics::bounce_basic(p, 0.5, e, static_cast<double>(ground_height),
+                          time_since_last_update);
     return true;
   }
   return false;

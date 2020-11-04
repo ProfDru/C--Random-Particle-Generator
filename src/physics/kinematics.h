@@ -20,6 +20,18 @@ inline void apply_gravity(K& velocity, seconds s) {
   change_over_time(velocity, Fg, s);
 }
 
+inline void update_position_with_gravity(Vector3D auto& position,
+                                         Vector3D auto& velocity,
+                                         Numeric auto time) {
+  const double seconds = static_cast<double>(time);
+  const Vector3D auto gravity_accel =
+      multiply(multiply(Fg, pow(seconds, 2)), 0.5);
+  const Vector3D auto change_due_to_velocity = multiply(velocity, seconds);
+
+  position = add(add(position, change_due_to_velocity), gravity_accel);
+  velocity = add(velocity, multiply(Fg, seconds));
+}
+
 inline auto kinematic_energy(Numeric auto velocity_magnitude,
                              Numeric auto mass) {
   return (mass * pow(velocity_magnitude, 2) / static_cast<decltype(mass)>(2));
@@ -33,11 +45,11 @@ inline auto kinematic_energy(const Vector3D auto& velocity, Numeric auto mass) {
 
 inline auto velocity_from_kinematic_energy(Numeric auto kinematic_energy,
                                            Numeric auto mass) {
-  return sqrt(2 * kinematic_energy / mass);
+  return sqrt(2.0 * kinematic_energy / mass);
 }
 
 inline constexpr auto calculate_energy_loss(Numeric auto e) {
-  return (1 - pow(e, 2));
+  return (1.0 - pow(e, 2));
 }
 
 }  // namespace rpg::physics
