@@ -184,7 +184,7 @@ void ParticleEngine::simulate_particles(float time) {
 
 void ParticleEngine::Update() {
   // Get time
-  float time = simulation::get_time_since(last_update) / 1000.0f;
+  this->fire_rate = 1.0 / static_cast<double>(this->particles_per_second);
 
   if (time > update_threshold) {
     // Step through physics in discreet steps
