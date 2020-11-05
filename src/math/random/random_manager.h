@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <math/base.h>
 
-namespace rpg::simulation {
+namespace rpg::math::random {
 
 template <class T>
 class RandomNumberGen {
@@ -30,4 +30,4 @@ class RandomManager {
   /*! \brief Calculate a random number between the range of min and max*/
   static float random_range(float min, float max);
 };
-}  // namespace rpg::simulation
+}  // namespace rpg::math::random

@@ -1,7 +1,7 @@
 
 #include <sys_time.h>
 #include <entities\particle_simulation.h>
-#include <random_manager.h>
+#include <math/random/random_manager.h>
 
 #include <math/base.h>
 #include <math/vector3d.h>
@@ -17,6 +17,7 @@
 #include <algorithm>
 #include <numbers>
 
+using namespace rpg::math::random;
 namespace rpg::simulation {
 
 float time_scale = 1.0f;

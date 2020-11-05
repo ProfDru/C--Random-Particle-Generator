@@ -48,13 +48,11 @@ target_sources(RandomParticleEngine
     src/utils.h
     src/utils.cpp
 
-    src/random_manager.cpp
     src/sys_time.cpp
     src/camera.cpp
     src/scene.cpp
     src/main.cpp
 
-    src/random_manager.h
     src/sys_time.h
 
     src/system/kbm_movement.cpp
@@ -114,6 +112,8 @@ target_sources(RandomParticleEngine
     src/math/units.h
     src/math/base.h
     src/math/color.h
+    src/math/random/random_manager.h
+    src/math/random/random_manager.cpp
 
     src/physics/base.h
     src/physics/kinematics.h

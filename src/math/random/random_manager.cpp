@@ -1,7 +1,8 @@
-#include <random_manager.h>
+#include <math/random/random_manager.h>
 #include <cmath>
 #include <algorithm>
-namespace rpg::simulation {
+
+namespace rpg::math::random {
 float RandomManager::GetRandomNumber() {
   return RNG.GetRandomNumber(RD);
 }
@@ -12,4 +13,4 @@ float RandomManager::random_range(float min, float max) {
   return std::lerp(min, max, random_number);
 }
 
-}  // namespace rpg::simulation
+}  // namespace rpg::math::random
