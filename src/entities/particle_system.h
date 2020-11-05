@@ -1,6 +1,6 @@
 #pragma once
 #include <entities/entity.h>
-
+#include <math\random\random_enums.h>
 #include <entities\particle.h>
 
 #include <vector>
@@ -38,6 +38,8 @@ class ParticleEngine : public Entity {
 
  public:
   // EMITTER
+  math::random::RNG_Algorithm random_algorithm =
+      math::random::RNG_Algorithm::DEFAULT;
   int max_particles =
       15000;  //< Maximum number of particles alive at any given time
   double fire_rate =

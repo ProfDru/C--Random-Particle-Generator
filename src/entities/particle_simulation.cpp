@@ -41,8 +41,8 @@ double get_time() {
   return rpg::system::get_precise_time_ms();
 }
 
-inline float get_rand(float min, float max) {
-  return RandomManager::random_range(min, max);
+inline float get_rand(float min, float max, RNG_Algorithm alg) {
+  return RandomManager::GetRandomNumber(min, max, alg);
 }
 
 inline float get_rand_nolimits() {
@@ -69,10 +69,13 @@ bool simple_ground_bounce(Particle& p,
 const glm::vec3 origin(0, 0, 0);
 const glm::vec3 white(255, 255, 255);
 
-Particle fire_particle(float magnitude, float vertical_angle, float lifetime) {
-  const float horizontal_angle =
-      get_rand(0, 360);  // rand(0, 360);
-                         // ticks = (ticks % 360) + 1;
+Particle fire_particle(float magnitude,
+                       float vertical_angle,
+                       float lifetime,
+                       RNG_Algorithm rng) {
+  const double horizontal_angle =
+      get_rand(0, 360, rng);  // rand(0, 360);
+                              // ticks = (ticks % 360) + 1;
 
   auto dir = math::spherical_to_cartesian(glm::vec3(
       1, math::to_radians(horizontal_angle), math::to_radians(vertical_angle)));

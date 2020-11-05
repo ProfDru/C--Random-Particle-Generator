@@ -133,7 +133,8 @@ void ParticleEngine::emit_particle(int num_particles) {
       break;
 
     Particle P = simulation::fire_particle(this->magnitude, this->angle,
-                                           this->particle_lifetime);
+                                           this->particle_lifetime,
+                                           this->random_algorithm);
 
     UpdateParticle(P, sim_time, true, this->coeff_of_restitution);
     color_particle(P);

@@ -2,6 +2,7 @@
 #include <concepts>
 #include <random>
 #include <algorithm>
+#include <math/random/random_enums.h>
 
 #include <math/base.h>
 
@@ -51,9 +52,11 @@ class RandomManager {
   static void SeedEngines();
 
   /*! \brief get a random number between 0 and 1 */
-  static float GetRandomNumber();
+  static float GetRandomNumber(RNG_Algorithm alg = RNG_Algorithm::DEFAULT);
 
   /*! \brief Calculate a random number between the range of min and max*/
-  static float random_range(float min, float max);
+  static float GetRandomNumber(float min,
+                               float max,
+                               RNG_Algorithm alg = RNG_Algorithm::DEFAULT);
 };
 }  // namespace rpg::math::random

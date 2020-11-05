@@ -114,7 +114,8 @@ target_sources(RandomParticleEngine
     src/math/color.h
     src/math/random/random_manager.h
     src/math/random/random_manager.cpp
-
+    src/math/random/random_enums.h
+    
     src/physics/base.h
     src/physics/kinematics.h
     src/physics/rigid_body.h
