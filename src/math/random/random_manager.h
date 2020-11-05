@@ -1,29 +1,55 @@
+#pragma once
 #include <concepts>
 #include <random>
 #include <algorithm>
+
 #include <math/base.h>
 
 namespace rpg::math::random {
 
 template <class T>
-class RandomNumberGen {
+class RandomNumberDistribution {
   static inline T random_engine = T(0, 1);
 
  public:
   template <typename D>
 
   static inline float GetRandomNumber(D& device) {
-    const auto number = RandomNumberGen::random_engine(device);
+    const auto number = RandomNumberDistribution::random_engine(device);
     return number;
   }
 };
 
-/*! \brief Manages the state of the current random number generator */
-class RandomManager {
-  static RandomNumberGen<std::uniform_real_distribution<>> RNG;
-  inline static std::random_device RD;
+template <class Engine>
+class RandomNumberEngine {
+  Engine E;
 
  public:
+  inline RandomNumberEngine(std::random_device& d) : E(d()) {}
+
+  inline auto min() { return E.min(); }
+  inline auto max() { return E.max(); }
+  inline auto operator()() { return E(); }
+};  // namespace rpg::math::random
+
+/*! \brief Manages the state of the current random number generator */
+class RandomManager {
+  static RandomNumberDistribution<std::uniform_real_distribution<>> RNG;
+
+  // static RandomNumberEngine<std::mt19937_64> mnt_64;
+
+ public:
+  inline static std::random_device RD;
+  static RandomNumberEngine<std::mt19937> mnt;
+  static RandomNumberEngine<std::minstd_rand> minstd;
+  static RandomNumberEngine<std::ranlux48> ranlux;
+  static RandomNumberEngine<std::ranlux48_base> ranlux_base;
+  static RandomNumberEngine<std::knuth_b> knuth_base;
+  static RandomNumberEngine<std::default_random_engine> default_engine;
+
+  /*! \brief Seed every random number engine in here */
+  static void SeedEngines();
+
   /*! \brief get a random number between 0 and 1 */
   static float GetRandomNumber();
 
