@@ -128,7 +128,7 @@ GLFWwindow* InitWindow(float window_width, float window_height) {
 
   // Enable depth buffer test
   glEnable(GL_DEPTH_TEST);
-  glDepthFunc(GL_LESS);
+  glDepthFunc(GL_LEQUAL);
   glDepthMask(GL_TRUE);
   glDepthRange(0.0f, 1.0f);
 
@@ -143,7 +143,7 @@ GLFWwindow* InitWindow(float window_width, float window_height) {
   glfwWindowHint(GLFW_REFRESH_RATE, 120);
   glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
   glEnable(GL_PROGRAM_POINT_SIZE);
-
+  glEnable(GL_BLEND);
   printf("Initializing GLEW...\n");
   bool did_init = InitGlew();
   assert(did_init);
