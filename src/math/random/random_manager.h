@@ -3,6 +3,7 @@
 #include <random>
 #include <algorithm>
 #include <math/random/random_enums.h>
+#include <math/random/generator.h>
 
 #include <math/base.h>
 
@@ -47,6 +48,7 @@ class RandomManager {
   static RandomNumberEngine<std::ranlux48_base> ranlux_base;
   static RandomNumberEngine<std::knuth_b> knuth_base;
   static RandomNumberEngine<std::default_random_engine> default_engine;
+  static Generator rand_gen;
 
   /*! \brief Seed every random number engine in here */
   static void SeedEngines();

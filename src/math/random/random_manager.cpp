@@ -1,8 +1,10 @@
 #include <math/random/random_manager.h>
+
 #include <cmath>
 #include <algorithm>
 
 namespace rpg::math::random {
+Generator RandomManager::rand_gen(RNG_Algorithm::KNUTH);
 
 RandomNumberEngine<std::mt19937> RandomManager::mnt(RandomManager::RD);
 RandomNumberEngine<std::minstd_rand> RandomManager::minstd(RandomManager::RD);
@@ -43,25 +45,11 @@ inline MinMax get_min_and_max(RNG_Algorithm rng) {
 float random_range_impl(float min, float max, RNG_Algorithm rng) {
   const MinMax mm = get_min_and_max(rng);
   const float random_number = RandomManager::GetRandomNumber(rng);
-
   return std::lerp(min, max, random_number);
 }
 
 float RandomManager::GetRandomNumber(RNG_Algorithm alg) {
-  switch (alg) {
-    case RNG_Algorithm::KNUTH:
-      return RNG.GetRandomNumber(knuth_base);
-    case RNG_Algorithm::MINSTD:
-      return RNG.GetRandomNumber(minstd);
-    case RNG_Algorithm::MT19937:
-      return RNG.GetRandomNumber(mnt);
-    case RNG_Algorithm::RANLUX48:
-      return RNG.GetRandomNumber(ranlux);
-    case RNG_Algorithm::RANLUX48_B:
-      return RNG.GetRandomNumber(ranlux_base);
-    default:
-      return RNG.GetRandomNumber(default_engine);
-  }
+  return RNG.GetRandomNumber(rand_gen);
 }
 
 float RandomManager::GetRandomNumber(float min, float max, RNG_Algorithm rng) {

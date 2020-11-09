@@ -52,6 +52,8 @@ target_sources(RandomParticleEngine
     src/camera.cpp
     src/scene.cpp
     src/main.cpp
+    src/random_or_constant.h
+    src/random_or_constant.cpp
 
     src/sys_time.h
 
@@ -115,6 +117,12 @@ target_sources(RandomParticleEngine
     src/math/random/random_manager.h
     src/math/random/random_manager.cpp
     src/math/random/random_enums.h
+    src/math/random/distribution.cpp
+    src/math/random/distribution.h
+    src/math/random/generator.cpp
+    src/math/random/generator.h
+    src/math/random/distributions/normal.cpp
+    src/math/random/distributions/normal.h
     
     src/physics/base.h
     src/physics/kinematics.h
