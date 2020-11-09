@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <math/random/random_enums.h>
 #include <math/random/generator.h>
+#include <math/random/distribution.h>
+#include <memory>
 
 #include <math/base.h>
 
@@ -49,6 +51,7 @@ class RandomManager {
   static RandomNumberEngine<std::knuth_b> knuth_base;
   static RandomNumberEngine<std::default_random_engine> default_engine;
   static Generator rand_gen;
+  static std::unique_ptr<Distribution> dist;
 
   /*! \brief Seed every random number engine in here */
   static void SeedEngines();

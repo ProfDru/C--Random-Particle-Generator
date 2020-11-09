@@ -1,10 +1,13 @@
 #include <math/random/random_manager.h>
+#include <math/random/distributions/uniform.h>
 
 #include <cmath>
 #include <algorithm>
 
 namespace rpg::math::random {
 Generator RandomManager::rand_gen(RNG_Algorithm::KNUTH);
+std::unique_ptr<Distribution> RandomManager::dist =
+    std::unique_ptr<Distribution>(new Uniform(0, 1));
 
 RandomNumberEngine<std::mt19937> RandomManager::mnt(RandomManager::RD);
 RandomNumberEngine<std::minstd_rand> RandomManager::minstd(RandomManager::RD);
@@ -49,7 +52,7 @@ float random_range_impl(float min, float max, RNG_Algorithm rng) {
 
 float RandomManager::GetRandomNumber(RNG_Algorithm alg) {
   rand_gen.set_type(alg);
-  return RNG.GetRandomNumber(rand_gen);
+  return dist->get_number(rand_gen);
 }
 
 float RandomManager::GetRandomNumber(float min, float max, RNG_Algorithm rng) {

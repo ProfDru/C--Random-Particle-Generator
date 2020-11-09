@@ -1,3 +1,4 @@
+#pragma once
 #include <math/random/random_enums.h>
 #include <random>
 #include <variant>

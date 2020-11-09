@@ -121,8 +121,8 @@ target_sources(RandomParticleEngine
     src/math/random/distribution.h
     src/math/random/generator.cpp
     src/math/random/generator.h
-    src/math/random/distributions/normal.cpp
-    src/math/random/distributions/normal.h
+    src/math/random/distributions/uniform.cpp
+    src/math/random/distributions/uniform.h
     
     src/physics/base.h
     src/physics/kinematics.h
