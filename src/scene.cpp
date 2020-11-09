@@ -38,14 +38,13 @@ void Scene::Start() {
 
   // Create a particle engine and camera
   printf("Creating Particle Engine and Camera...");
-  this->PI.emplace(ParticleEngine());
   this->main_camera = Camera(0, 0, 2, 0, 0, -1);
 
   // Set the ID of the particle system
-  this->PI->SetID(Registry::GetNextID());
+  this->PI.SetID(Registry::GetNextID());
 
   // Add hud widgets
-  rpg::menus::InitParticleMenu(&(*PI));
+  rpg::menus::InitParticleMenu(&PI);
 
   // Initiate draw loop
   printf("Beginning Draw Loop. \n");
@@ -65,18 +64,18 @@ inline bool HandleMovement(Camera& camera, GLFWwindow* window) {
 
 void Scene::DrawLoop() {
   // Ensure we can capture the escape key being pressed below
-  rendering::Renderer::AssignShader(*(this->PI), rendering::ParticleShader);
+  rendering::Renderer::AssignShader(PI, rendering::ParticleShader);
 
   bool keep_drawing = true;
 
   this->current_window.UpdateSize();
 
   while (keep_drawing) {
-    PI->Update();
+    PI.Update();
     HandleMovement(this->main_camera, this->current_window.win);
     current_window.TrackMouse(input::InputManager::IsPaused());
     this->current_window.Clear();
-    rendering::Renderer::Render(*(this->PI));
+    rendering::Renderer::Render(PI);
     keep_drawing = this->current_window.Redraw();
   }
 }
