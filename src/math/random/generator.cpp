@@ -43,6 +43,17 @@ gen_t Generator::operator()() {
   return get_rand();
 }
 
+RNG_Algorithm Generator::get_type() const {
+  return this->alg;
+}
+
+void Generator::set_type(RNG_Algorithm alg) {
+  if (alg != this->alg) {
+    reng = REngine(determine_generator_variant(alg));
+    seed_engine();
+  }
+}
+
 void Generator::seed_engine() {
   const auto true_random = this->device();
 

@@ -9,7 +9,7 @@ using REngine = std::variant<std::mt19937,
                              std::ranlux48_base,
                              std::knuth_b,
                              std::default_random_engine>;
-using gen_t = int;
+using gen_t = int64_t;
 
 /*! \brief Provides access to one of many random number generator algorithms
             defined in the standard library. */
@@ -35,7 +35,10 @@ class Generator {
   /*! \brief Advance the state of the generator and create the random number*/
   gen_t operator()();
 
-  /*! \brief Set the type of algorithm this generator uses */
+  /*! \brief Set the type of algorithm this generator uses
+
+    If `alg` is already being used, nothing will happen.
+  */
   void set_type(RNG_Algorithm alg);
 
   gen_t min() const;

@@ -43,12 +43,12 @@ inline MinMax get_min_and_max(RNG_Algorithm rng) {
 }
 
 float random_range_impl(float min, float max, RNG_Algorithm rng) {
-  const MinMax mm = get_min_and_max(rng);
   const float random_number = RandomManager::GetRandomNumber(rng);
   return std::lerp(min, max, random_number);
 }
 
 float RandomManager::GetRandomNumber(RNG_Algorithm alg) {
+  rand_gen.set_type(alg);
   return RNG.GetRandomNumber(rand_gen);
 }
 
