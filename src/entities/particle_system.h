@@ -2,6 +2,7 @@
 #include <entities/entity.h>
 #include <math\random\random_enums.h>
 #include <entities\particle.h>
+#include <random_or_constant.h>
 
 #include <vector>
 #include <string>
@@ -48,7 +49,9 @@ class ParticleEngine : public Entity {
   int particles_per_second = 1000;
   float particle_lifetime = 5.0f;  //< Maximum length of time a particle can be
                                    // alive before being cleaned up
-  float angle = 20.0f;  //< Angle between y+ and the ground to fire particles in
+
+  RandomOrConstant vertical_angle;  //= RandomOrConstant(20.0f, 0.0f, 90.0f);
+
   float magnitude = 10.0f;  //< MAgnitude of the initial velocity vector  for
                             // each new particle.
   COLOR_MODE color_mode = COLOR_MODE::RAINBOW;

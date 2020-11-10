@@ -9,4 +9,6 @@ enum class RNG_Algorithm {
   RANLUX48_B = 4,
   KNUTH = 6
 };
-}
+
+enum class RNG_Distribution { UNIFORM = 0, NORMAL = 1 };
+}  // namespace rpg::math::random

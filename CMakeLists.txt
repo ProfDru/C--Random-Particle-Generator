@@ -107,6 +107,8 @@ target_sources(RandomParticleEngine
     src/window/hud/multi_widget.cpp
     src/window/hud/multi_widget.h
 
+    src/menus/roc_control.cpp
+    src/menus/roc_control.h
     src/menus/settings.cpp
     src/menus/settings.h
 
@@ -123,6 +125,8 @@ target_sources(RandomParticleEngine
     src/math/random/generator.h
     src/math/random/distributions/uniform.cpp
     src/math/random/distributions/uniform.h
+    src/math/random/distributions/normal.cpp
+    src/math/random/distributions/normal.h
     
     src/physics/base.h
     src/physics/kinematics.h

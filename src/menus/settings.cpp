@@ -8,6 +8,7 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
+#include <menus\roc_control.h>
 #include <window/hud/label.h>
 #include <window/hud/slider.h>
 #include <window/hud/button.h>
@@ -26,6 +27,12 @@ namespace rpg::menus {
 
 std::string GetParticleCount(ParticleEngine* ps) {
   return "Particle Count: " + std::to_string(ps->NumVertices());
+}
+
+/*! \brief Create a prebaked group to bind all parameters in a random or
+ * constant */
+Widget* BindRandomOrConstant(RandomOrConstant& ROC, const std::string& name) {
+  return CreateDistributionWidgets(ROC, name);
 }
 
 void InitParticleMenu(rpg::ParticleEngine* PE) {
@@ -63,8 +70,7 @@ void InitParticleMenu(rpg::ParticleEngine* PE) {
           "this cap is reached, no more particles will be created."),
       new Slider("Particle Lifetime", &PE->particle_lifetime, 0.1, 10,
                  "The time in seconds before a particle is destroyed."),
-      new Slider("Vertical Angle", &PE->angle, 0, 85,
-                 "Angle between +Y and the ground to fire particles in."),
+      BindRandomOrConstant(PE->vertical_angle, "Vertical Angle"),
       new Slider(
           "Magnitude", &PE->magnitude, 1, 20,
           "The magnitude of a particle's initial velocity upon creation"),
