@@ -44,19 +44,30 @@ Slider::Slider(const std::string& name,
   this->SetHelpMarker(help_text);
 }
 
+void Slider::SetReleaseCallback(std::function<void()> release_function) {
+  this->on_release = release_function;
+}
+
 void Slider::Draw() {
   if (this->same_line) {
     ImGui::SameLine();
   }
+
+  bool value_changed = false;
   switch (this->type) {
     case SliderType::FLOAT:
-      ImGui::SliderFloat(this->text.c_str(), this->float_ptr, this->min,
-                         this->max, "%.3f", 1);
+      value_changed = ImGui::SliderFloat(this->text.c_str(), this->float_ptr,
+                                         this->min, this->max, "%.3f", 1);
       break;
     case SliderType::INT:
-      ImGui::SliderInt(this->text.c_str(), this->int_ptr, this->min, this->max,
-                       "%d", 1);
+      value_changed = ImGui::SliderInt(this->text.c_str(), this->int_ptr,
+                                       this->min, this->max, "%d", 1);
       break;
   }
+
+  if (this->held_last_frame && !value_changed && this->on_release) {
+    this->on_release();
+  }
+  this->held_last_frame = value_changed;
 }
 }  // namespace rpg::hud
