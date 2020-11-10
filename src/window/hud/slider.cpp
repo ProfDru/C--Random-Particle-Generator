@@ -45,6 +45,9 @@ Slider::Slider(const std::string& name,
 }
 
 void Slider::Draw() {
+  if (this->same_line) {
+    ImGui::SameLine();
+  }
   switch (this->type) {
     case SliderType::FLOAT:
       ImGui::SliderFloat(this->text.c_str(), this->float_ptr, this->min,

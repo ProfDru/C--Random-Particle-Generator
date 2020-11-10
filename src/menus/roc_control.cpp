@@ -61,7 +61,7 @@ Widget* CreateDistributionWidgets(RandomOrConstant& ROC,
   Widget* distribution_select =
       new ComboBox("Distribution", distributions, distribution_ptr,
                    std::bind(ChangeRandomDistribution, &ROC));
-
+  distribution_select->same_line = true;
   Widget* min_slider =
       new Slider("min", &ROC.rand_min, ROC.min_value, ROC.max_value);
   Widget* max_slider =
@@ -70,6 +70,9 @@ Widget* CreateDistributionWidgets(RandomOrConstant& ROC,
       new Slider("mean", &ROC.rand_min, ROC.min_value, ROC.max_value);
   Widget* std_slider =
       new Slider("standard_dev", &ROC.rand_max, ROC.min_value, ROC.max_value);
+
+  max_slider->same_line = true;
+  std_slider->same_line = true;
   Widget* distribution_pane = new MultiWidget(
       std::vector<Widget*>{min_slider, max_slider, mean_slider, std_slider},
       distribution_ptr, {{0, 1}, {2, 3}});
