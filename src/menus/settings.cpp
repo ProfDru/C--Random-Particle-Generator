@@ -71,9 +71,7 @@ void InitParticleMenu(rpg::ParticleEngine* PE) {
       new Slider("Particle Lifetime", &PE->particle_lifetime, 0.1, 10,
                  "The time in seconds before a particle is destroyed."),
       BindRandomOrConstant(PE->vertical_angle, "Vertical Angle"),
-      new Slider(
-          "Magnitude", &PE->magnitude, 1, 20,
-          "The magnitude of a particle's initial velocity upon creation"),
+      BindRandomOrConstant(PE->magnitude, "Magnitude"),
       new Slider("Particles Per Second", &PE->particles_per_second, 1, 100000,
                  "Number of particles that can be created per second.")};
 

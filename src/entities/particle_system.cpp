@@ -97,12 +97,14 @@ void ParticleEngine::color_particle(Particle& P) {
         break;
       case PARAMETER::VELOCITY:
         min = 0;
-        max = calculate_height(this->magnitude, this->vertical_angle.constant);
+        max = calculate_height(this->magnitude.constant,
+                               this->vertical_angle.constant);
         val = abs(P.velocity.y);
         break;
       case PARAMETER::DIST_FROM_GROUND:
         min = 0;
-        max = find_apex(this->magnitude, this->vertical_angle.constant);
+        max =
+            find_apex(this->magnitude.constant, this->vertical_angle.constant);
         val = P.pos.y;
         break;
       default:
@@ -133,7 +135,7 @@ void ParticleEngine::emit_particle(int num_particles) {
       break;
 
     Particle P = simulation::fire_particle(
-        this->magnitude, this->vertical_angle.get_number(),
+        this->magnitude.get_number(), this->vertical_angle.get_number(),
         this->particle_lifetime, this->random_algorithm);
 
     UpdateParticle(P, sim_time, true, this->coeff_of_restitution);
@@ -156,7 +158,8 @@ void ParticleEngine::create_new_particles(double time) {
   emit_particle(particle_budget);
 }
 
-ParticleEngine::ParticleEngine() : vertical_angle(20.0f, 0.0f, 90.0f) {
+ParticleEngine::ParticleEngine()
+    : vertical_angle(20.0f, 0.0f, 90.0f), magnitude(10.0f, 0.0f, 20.0f) {
   this->particles = std::vector<Particle>();
   last_update = simulation::get_time();
 }

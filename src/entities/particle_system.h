@@ -52,8 +52,8 @@ class ParticleEngine : public Entity {
 
   RandomOrConstant vertical_angle;  //= RandomOrConstant(20.0f, 0.0f, 90.0f);
 
-  float magnitude = 10.0f;  //< MAgnitude of the initial velocity vector  for
-                            // each new particle.
+  RandomOrConstant magnitude;  //< MAgnitude of the initial velocity vector  for
+                               // each new particle.
   COLOR_MODE color_mode = COLOR_MODE::RAINBOW;
   PARAMETER color_param = PARAMETER::LIFETIME;
 
