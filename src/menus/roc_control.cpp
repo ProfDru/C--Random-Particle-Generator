@@ -49,6 +49,8 @@ Widget* CreateDistributionWidgets(RandomOrConstant& ROC,
   int* distribution_ptr = reinterpret_cast<int*>(&ROC.next_distribution);
   int* engine_ptr = reinterpret_cast<int*>(&ROC.next_algorithm);
 
+  auto update_dist_function = std::bind(ChangeRandomDistribution, &ROC);
+
   const vector<string> distributions{"Uniform", "Normal"};
 
   const vector<string> engines = {"Default",  "MinSTD",     "MT19937",
@@ -61,32 +63,33 @@ Widget* CreateDistributionWidgets(RandomOrConstant& ROC,
   Widget* distribution_select =
       new ComboBox("Distribution", distributions, distribution_ptr,
                    std::bind(ChangeRandomDistribution, &ROC));
-  distribution_select->same_line = true;
-  Widget* min_slider =
+  // distribution_select->same_line = true;
+  Slider* min_slider =
       new Slider("min", &ROC.rand_min, ROC.min_value, ROC.max_value);
-  Widget* max_slider =
+  Slider* max_slider =
       new Slider("max", &ROC.rand_max, ROC.min_value, ROC.max_value);
-  Widget* mean_slider =
+  Slider* mean_slider =
       new Slider("mean", &ROC.rand_min, ROC.min_value, ROC.max_value);
-  Widget* std_slider =
+  Slider* std_slider =
       new Slider("standard_dev", &ROC.rand_max, ROC.min_value, ROC.max_value);
 
-  max_slider->same_line = true;
-  std_slider->same_line = true;
+  // max_slider->same_line = true;
+  // std_slider->same_line = true;
+  max_slider->SetReleaseCallback(update_dist_function);
+  min_slider->SetReleaseCallback(update_dist_function);
+  std_slider->SetReleaseCallback(update_dist_function);
+  mean_slider->SetReleaseCallback(update_dist_function);
+
   Widget* distribution_pane = new MultiWidget(
       std::vector<Widget*>{min_slider, max_slider, mean_slider, std_slider},
       distribution_ptr, {{0, 1}, {2, 3}});
 
   Widget* constant_slider =
       new Slider(name, &ROC.constant, ROC.min_value, ROC.max_value);
-  Widget* update_dist_button =
-      new Button("Update Random Generator", "Update Random Genreator",
-                 std::bind(ChangeRandomDistribution, &ROC));
-  Widget* random_group =
-      new Group("Random",
-                vector<Widget*>{engine_select, distribution_select,
-                                distribution_pane, update_dist_button},
-                false);
+  Widget* random_group = new Group(
+      "Random",
+      vector<Widget*>{engine_select, distribution_select, distribution_pane},
+      false);
   Widget* constant_group =
       new Group("Constant", vector<Widget*>{constant_slider}, false);
 
