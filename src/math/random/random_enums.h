@@ -10,5 +10,5 @@ enum class RNG_Algorithm {
   KNUTH = 6
 };
 
-enum class RNG_Distribution { UNIFORM = 0, NORMAL = 1 };
+enum class RNG_Distribution { UNIFORM = 0, NORMAL = 1, LOG_NORMAL = 2 };
 }  // namespace rpg::math::random
