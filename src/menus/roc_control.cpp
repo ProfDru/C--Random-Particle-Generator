@@ -66,6 +66,14 @@ Widget* CreateDistributionWidgets(RandomOrConstant& ROC,
       new Slider("min", &ROC.rand_min, ROC.min_value, ROC.max_value);
   Widget* max_slider =
       new Slider("max", &ROC.rand_max, ROC.min_value, ROC.max_value);
+  Widget* mean_slider =
+      new Slider("mean", &ROC.rand_min, ROC.min_value, ROC.max_value);
+  Widget* std_slider =
+      new Slider("standard_dev", &ROC.rand_max, ROC.min_value, ROC.max_value);
+  Widget* distribution_pane = new MultiWidget(
+      std::vector<Widget*>{min_slider, max_slider, mean_slider, std_slider},
+      distribution_ptr, {{0, 1}, {2, 3}});
+
   Widget* constant_slider =
       new Slider(name, &ROC.constant, ROC.min_value, ROC.max_value);
   Widget* update_dist_button =
@@ -73,8 +81,8 @@ Widget* CreateDistributionWidgets(RandomOrConstant& ROC,
                  std::bind(ChangeRandomDistribution, &ROC));
   Widget* random_group =
       new Group("Random",
-                vector<Widget*>{engine_select, distribution_select, max_slider,
-                                min_slider, update_dist_button},
+                vector<Widget*>{engine_select, distribution_select,
+                                distribution_pane, update_dist_button},
                 false);
   Widget* constant_group =
       new Group("Constant", vector<Widget*>{constant_slider}, false);
