@@ -1,14 +1,23 @@
 #include <menus/roc_control.h>
 
+#include <math/random/distribution.h>
+#include <math/random/distributions/normal.h>
+#include <math/random/distributions/uniform.h>
+
 #include <window/hud/checkbox.h>
 #include <window/hud/slider.h>
 #include <window/hud/optional_element.h>
 #include <window/hud/group.h>
+#include <window/hud/button.h>
+
+#include <math/random/random_enums.h>
 
 #include <functional>
 
 namespace rpg {
 using namespace rpg::hud;
+using namespace math::random;
+using math::random::RNG_Distribution;
 using std::string;
 using std::vector;
 
@@ -16,11 +25,23 @@ using std::vector;
  * distribution */
 void ChangeRandomEngine(RandomOrConstant* roc) {
   printf(" CHANGE ENGINE \n");
+
+  roc->set_generator(roc->next_algorithm);
 }
 
 /*! \brief Used as a callback to change the distribution a ROC is using */
 void ChangeRandomDistribution(RandomOrConstant* roc) {
   printf("CHANGE DISTRIBUTION min:%f, max: %f\n", roc->rand_min, roc->rand_max);
+
+  const RNG_Distribution next_distribution = roc->next_distribution;
+  switch (next_distribution) {
+    case RNG_Distribution::NORMAL:
+      roc->set_distribution(new Normal(roc->rand_min, roc->rand_max));
+      break;
+    case RNG_Distribution::UNIFORM:
+      roc->set_distribution(new Uniform(roc->rand_min, roc->rand_max));
+      break;
+  }
 }
 
 Widget* CreateDistributionWidgets(RandomOrConstant& ROC,
@@ -30,10 +51,8 @@ Widget* CreateDistributionWidgets(RandomOrConstant& ROC,
 
   const vector<string> distributions{"Uniform", "Normal"};
 
-  const vector<string> engines = {"Default", "MinSTD", "MT19937",
-                                  "Ranlux48"
-                                  "Ranlux48_B",
-                                  "Knuth"};
+  const vector<string> engines = {"Default",  "MinSTD",     "MT19937",
+                                  "Ranlux48", "Ranlux48_B", "Knuth"};
 
   Widget* random_toggle = new CheckBox("Use random?", &ROC.use_random);
   Widget* engine_select = new ComboBox("Random Engine", engines, engine_ptr,
@@ -49,11 +68,13 @@ Widget* CreateDistributionWidgets(RandomOrConstant& ROC,
       new Slider("max", &ROC.rand_max, ROC.min_value, ROC.max_value);
   Widget* constant_slider =
       new Slider(name, &ROC.constant, ROC.min_value, ROC.max_value);
-
+  Widget* update_dist_button =
+      new Button("Update Random Generator", "Update Random Genreator",
+                 std::bind(ChangeRandomDistribution, &ROC));
   Widget* random_group =
       new Group("Random",
                 vector<Widget*>{engine_select, distribution_select, max_slider,
-                                min_slider},
+                                min_slider, update_dist_button},
                 false);
   Widget* constant_group =
       new Group("Constant", vector<Widget*>{constant_slider}, false);

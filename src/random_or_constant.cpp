@@ -40,7 +40,8 @@ float RandomOrConstant::get_number() {
 
 inline float RandomOrConstant::gen_random_number() {
   assert(distribution.get());
-  return std::lerp(rand_min, rand_max, distribution->get_number(generator));
+  return distribution->get_number(generator);
+  // return std::lerp(rand_min, rand_max, distribution->get_number(generator));
 }
 
 void RandomOrConstant::set_generator(RNG_Algorithm alg) {
