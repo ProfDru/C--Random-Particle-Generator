@@ -33,41 +33,53 @@ void ChangeRandomEngine(RandomOrConstant* roc) {
   roc->set_generator(roc->next_algorithm);
 }
 
-/*! \brief Used as a callback to change the distribution a ROC is using */
-void ChangeRandomDistribution(RandomOrConstant* roc) {
+/*! \brief Used as a callback to change the distribution a ROC is using  and the
+ * names/ranges of each slider. */
+void ChangeRandomDistribution(RandomOrConstant* roc,
+                              Slider* slider_1,
+                              Slider* slider_2) {
   printf("CHANGE DISTRIBUTION min:%f, max: %f\n", roc->rand_min, roc->rand_max);
 
   const RNG_Distribution next_distribution = roc->next_distribution;
+  std::array<std::string, 2> slider_names = {"", ""};
+
   switch (next_distribution) {
     case RNG_Distribution::NORMAL:
+      slider_names = {"std", "mean"};
       roc->set_distribution(new Normal(roc->rand_min, roc->rand_max));
       break;
     case RNG_Distribution::UNIFORM:
+      slider_names = {"min", "max"};
       roc->set_distribution(new Uniform(roc->rand_min, roc->rand_max));
       break;
     case RNG_Distribution::LOG_NORMAL:
+      slider_names = {"std", "mean"};
       roc->set_distribution(new LogNormal(roc->rand_min, roc->rand_max));
       break;
     case RNG_Distribution::EXTREME:
+      slider_names = {"std", "mean"};
       roc->set_distribution(
           new ExtremeDistribution(roc->rand_min, roc->rand_max));
       break;
     case RNG_Distribution::WEIBULL:
+      slider_names = {"a", "b"};
       roc->set_distribution(
           new WeibullDistribution(roc->rand_min, roc->rand_max));
       break;
     case RNG_Distribution::CHI:
+      slider_names = {"dof", ""};
       roc->set_distribution(new ChiSquaredDistribution(roc->rand_min));
       break;
   }
+
+  slider_1->text = slider_names[0];
+  slider_2->text = slider_names[1];
 }
 
 Widget* CreateDistributionWidgets(RandomOrConstant& ROC,
                                   const std::string& name) {
   int* distribution_ptr = reinterpret_cast<int*>(&ROC.next_distribution);
   int* engine_ptr = reinterpret_cast<int*>(&ROC.next_algorithm);
-
-  auto update_dist_function = std::bind(ChangeRandomDistribution, &ROC);
 
   const vector<string> distributions{"Uniform", "Normal",  "LogNormal",
                                      "Extreme", "Weibull", "Chi"};
@@ -78,37 +90,24 @@ Widget* CreateDistributionWidgets(RandomOrConstant& ROC,
   Widget* random_toggle = new CheckBox("Use random?", &ROC.use_random);
   Widget* engine_select = new ComboBox("Random Engine", engines, engine_ptr,
                                        std::bind(ChangeRandomEngine, &ROC));
-
-  Widget* distribution_select =
-      new ComboBox("Distribution", distributions, distribution_ptr,
-                   std::bind(ChangeRandomDistribution, &ROC));
   // distribution_select->same_line = true;
   Slider* min_slider =
       new Slider("min", &ROC.rand_min, ROC.min_value, ROC.max_value);
   Slider* max_slider =
       new Slider("max", &ROC.rand_max, ROC.min_value, ROC.max_value);
-  Slider* mean_slider =
-      new Slider("mean", &ROC.rand_min, ROC.min_value, ROC.max_value);
-  Slider* std_slider =
-      new Slider("standard_dev", &ROC.rand_max, ROC.min_value, ROC.max_value);
-  Slider* a_slider =
-      new Slider("a", &ROC.rand_min, ROC.min_value, ROC.max_value);
-  Slider* b_slider =
-      new Slider("b", &ROC.rand_max, ROC.min_value, ROC.max_value);
 
-  // max_slider->same_line = true;
-  // std_slider->same_line = true;
+  auto update_dist_function =
+      std::bind(ChangeRandomDistribution, &ROC, min_slider, max_slider);
+
+  Widget* distribution_select = new ComboBox(
+      "Distribution", distributions, distribution_ptr, update_dist_function);
+
   max_slider->SetReleaseCallback(update_dist_function);
   min_slider->SetReleaseCallback(update_dist_function);
-  std_slider->SetReleaseCallback(update_dist_function);
-  mean_slider->SetReleaseCallback(update_dist_function);
-  a_slider->SetReleaseCallback(update_dist_function);
-  b_slider->SetReleaseCallback(update_dist_function);
 
   Widget* distribution_pane = new MultiWidget(
-      std::vector<Widget*>{min_slider, max_slider, mean_slider, std_slider,
-                           a_slider, b_slider},
-      distribution_ptr, {{0, 1}, {2, 3}, {2, 3}, {2, 3}, {4, 5}, {4}});
+      std::vector<Widget*>{min_slider, max_slider}, distribution_ptr,
+      {{0, 1}, {0, 1}, {0, 1}, {0, 1}, {0, 1}, {1}});
 
   Widget* constant_slider =
       new Slider(name, &ROC.constant, ROC.min_value, ROC.max_value);
