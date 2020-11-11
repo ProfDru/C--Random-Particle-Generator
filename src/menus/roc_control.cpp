@@ -1,9 +1,12 @@
 #include <menus/roc_control.h>
 
+#include <random>
+
 #include <math/random/distribution.h>
 #include <math/random/distributions/normal.h>
 #include <math/random/distributions/uniform.h>
 #include <math/random/distributions/log_normal.h>
+#include <math/random/distributions/general.h>
 
 #include <window/hud/checkbox.h>
 #include <window/hud/slider.h>
@@ -45,6 +48,11 @@ void ChangeRandomDistribution(RandomOrConstant* roc) {
     case RNG_Distribution::LOG_NORMAL:
       roc->set_distribution(new LogNormal(roc->rand_min, roc->rand_max));
       break;
+    case RNG_Distribution::EXTREME:
+      roc->set_distribution(
+          new TMPDistribution<std::extreme_value_distribution<float>>(
+              roc->rand_min, roc->rand_max));
+      break;
   }
 }
 
@@ -55,7 +63,8 @@ Widget* CreateDistributionWidgets(RandomOrConstant& ROC,
 
   auto update_dist_function = std::bind(ChangeRandomDistribution, &ROC);
 
-  const vector<string> distributions{"Uniform", "Normal", "LogNormal"};
+  const vector<string> distributions{"Uniform", "Normal", "LogNormal",
+                                     "Extreme"};
 
   const vector<string> engines = {"Default",  "MinSTD",     "MT19937",
                                   "Ranlux48", "Ranlux48_B", "Knuth"};
@@ -86,7 +95,7 @@ Widget* CreateDistributionWidgets(RandomOrConstant& ROC,
 
   Widget* distribution_pane = new MultiWidget(
       std::vector<Widget*>{min_slider, max_slider, mean_slider, std_slider},
-      distribution_ptr, {{0, 1}, {2, 3}, {2, 3}});
+      distribution_ptr, {{0, 1}, {2, 3}, {2, 3}, {2, 3}});
 
   Widget* constant_slider =
       new Slider(name, &ROC.constant, ROC.min_value, ROC.max_value);

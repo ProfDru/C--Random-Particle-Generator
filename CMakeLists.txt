@@ -129,7 +129,9 @@ target_sources(RandomParticleEngine
     src/math/random/distributions/normal.h
     src/math/random/distributions/log_normal.h
     src/math/random/distributions/log_normal.cpp
-    
+    src/math/random/distributions/general.cpp
+    src/math/random/distributions/general.h
+
     src/physics/base.h
     src/physics/kinematics.h
     src/physics/rigid_body.h
