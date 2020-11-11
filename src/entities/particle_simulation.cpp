@@ -69,12 +69,16 @@ bool simple_ground_bounce(Particle& p,
 const glm::vec3 origin(0, 0, 0);
 const glm::vec3 white(255, 255, 255);
 
-Particle fire_particle(float magnitude, float vertical_angle, float lifetime) {
-  const double horizontal_angle = get_rand(0, 360);
+Particle fire_particle(float magnitude,
+                       float vertical_angle,
+                       float lifetime,
+                       float max_horizontal_angle) {
+  const double horizontal_angle = get_rand(0, max_horizontal_angle);
+  static const float rotation = math::to_radians<int, float>(-90);
 
   auto dir = math::spherical_to_cartesian(glm::vec3(
       1, math::to_radians(horizontal_angle), math::to_radians(vertical_angle)));
-  dir = glm::rotateX(dir, math::to_radians<int, float>(-90));
+  dir = glm::rotateX(dir, rotation);
 
   Particle out_particle(origin, white);
   out_particle.velocity = (dir * magnitude);

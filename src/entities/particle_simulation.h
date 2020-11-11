@@ -18,6 +18,9 @@ bool simple_ground_bounce(Particle& P,
                           float e,
                           double time);
 
-Particle fire_particle(float magnitude, float vertical_angle, float lifetime);
+Particle fire_particle(float magnitude,
+                       float vertical_angle,
+                       float lifetime,
+                       float max_hoizontal_angle);
 
 }  // namespace rpg::simulation

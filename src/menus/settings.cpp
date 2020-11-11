@@ -66,6 +66,8 @@ void InitParticleMenu(rpg::ParticleEngine* PE) {
           "this cap is reached, no more particles will be created."),
       new Slider("Particle Lifetime", &PE->particle_lifetime, 0.1, 10,
                  "The time in seconds before a particle is destroyed."),
+
+      new Slider("Horizontal Angle", &PE->horizontal_angle, 0, 360),
       BindRandomOrConstant(PE->vertical_angle, "Vertical Angle"),
       BindRandomOrConstant(PE->magnitude, "Magnitude"),
       new Slider("Particles Per Second", &PE->particles_per_second, 1, 100000,
