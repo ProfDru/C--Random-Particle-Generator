@@ -14,6 +14,8 @@ enum class RNG_Distribution {
   UNIFORM = 0,
   NORMAL = 1,
   LOG_NORMAL = 2,
-  EXTREME = 3
+  EXTREME = 3,
+  WEIBULL = 4,
+  CHI = 5,
 };
 }  // namespace rpg::math::random
