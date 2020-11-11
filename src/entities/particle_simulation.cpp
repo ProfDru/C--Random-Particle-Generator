@@ -42,11 +42,11 @@ double get_time() {
 }
 
 inline float get_rand(float min, float max, RNG_Algorithm alg) {
-  return RandomManager::GetRandomNumber(min, max, alg);
+  return GlobalRandom::GetRandomNumber(min, max);
 }
 
 inline float get_rand_nolimits() {
-  return RandomManager::GetRandomNumber();
+  return GlobalRandom::GetRandomNumber();
 }
 
 /*! \brief Move particle based on it's velocity */
