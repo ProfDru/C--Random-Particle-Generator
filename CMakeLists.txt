@@ -152,7 +152,7 @@ set_property(
 )
 
 target_compile_options(
-  RandomParticleEngine PRIVATE -Wall -Wextra
+  RandomParticleEngine PRIVATE -Wall -Wextra -g
 )
 
 add_custom_command(
