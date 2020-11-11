@@ -57,11 +57,7 @@ void InitParticleMenu(rpg::ParticleEngine* PE) {
 
   vector<Widget*> simulation = {
       new Slider("Simulation Speed", &rpg::simulation::time_scale, 0.0f, 2.0f),
-      new CheckBox("Enable Floor", &PE->bounce),
-      new ComboBox("Random Number Generator",
-                   vector<string>{"Default", "MinSTD", "MT19937", "Ranlux48",
-                                  "Ranlux48_B", "Knuth"},
-                   reinterpret_cast<int*>(&PE->random_algorithm))};
+      new CheckBox("Enable Floor", &PE->bounce)};
 
   vector<Widget*> particle_system{
       new Slider(

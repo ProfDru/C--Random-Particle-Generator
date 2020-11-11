@@ -134,9 +134,9 @@ void ParticleEngine::emit_particle(int num_particles) {
     if (sim_time >= this->particle_lifetime)
       break;
 
-    Particle P = simulation::fire_particle(
-        this->magnitude.get_number(), this->vertical_angle.get_number(),
-        this->particle_lifetime, this->random_algorithm);
+    Particle P = simulation::fire_particle(this->magnitude.get_number(),
+                                           this->vertical_angle.get_number(),
+                                           this->particle_lifetime);
 
     UpdateParticle(P, sim_time, true, this->coeff_of_restitution);
     color_particle(P);

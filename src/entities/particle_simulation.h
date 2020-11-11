@@ -18,9 +18,6 @@ bool simple_ground_bounce(Particle& P,
                           float e,
                           double time);
 
-Particle fire_particle(float magnitude,
-                       float vertical_angle,
-                       float lifetime,
-                       math::random::RNG_Algorithm rng);
+Particle fire_particle(float magnitude, float vertical_angle, float lifetime);
 
 }  // namespace rpg::simulation
