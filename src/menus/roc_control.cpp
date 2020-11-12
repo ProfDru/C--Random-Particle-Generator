@@ -45,7 +45,7 @@ void ChangeRandomDistribution(RandomOrConstant* roc,
 
   switch (next_distribution) {
     case RNG_Distribution::NORMAL:
-      slider_names = {"std", "mean"};
+      slider_names = {"mean", "standard deviation"};
       roc->set_distribution(new Normal(roc->rand_min, roc->rand_max));
       break;
     case RNG_Distribution::UNIFORM:
@@ -53,11 +53,11 @@ void ChangeRandomDistribution(RandomOrConstant* roc,
       roc->set_distribution(new Uniform(roc->rand_min, roc->rand_max));
       break;
     case RNG_Distribution::LOG_NORMAL:
-      slider_names = {"std", "mean"};
+      slider_names = {"mean", "standard deviation"};
       roc->set_distribution(new LogNormal(roc->rand_min, roc->rand_max));
       break;
     case RNG_Distribution::EXTREME:
-      slider_names = {"std", "mean"};
+      slider_names = {"location", "scale"};
       roc->set_distribution(
           new ExtremeDistribution(roc->rand_min, roc->rand_max));
       break;
@@ -107,7 +107,7 @@ Widget* CreateDistributionWidgets(RandomOrConstant& ROC,
 
   Widget* distribution_pane = new MultiWidget(
       std::vector<Widget*>{min_slider, max_slider}, distribution_ptr,
-      {{0, 1}, {0, 1}, {0, 1}, {0, 1}, {0, 1}, {1}});
+      {{0, 1}, {0, 1}, {0, 1}, {0, 1}, {0, 1}, {0}});
 
   Widget* constant_slider =
       new Slider(name, &ROC.constant, ROC.min_value, ROC.max_value);
