@@ -9,7 +9,7 @@ namespace rpg {
 /*! \brief Manages a random number generator/distribution or just holds a
    constant
 
-
+    \remarks
     Used to make it easier to swap between constants and random numbers.*/
 class RandomOrConstant {
  private:
@@ -21,6 +21,7 @@ class RandomOrConstant {
  public:
   float constant, min_value, max_value;
   float rand_min, rand_max;
+  float scale_factor = 1;
 
   math::random::RNG_Algorithm next_algorithm =
       math::random::RNG_Algorithm::DEFAULT;

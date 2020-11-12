@@ -37,15 +37,18 @@ void ChangeRandomEngine(RandomOrConstant* roc) {
  * names/ranges of each slider. */
 void ChangeRandomDistribution(RandomOrConstant* roc,
                               Slider* slider_1,
-                              Slider* slider_2) {
+                              Slider* slider_2,
+                              Slider* scale_slider) {
   printf("CHANGE DISTRIBUTION min:%f, max: %f\n", roc->rand_min, roc->rand_max);
 
   const RNG_Distribution next_distribution = roc->next_distribution;
   std::array<std::string, 2> slider_names = {"", ""};
 
+  bool normalized_scale = false;
+
   switch (next_distribution) {
     case RNG_Distribution::NORMAL:
-      slider_names = {"mean", "standard deviation"};
+      slider_names = {"Mean", "Standard Deviation"};
       roc->set_distribution(new Normal(roc->rand_min, roc->rand_max));
       break;
     case RNG_Distribution::UNIFORM:
@@ -53,11 +56,12 @@ void ChangeRandomDistribution(RandomOrConstant* roc,
       roc->set_distribution(new Uniform(roc->rand_min, roc->rand_max));
       break;
     case RNG_Distribution::LOG_NORMAL:
-      slider_names = {"mean", "standard deviation"};
+      slider_names = {"Log Mean", "Log Deviation"};
       roc->set_distribution(new LogNormal(roc->rand_min, roc->rand_max));
+      normalized_scale = true;
       break;
     case RNG_Distribution::EXTREME:
-      slider_names = {"location", "scale"};
+      slider_names = {"Location", "Scale"};
       roc->set_distribution(
           new ExtremeDistribution(roc->rand_min, roc->rand_max));
       break;
@@ -67,7 +71,7 @@ void ChangeRandomDistribution(RandomOrConstant* roc,
           new WeibullDistribution(roc->rand_min, roc->rand_max));
       break;
     case RNG_Distribution::CHI:
-      slider_names = {"dof", ""};
+      slider_names = {"Degrees of Freedom", ""};
       roc->set_distribution(new ChiSquaredDistribution(roc->rand_min));
       break;
     case RNG_Distribution::STUDENT:
@@ -92,6 +96,24 @@ void ChangeRandomDistribution(RandomOrConstant* roc,
 
   slider_1->text = slider_names[0];
   slider_2->text = slider_names[1];
+
+  // Enable the scale slider if sliders 1/2 are normalized
+  if (!normalized_scale) {
+    slider_1->min = roc->min_value;
+    slider_1->max = roc->max_value;
+
+    slider_2->min = roc->min_value;
+    slider_2->max = roc->max_value;
+    roc->scale_factor = 1;
+  } else {
+    slider_1->min = 0;
+    slider_1->max = 1;
+    slider_2->min = 0;
+    slider_2->max = 1;
+
+    scale_slider->min = roc->min_value;
+    scale_slider->max = roc->max_value;
+  }
 }
 
 Widget* CreateDistributionWidgets(RandomOrConstant& ROC,
@@ -114,9 +136,11 @@ Widget* CreateDistributionWidgets(RandomOrConstant& ROC,
       new Slider("min", &ROC.rand_min, ROC.min_value, ROC.max_value);
   Slider* max_slider =
       new Slider("max", &ROC.rand_max, ROC.min_value, ROC.max_value);
+  Slider* scale_slider =
+      new Slider("scale", &ROC.scale_factor, ROC.min_value, ROC.max_value);
 
-  auto update_dist_function =
-      std::bind(ChangeRandomDistribution, &ROC, min_slider, max_slider);
+  auto update_dist_function = std::bind(ChangeRandomDistribution, &ROC,
+                                        min_slider, max_slider, scale_slider);
 
   Widget* distribution_select = new ComboBox(
       "Distribution", distributions, distribution_ptr, update_dist_function);
@@ -125,8 +149,18 @@ Widget* CreateDistributionWidgets(RandomOrConstant& ROC,
   min_slider->SetReleaseCallback(update_dist_function);
 
   Widget* distribution_pane = new MultiWidget(
-      std::vector<Widget*>{min_slider, max_slider}, distribution_ptr,
-      {{0, 1}, {0, 1}, {0, 1}, {0, 1}, {0, 1}, {0}, {0}, {0, 1}, {0, 1}, {0}});
+      std::vector<Widget*>{min_slider, max_slider, scale_slider},
+      distribution_ptr,
+      {{0, 1},
+       {0, 1},
+       {0, 1, 2},
+       {0, 1},
+       {0, 1},
+       {0},
+       {0},
+       {0, 1},
+       {0, 1},
+       {0}});
 
   Widget* constant_slider =
       new Slider(name, &ROC.constant, ROC.min_value, ROC.max_value);

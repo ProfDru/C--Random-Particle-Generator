@@ -35,7 +35,7 @@ RandomOrConstant::RandomOrConstant(float constant,
 }
 
 float RandomOrConstant::get_number() {
-  return use_random ? gen_random_number() : constant;
+  return use_random ? gen_random_number() * scale_factor : constant;
 }
 
 inline float RandomOrConstant::gen_random_number() {
