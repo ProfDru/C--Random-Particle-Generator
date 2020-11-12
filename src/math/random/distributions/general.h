@@ -44,4 +44,32 @@ class ChiSquaredDistribution
   inline ChiSquaredDistribution(float dof)
       : TMPDistribution(std::chi_squared_distribution(dof)){};
 };
+
+class StudentDistribution
+    : public TMPDistribution<std::student_t_distribution<float>> {
+ public:
+  inline StudentDistribution(float dof)
+      : TMPDistribution(std::student_t_distribution<float>(dof)){};
+};
+
+class FisherDistribution
+    : public TMPDistribution<std::fisher_f_distribution<float>> {
+ public:
+  inline FisherDistribution(float m, float n)
+      : TMPDistribution(std::fisher_f_distribution<float>(m, n)){};
+};
+
+class GammaDistribution
+    : public TMPDistribution<std::gamma_distribution<float>> {
+ public:
+  inline GammaDistribution(float alpha, float beta)
+      : TMPDistribution(std::gamma_distribution<float>(alpha, beta)){};
+};
+class ExponentialDistribution
+    : public TMPDistribution<std::exponential_distribution<float>> {
+ public:
+  inline ExponentialDistribution(float lambda)
+      : TMPDistribution(std::exponential_distribution<float>(lambda)){};
+};
+
 }  // namespace rpg::math::random

@@ -70,6 +70,24 @@ void ChangeRandomDistribution(RandomOrConstant* roc,
       slider_names = {"dof", ""};
       roc->set_distribution(new ChiSquaredDistribution(roc->rand_min));
       break;
+    case RNG_Distribution::STUDENT:
+      slider_names = {"dof", ""};
+      roc->set_distribution(new StudentDistribution(roc->rand_min));
+      break;
+    case RNG_Distribution::FISHER:
+      slider_names = {"m", "n"};
+      roc->set_distribution(
+          new FisherDistribution(roc->rand_min, roc->rand_max));
+      break;
+    case RNG_Distribution::GAMMA:
+      slider_names = {"alpha", "beta"};
+      roc->set_distribution(
+          new GammaDistribution(roc->rand_min, roc->rand_max));
+      break;
+    case RNG_Distribution::EXPONENTIAL:
+      slider_names = {"lambda", ""};
+      roc->set_distribution(new ExponentialDistribution(roc->rand_min));
+      break;
   }
 
   slider_1->text = slider_names[0];
@@ -81,8 +99,9 @@ Widget* CreateDistributionWidgets(RandomOrConstant& ROC,
   int* distribution_ptr = reinterpret_cast<int*>(&ROC.next_distribution);
   int* engine_ptr = reinterpret_cast<int*>(&ROC.next_algorithm);
 
-  const vector<string> distributions{"Uniform", "Normal",  "LogNormal",
-                                     "Extreme", "Weibull", "Chi"};
+  const vector<string> distributions{
+      "Uniform", "Normal",  "LogNormal", "Extreme", "Weibull",
+      "Chi",     "Student", "Fisher",    "Gamma",   "Exponential"};
 
   const vector<string> engines = {"Default",  "MinSTD",     "MT19937",
                                   "Ranlux48", "Ranlux48_B", "Knuth"};
@@ -107,7 +126,7 @@ Widget* CreateDistributionWidgets(RandomOrConstant& ROC,
 
   Widget* distribution_pane = new MultiWidget(
       std::vector<Widget*>{min_slider, max_slider}, distribution_ptr,
-      {{0, 1}, {0, 1}, {0, 1}, {0, 1}, {0, 1}, {0}});
+      {{0, 1}, {0, 1}, {0, 1}, {0, 1}, {0, 1}, {0}, {0}, {0, 1}, {0, 1}, {0}});
 
   Widget* constant_slider =
       new Slider(name, &ROC.constant, ROC.min_value, ROC.max_value);

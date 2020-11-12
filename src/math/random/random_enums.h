@@ -17,5 +17,9 @@ enum class RNG_Distribution {
   EXTREME = 3,
   WEIBULL = 4,
   CHI = 5,
+  STUDENT = 6,
+  FISHER = 7,
+  GAMMA = 8,
+  EXPONENTIAL = 9
 };
 }  // namespace rpg::math::random
