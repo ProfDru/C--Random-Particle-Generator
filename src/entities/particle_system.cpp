@@ -125,15 +125,12 @@ void ParticleEngine::color_particle(Particle& P) {
 }
 
 void ParticleEngine::emit_particle(int num_particles) {
+  double sim_time = 0;
   for (int i = 0; i < num_particles; i++) {
     // Simulate this particle for the time between it should have been
     // fired and the time it was fired
-    const double sim_time =
-        (static_cast<double>(i) * this->fire_rate) + this->overflow;
-
-    if (sim_time >= this->particle_lifetime)
+    if (sim_time > particle_lifetime)
       break;
-
     Particle P = simulation::fire_particle(
         this->magnitude.get_number(), this->vertical_angle.get_number(),
         this->particle_lifetime, this->horizontal_angle);
@@ -142,6 +139,7 @@ void ParticleEngine::emit_particle(int num_particles) {
     color_particle(P);
 
     particles.push_back(P);
+    sim_time += fire_rate;
   }
 }
 
@@ -191,7 +189,7 @@ void ParticleEngine::Update() {
   // Get time
   this->fire_rate = 1.0 / static_cast<double>(this->particles_per_second);
   const double time = simulation::get_time_since(last_update) / 1000.0;
-  if (time > update_threshold) {
+  if (time > (simulation::time_scale * update_threshold)) {
     const double this_update = simulation::get_time();
     simulate_particles(time);
     last_update = this_update;
