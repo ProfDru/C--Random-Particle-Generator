@@ -13,23 +13,20 @@ using std::vector;
 namespace rpg {
 
 /*! \brief Creates a position array from an array of particles */
-inline vector<float> CreatePositionArray(const vector<Particle>& particles) {
-  std::vector<float> pos_arr(particles.size() * 3);
-  for (long long unsigned int i = 0; i < particles.size(); i++) {
+inline void CreatePositionArray(const vector<Particle>& particles,
+                                vector<float>& pos_arr) {
+  for (int i = 0; i < particles.size(); i++) {
     const auto offset = i * 3;
     const Particle& particle = particles[i];
     pos_arr[offset] = particle.pos.x;
     pos_arr[offset + 1] = particle.pos.y;
     pos_arr[offset + 2] = particle.pos.z;
   }
-
-  return pos_arr;
 }
 
 /*! \brief Creates a color array from an array of particles */
-inline vector<float> CreateColorArray(const vector<Particle>& particles) {
-  std::vector<float> color_arr(particles.size() * 3);
-
+inline void CreateColorArray(const vector<Particle>& particles,
+                             vector<float>& color_arr) {
   for (long long unsigned int i = 0; i < particles.size(); i++) {
     const auto offset = i * 3;
     const Particle& particle = particles[i];
@@ -37,8 +34,6 @@ inline vector<float> CreateColorArray(const vector<Particle>& particles) {
     color_arr[offset + 1] = particle.color.g;
     color_arr[offset + 2] = particle.color.b;
   }
-
-  return color_arr;
 }
 
 void UpdateParticle(Particle& P,
@@ -158,7 +153,10 @@ void ParticleEngine::create_new_particles(double time) {
 }
 
 ParticleEngine::ParticleEngine()
-    : vertical_angle(20.0f, 0.0f, 90.0f), magnitude(10.0f, 0.0f, 20.0f) {
+    : vertical_angle(20.0f, 0.0f, 90.0f),
+      magnitude(10.0f, 0.0f, 20.0f),
+      position_storage(10000),
+      color_storage(10000) {
   this->particles = std::vector<Particle>();
   last_update = simulation::get_time();
 }
@@ -197,16 +195,26 @@ void ParticleEngine::Update() {
   }
 }
 
-std::vector<float> ParticleEngine::GetVertexBuffer() const {
-  return CreatePositionArray(particles);
+const std::vector<float>& ParticleEngine::GetColorBuffer() {
+  if (color_storage.size() != max_particles * 3) {
+    printf("RESIZE\n");
+    color_storage.resize(max_particles * 3, 0);
+  }
+
+  CreateColorArray(particles, color_storage);
+  return color_storage;
 }
 
-std::vector<float> ParticleEngine::GetColorBuffer() const {
-  return CreateColorArray(this->particles);
+const std::vector<float>& ParticleEngine::GetVertexBuffer() {
+  if (position_storage.size() != max_particles * 3)
+    position_storage.resize(max_particles * 3, 0);
+
+  CreatePositionArray(particles, position_storage);
+  return position_storage;
 };
 
 int ParticleEngine::NumVertices() const {
-  return this->particles.size() * 3;
+  return std::min(static_cast<int>(particles.size()), max_particles) * 3;
 }
 
 }  // namespace rpg

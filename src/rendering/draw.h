@@ -18,7 +18,7 @@ void DrawPoints(int num);
 
 /*! \brief Set up attribute to be drawn next draw call */
 template <typename T>
-inline void HandleAttribute(const T& ent, const ShaderAttribute& attr) {
+inline void HandleAttribute(T& ent, const ShaderAttribute& attr) {
   // Enable the vertex attribute for this shader
   const int attr_id = attr.id;
   EnableVertexAttribute(attr.id);
@@ -26,14 +26,14 @@ inline void HandleAttribute(const T& ent, const ShaderAttribute& attr) {
   // Fill the buffer with the asked for information
   switch (attr.T) {
     case (ShaderAttribute::type::vertex): {
-      const std::vector<float> vertex_buffer = ent.GetVertexBuffer();
+      const std::vector<float>& vertex_buffer = ent.GetVertexBuffer();
       const int num_vertices = ent.NumVertices();
 
       FillBuffer(vertex_buffer.data(), num_vertices, attr.vbo, attr_id);
       break;
     }
     case (ShaderAttribute::type::color): {
-      const std::vector<float> color_buffer = ent.GetColorBuffer();
+      const std::vector<float>& color_buffer = ent.GetColorBuffer();
       const int num_vertices = ent.NumVertices();
 
       FillBuffer(color_buffer.data(), num_vertices, attr.vbo, attr_id);
@@ -46,7 +46,7 @@ inline void HandleAttribute(const T& ent, const ShaderAttribute& attr) {
 }
 
 template <typename T>
-inline void Draw(const T& ent, const Shader& shader) {
+inline void Draw(T& ent, const Shader& shader) {
   // Fill buffers and enable each attribute
   UseProgram(shader.get_program_id());
 

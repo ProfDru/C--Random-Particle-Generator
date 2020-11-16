@@ -19,6 +19,8 @@ class ParticleEngine : public Entity {
   double overflow = 0.0;
   double last_update = 0.0;
   const double update_threshold = 0.01 / 1000.0;
+  std::vector<float> color_storage;
+  std::vector<float> position_storage;
 
   /*! \brief Determine how many particles should be emitted based on the
    * firerate, time since last update, and number of alive particles. */
@@ -73,8 +75,8 @@ class ParticleEngine : public Entity {
   /*! \brief Update all particles */
   void Update();
 
-  std::vector<float> GetVertexBuffer() const;
-  std::vector<float> GetColorBuffer() const;
+  const std::vector<float>& GetVertexBuffer();
+  const std::vector<float>& GetColorBuffer();
   int NumVertices() const;
 
   //~ParticleEngine();
