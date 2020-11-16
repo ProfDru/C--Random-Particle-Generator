@@ -144,13 +144,14 @@ void ParticleEngine::emit_particle(int num_particles) {
 }
 
 void ParticleEngine::create_new_particles(double time) {
-  if (NumVertices() >= max_particles)
+  if (NumVertices() / 3 >= max_particles)
     return;
 
   const int num_shots = queued_shots(time);
 
   // Limit max number of particles by max_particles and shot time
-  const int remaining_vertices = std::max(max_particles - NumVertices(), 0);
+  const int remaining_vertices =
+      std::max(max_particles - static_cast<int>(particles.size()), 0);
   const int particle_budget = std::clamp(num_shots, 0, remaining_vertices);
 
   emit_particle(particle_budget);

@@ -26,7 +26,7 @@ using std::vector;
 namespace rpg::menus {
 
 std::string GetParticleCount(ParticleEngine* ps) {
-  return "Particle Count: " + std::to_string(ps->NumVertices());
+  return "Particle Count: " + std::to_string(ps->NumVertices() / 3);
 }
 
 /*! \brief Create a prebaked group to bind all parameters in a random or
