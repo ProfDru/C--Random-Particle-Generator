@@ -13,7 +13,7 @@ namespace rpg {
 
 /*! \brief Manages the state of the OpenGL renderer */
 class Scene {
-  std::optional<ParticleEngine> PI;
+  ParticleEngine PI;
   Camera main_camera;
   bool paused = false;
 

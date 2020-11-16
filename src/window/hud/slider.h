@@ -12,9 +12,11 @@ class Slider : public Label {
   int* int_ptr;
   float* float_ptr;
   SliderType type;
-  float max, min;
+  std::function<void()> on_release;
+  bool held_last_frame = false;
 
  public:
+  float max, min;
   Slider(const std::string& name,
          int* var,
          float min = 0.0f,
@@ -34,7 +36,10 @@ class Slider : public Label {
          float max = 1.0f,
          const std::string& help_text = "");
 
-  void Draw();
+  /*! \brief Set the update function on release */
+  void SetReleaseCallback(std::function<void()> release_function);
+
+  void Draw() override;
 
   ~Slider(){};
 };  // namespace rpg::hud

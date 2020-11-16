@@ -1,7 +1,7 @@
 
 #include <sys_time.h>
 #include <entities\particle_simulation.h>
-#include <random_manager.h>
+#include <math/random/random_manager.h>
 
 #include <math/base.h>
 #include <math/vector3d.h>
@@ -17,6 +17,7 @@
 #include <algorithm>
 #include <numbers>
 
+using namespace rpg::math::random;
 namespace rpg::simulation {
 
 float time_scale = 1.0f;
@@ -41,11 +42,11 @@ double get_time() {
 }
 
 inline float get_rand(float min, float max) {
-  return RandomManager::random_range(min, max);
+  return GlobalRandom::GetRandomNumber(min, max);
 }
 
 inline float get_rand_nolimits() {
-  return RandomManager::GetRandomNumber();
+  return GlobalRandom::GetRandomNumber();
 }
 
 /*! \brief Move particle based on it's velocity */
@@ -68,14 +69,16 @@ bool simple_ground_bounce(Particle& p,
 const glm::vec3 origin(0, 0, 0);
 const glm::vec3 white(255, 255, 255);
 
-Particle fire_particle(float magnitude, float vertical_angle, float lifetime) {
-  const float horizontal_angle =
-      get_rand(0, 360);  // rand(0, 360);
-                         // ticks = (ticks % 360) + 1;
+Particle fire_particle(float magnitude,
+                       float vertical_angle,
+                       float lifetime,
+                       float max_horizontal_angle) {
+  const double horizontal_angle = get_rand(0, max_horizontal_angle);
+  static const float rotation = math::to_radians<int, float>(-90);
 
   auto dir = math::spherical_to_cartesian(glm::vec3(
       1, math::to_radians(horizontal_angle), math::to_radians(vertical_angle)));
-  dir = glm::rotateX(dir, math::to_radians<int, float>(-90));
+  dir = glm::rotateX(dir, rotation);
 
   Particle out_particle(origin, white);
   out_particle.velocity = (dir * magnitude);

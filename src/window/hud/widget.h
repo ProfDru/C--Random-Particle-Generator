@@ -16,7 +16,8 @@ class Widget {
   std::string name;  //< Name of this widget
   std::string help_marker =
       "";  //< Text that will appear when the help marker is hovered over
-
+  bool same_line = false;  //< Whether or not this widget should be drawn on the
+                           //same line as the last.
   /*! \brief Draw this hud element. */
   virtual void Draw() = 0;
 

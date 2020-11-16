@@ -48,13 +48,13 @@ target_sources(RandomParticleEngine
     src/utils.h
     src/utils.cpp
 
-    src/random_manager.cpp
     src/sys_time.cpp
     src/camera.cpp
     src/scene.cpp
     src/main.cpp
+    src/random_or_constant.h
+    src/random_or_constant.cpp
 
-    src/random_manager.h
     src/sys_time.h
 
     src/system/kbm_movement.cpp
@@ -107,6 +107,8 @@ target_sources(RandomParticleEngine
     src/window/hud/multi_widget.cpp
     src/window/hud/multi_widget.h
 
+    src/menus/roc_control.cpp
+    src/menus/roc_control.h
     src/menus/settings.cpp
     src/menus/settings.h
 
@@ -114,6 +116,21 @@ target_sources(RandomParticleEngine
     src/math/units.h
     src/math/base.h
     src/math/color.h
+    src/math/random/random_manager.h
+    src/math/random/random_manager.cpp
+    src/math/random/random_enums.h
+    src/math/random/distribution.cpp
+    src/math/random/distribution.h
+    src/math/random/generator.cpp
+    src/math/random/generator.h
+    src/math/random/distributions/uniform.cpp
+    src/math/random/distributions/uniform.h
+    src/math/random/distributions/normal.cpp
+    src/math/random/distributions/normal.h
+    src/math/random/distributions/log_normal.h
+    src/math/random/distributions/log_normal.cpp
+    src/math/random/distributions/general.cpp
+    src/math/random/distributions/general.h
 
     src/physics/base.h
     src/physics/kinematics.h

@@ -27,10 +27,34 @@ ComboBox::ComboBox(const std::string& name,
   *int_to_update = 0;
 }
 
+ComboBox::ComboBox(const std::string& name,
+                   const std::vector<std::string>& elements,
+                   int* var,
+                   std::function<void()> update_func)
+    : Label(name, name),
+      int_to_update(var),
+      elements(elements),
+      update_func(update_func) {
+  this->values = BuildString(elements);
+  *int_to_update = 0;
+}
+
+void ComboBox::check_update(int new_value) {
+  if (new_value != last_value) {
+    last_value = new_value;
+
+    // dont call the function if it has no target
+    if (update_func)
+      update_func();
+  }
+}
+
 void ComboBox::Draw() {
   // ImGui::Combo(this->text.c_str(), int_to_update, values.c_str());
 
   // This will be true if the drop down should be rendered
+  if (this->same_line)
+    ImGui::SameLine();
   if (ImGui::BeginCombo(this->name.c_str(),
                         this->elements[*int_to_update].c_str())) {
     // This is the drop down code specifically
@@ -43,6 +67,7 @@ void ComboBox::Draw() {
       if (is_selected)
         ImGui::SetItemDefaultFocus();
     }
+    this->check_update(*int_to_update);
     ImGui::EndCombo();
   }
 }

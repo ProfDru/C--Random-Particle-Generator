@@ -1,7 +1,7 @@
 
 #pragma once
 #include <entities\particle.h>
-
+#include <math/random/random_enums.h>
 #include <vector>
 namespace rpg::simulation {
 
@@ -18,6 +18,9 @@ bool simple_ground_bounce(Particle& P,
                           float e,
                           double time);
 
-Particle fire_particle(float magnitude, float vertical_angle, float lifetime);
+Particle fire_particle(float magnitude,
+                       float vertical_angle,
+                       float lifetime,
+                       float max_hoizontal_angle);
 
 }  // namespace rpg::simulation

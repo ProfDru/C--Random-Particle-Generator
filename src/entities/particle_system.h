@@ -1,7 +1,8 @@
 #pragma once
 #include <entities/entity.h>
-
+#include <math\random\random_enums.h>
 #include <entities\particle.h>
+#include <random_or_constant.h>
 
 #include <vector>
 #include <string>
@@ -38,6 +39,8 @@ class ParticleEngine : public Entity {
 
  public:
   // EMITTER
+  math::random::RNG_Algorithm random_algorithm =
+      math::random::RNG_Algorithm::DEFAULT;
   int max_particles =
       15000;  //< Maximum number of particles alive at any given time
   double fire_rate =
@@ -46,9 +49,13 @@ class ParticleEngine : public Entity {
   int particles_per_second = 1000;
   float particle_lifetime = 5.0f;  //< Maximum length of time a particle can be
                                    // alive before being cleaned up
-  float angle = 20.0f;  //< Angle between y+ and the ground to fire particles in
-  float magnitude = 10.0f;  //< MAgnitude of the initial velocity vector  for
-                            // each new particle.
+
+  RandomOrConstant vertical_angle;  //= RandomOrConstant(20.0f, 0.0f, 90.0f);
+
+  RandomOrConstant magnitude;  //< MAgnitude of the initial velocity vector  for
+                               // each new particle.
+  float horizontal_angle = 360.0f;
+
   COLOR_MODE color_mode = COLOR_MODE::RAINBOW;
   PARAMETER color_param = PARAMETER::LIFETIME;
 

@@ -97,12 +97,14 @@ void ParticleEngine::color_particle(Particle& P) {
         break;
       case PARAMETER::VELOCITY:
         min = 0;
-        max = calculate_height(this->magnitude, this->angle);
+        max = calculate_height(this->magnitude.constant,
+                               this->vertical_angle.constant);
         val = abs(P.velocity.y);
         break;
       case PARAMETER::DIST_FROM_GROUND:
         min = 0;
-        max = find_apex(this->magnitude, this->angle);
+        max =
+            find_apex(this->magnitude.constant, this->vertical_angle.constant);
         val = P.pos.y;
         break;
       default:
@@ -132,8 +134,9 @@ void ParticleEngine::emit_particle(int num_particles) {
     if (sim_time >= this->particle_lifetime)
       break;
 
-    Particle P = simulation::fire_particle(this->magnitude, this->angle,
-                                           this->particle_lifetime);
+    Particle P = simulation::fire_particle(
+        this->magnitude.get_number(), this->vertical_angle.get_number(),
+        this->particle_lifetime, this->horizontal_angle);
 
     UpdateParticle(P, sim_time, true, this->coeff_of_restitution);
     color_particle(P);
@@ -155,7 +158,8 @@ void ParticleEngine::create_new_particles(double time) {
   emit_particle(particle_budget);
 }
 
-ParticleEngine::ParticleEngine() {
+ParticleEngine::ParticleEngine()
+    : vertical_angle(20.0f, 0.0f, 90.0f), magnitude(10.0f, 0.0f, 20.0f) {
   this->particles = std::vector<Particle>();
   last_update = simulation::get_time();
 }
@@ -171,7 +175,8 @@ void remove_particles(std::vector<Particle>& particles) {
 void ParticleEngine::simulate_particles(double time) {
   // Apply simulation step to all particles
   for (auto& p : particles) {
-    UpdateParticle(p, time, this->bounce, this->coeff_of_restitution);
+    UpdateParticle(p, time, this->bounce, this->coeff_of_restitution,
+                   this->horizontal_angle);
     color_particle(p);
   }
 
