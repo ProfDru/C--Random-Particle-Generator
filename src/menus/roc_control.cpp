@@ -75,11 +75,13 @@ void ChangeRandomDistribution(RandomOrConstant* roc,
       roc->set_distribution(new ChiSquaredDistribution(roc->rand_min));
       break;
     case RNG_Distribution::STUDENT:
-      slider_names = {"dof", ""};
+      slider_names = {"Degrees of Freedom", ""};
+      normalized_scale = true;
       roc->set_distribution(new StudentDistribution(roc->rand_min));
       break;
     case RNG_Distribution::FISHER:
       slider_names = {"m", "n"};
+      normalized_scale = true;
       roc->set_distribution(
           new FisherDistribution(roc->rand_min, roc->rand_max));
       break;
@@ -90,6 +92,7 @@ void ChangeRandomDistribution(RandomOrConstant* roc,
       break;
     case RNG_Distribution::EXPONENTIAL:
       slider_names = {"lambda", ""};
+      normalized_scale = true;
       roc->set_distribution(new ExponentialDistribution(roc->rand_min));
       break;
   }
@@ -157,10 +160,10 @@ Widget* CreateDistributionWidgets(RandomOrConstant& ROC,
        {0, 1},
        {0, 1},
        {0},
-       {0},
+       {0, 2},
+       {0, 1, 2},
        {0, 1},
-       {0, 1},
-       {0}});
+       {0, 2}});
 
   Widget* constant_slider =
       new Slider(name, &ROC.constant, ROC.min_value, ROC.max_value);
