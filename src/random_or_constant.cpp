@@ -18,16 +18,16 @@ RandomOrConstant::RandomOrConstant(float constant,
                                    float max,
                                    RNG_Algorithm alg,
                                    Distribution* dist,
-                                   bool start_random,
-                                   bool force_wrap)
+                                   bool start_random)
     : constant(constant),
       min_value(min),
       max_value(max),
       rand_min(min),
       rand_max(max),
       generator(alg),
-      use_random(start_random),
-      force_wrap(force_wrap) {
+      use_random(start_random) {
+  // If the distribution is set to a null pointer, create a uniform distribution
+  // so distribution is never left as a null pointer.
   if (!dist)
     distribution = std::unique_ptr<Distribution>(new Uniform(0, 1));
   else
@@ -39,9 +39,7 @@ float RandomOrConstant::get_number() {
 }
 
 inline float RandomOrConstant::gen_random_number() {
-  assert(distribution.get());
   return distribution->get_number(generator);
-  // return std::lerp(rand_min, rand_max, distribution->get_number(generator));
 }
 
 void RandomOrConstant::set_generator(RNG_Algorithm alg) {

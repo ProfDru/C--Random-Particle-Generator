@@ -1,6 +1,8 @@
 #pragma once
 
 namespace rpg::math::random {
+/*! \brief a unique integer ID for a random number generator from the
+ * std::random library */
 enum class RNG_Algorithm {
   DEFAULT = 0,
   MINSTD = 1,
@@ -10,6 +12,8 @@ enum class RNG_Algorithm {
   KNUTH = 6
 };
 
+/*! \brief A unique integer ID for a distribution of numbers from the
+ * std::random library.*/
 enum class RNG_Distribution {
   UNIFORM = 0,
   NORMAL = 1,

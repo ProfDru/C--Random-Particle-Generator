@@ -12,6 +12,8 @@ concept RandomNumberDistribuiton = requires(T a, Generator& g) {
   ->std::floating_point;
 };
 
+/*! \brief A generalized wrapper for randum number distributions from
+ * std::random */
 template <RandomNumberDistribuiton dist_t>
 class TMPDistribution : public Distribution {
  protected:

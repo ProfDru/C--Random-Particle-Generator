@@ -28,8 +28,6 @@ using std::vector;
 /*! \brief Used as a callback to create the required stuff for a random
  * distribution */
 void ChangeRandomEngine(RandomOrConstant* roc) {
-  printf(" CHANGE ENGINE \n");
-
   roc->set_generator(roc->next_algorithm);
 }
 
@@ -39,13 +37,15 @@ void ChangeRandomDistribution(RandomOrConstant* roc,
                               Slider* slider_1,
                               Slider* slider_2,
                               Slider* scale_slider) {
-  printf("CHANGE DISTRIBUTION min:%f, max: %f\n", roc->rand_min, roc->rand_max);
-
   const RNG_Distribution next_distribution = roc->next_distribution;
   std::array<std::string, 2> slider_names = {"", ""};
 
+  // If this is set to true in the case statment, then the slider's parameters
+  // will be capped beetween 0 and 1, and the ROC will apply its scale factor
+  // to all produced values
   bool normalized_scale = false;
 
+  // Change behavior based on which distribution type is selected.
   switch (next_distribution) {
     case RNG_Distribution::NORMAL:
       slider_names = {"Mean", "Standard Deviation"};
@@ -97,10 +97,12 @@ void ChangeRandomDistribution(RandomOrConstant* roc,
       break;
   }
 
+  // Update the labels for sliders 1 and 2
   slider_1->text = slider_names[0];
   slider_2->text = slider_names[1];
 
-  // Enable the scale slider if sliders 1/2 are normalized
+  // Either set the slider's bounds to the ROC's maximum and minimum random
+  // values or between 1 and 0
   if (!normalized_scale) {
     slider_1->min = roc->min_value;
     slider_1->max = roc->max_value;
@@ -119,22 +121,31 @@ void ChangeRandomDistribution(RandomOrConstant* roc,
   }
 }
 
+/*! \brief Create a group of widgets to control a ROC.
+
+  \details This uses std::bind to create void function pointers with ROCs and
+  sliders as arguments to ChangeRandomDistribution and ChangeRandomEngine.
+
+ */
 Widget* CreateDistributionWidgets(RandomOrConstant& ROC,
                                   const std::string& name) {
-  int* distribution_ptr = reinterpret_cast<int*>(&ROC.next_distribution);
-  int* engine_ptr = reinterpret_cast<int*>(&ROC.next_algorithm);
-
+  // THis must be ordered to match up with the order of enums in
+  // RNG_Distribution
   const vector<string> distributions{
       "Uniform", "Normal",  "LogNormal", "Extreme", "Weibull",
       "Chi",     "Student", "Fisher",    "Gamma",   "Exponential"};
 
+  // THis must be ordered to match up with the order of enums in RNG_Algorithm
   const vector<string> engines = {"Default",  "MinSTD",     "MT19937",
                                   "Ranlux48", "Ranlux48_B", "Knuth"};
+
+  int* distribution_ptr = reinterpret_cast<int*>(&ROC.next_distribution);
+  int* engine_ptr = reinterpret_cast<int*>(&ROC.next_algorithm);
 
   Widget* random_toggle = new CheckBox("Use random?", &ROC.use_random);
   Widget* engine_select = new ComboBox("Random Engine", engines, engine_ptr,
                                        std::bind(ChangeRandomEngine, &ROC));
-  // distribution_select->same_line = true;
+
   Slider* min_slider =
       new Slider("min", &ROC.rand_min, ROC.min_value, ROC.max_value);
   Slider* max_slider =
@@ -151,6 +162,8 @@ Widget* CreateDistributionWidgets(RandomOrConstant& ROC,
   max_slider->SetReleaseCallback(update_dist_function);
   min_slider->SetReleaseCallback(update_dist_function);
 
+  // This determines which widgets are drawn for each value in distributions in
+  // order.
   Widget* distribution_pane = new MultiWidget(
       std::vector<Widget*>{min_slider, max_slider, scale_slider},
       distribution_ptr,
