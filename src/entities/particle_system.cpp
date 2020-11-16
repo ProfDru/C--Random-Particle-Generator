@@ -138,7 +138,7 @@ void ParticleEngine::emit_particle(int num_particles) {
         this->magnitude.get_number(), this->vertical_angle.get_number(),
         this->particle_lifetime, this->horizontal_angle);
 
-    UpdateParticle(P, sim_time, true, this->coeff_of_restitution);
+    UpdateParticle(P, sim_time, this->bounce, this->coeff_of_restitution);
     color_particle(P);
 
     particles.push_back(P);
