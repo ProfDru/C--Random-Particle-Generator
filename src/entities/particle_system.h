@@ -43,6 +43,9 @@ class ParticleEngine : public Entity {
    * particles, and create new particles */
   void simulate_particles(double time);
 
+  /*! Add this particle to the color and position arrays at index i. */
+  void update_arrays(Particle& P, int i);
+
  public:
   // EMITTER
   math::random::RNG_Algorithm random_algorithm =

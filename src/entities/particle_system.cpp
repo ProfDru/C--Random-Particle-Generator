@@ -157,7 +157,7 @@ void ParticleEngine::emit_particle(int num_particles) {
 
     UpdateParticle(P, time, this->bounce, this->coeff_of_restitution);
     color_particle(P);
-
+    this->update_arrays(P, i + this->num_particles);
     i++;
   });
   this->num_particles += i;
@@ -191,13 +191,23 @@ void remove_particles(std::vector<Particle>& particles) {
 void ParticleEngine::simulate_particles(double time) {
   // Apply simulation step to all particles
 
+  // Resize particle array if needed
+  if (particles.size() != max_particles) {
+    particles.clear();
+    particles.resize(max_particles,
+                     Particle{glm::vec3(0, 0, 0), glm::vec3(0, 0, 0)});
+    color_storage.resize(max_particles * 3);
+    position_storage.resize(max_particles * 3);
+  }
+
   int count = 0;
   std::ranges::for_each(get_live_particles(particles, max_particles),
                         [this, time, &count](Particle& p) {
                           UpdateParticle(p, time, bounce, coeff_of_restitution,
                                          horizontal_angle);
                           color_particle(p);
-                          count += is_live_particle(p);
+                          if (p.lifetime > 0)
+                            update_arrays(p, count++);
                         });
 
   // Update our particle count
@@ -208,11 +218,6 @@ void ParticleEngine::simulate_particles(double time) {
 }
 
 void ParticleEngine::Update() {
-  // Resize particle array if needed
-  if (particles.size() != max_particles)
-    particles.resize(max_particles,
-                     Particle{glm::vec3(0, 0, 0), glm::vec3(0, 0, 0)});
-
   // Update firerate and get the current time
   fire_rate = 1.0 / static_cast<double>(particles_per_second);
   const double time = simulation::get_time_since(last_update) / 1000.0;
@@ -227,19 +232,10 @@ void ParticleEngine::Update() {
 }
 
 const std::vector<float>& ParticleEngine::GetColorBuffer() {
-  if (color_storage.size() != max_particles * 3) {
-    color_storage.resize(max_particles * 3, 0);
-  }
-
-  CreateColorArray(particles, color_storage);
   return color_storage;
 }
 
 const std::vector<float>& ParticleEngine::GetVertexBuffer() {
-  if (position_storage.size() != max_particles * 3)
-    position_storage.resize(max_particles * 3, 0);
-
-  CreatePositionArray(particles, position_storage);
   return position_storage;
 };
 
@@ -249,6 +245,17 @@ int ParticleEngine::NumVertices() const {
 
 int ParticleEngine::NumParticles() const {
   return num_particles;
+}
+
+inline void ParticleEngine::update_arrays(Particle& P, int i) {
+  const int offset = i * 3;
+  color_storage[offset] = P.color.x;
+  color_storage[offset + 1] = P.color.y;
+  color_storage[offset + 2] = P.color.z;
+
+  position_storage[offset] = P.pos.x;
+  position_storage[offset + 1] = P.pos.y;
+  position_storage[offset + 2] = P.pos.z;
 }
 
 }  // namespace rpg
