@@ -21,7 +21,7 @@ template <typename T>
 inline void HandleAttribute(T& ent, const ShaderAttribute& attr) {
   // Enable the vertex attribute for this shader
   const int attr_id = attr.id;
-  EnableVertexAttribute(attr.id);
+  // EnableVertexAttribute(attr.id);
 
   // Fill the buffer with the asked for information
   switch (attr.T) {
@@ -57,8 +57,8 @@ inline void Draw(T& ent, const Shader& shader) {
   DrawPoints(ent.NumVertices());
 
   // Disable all attributes
-  for (const auto& attr : shader.attributes)
-    DisableVertexAttribute(attr.id);
+  // for (const auto& attr : shader.attributes)
+  // DisableVertexAttribute(attr.id);
 }
 
 }  // namespace rpg::rendering

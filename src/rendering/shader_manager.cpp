@@ -32,6 +32,7 @@ void ShaderManager::CompileShader(Shader& shader) {
   for (auto& attribute : shader.attributes) {
     attribute.id = GetAttributeID(program_id, attribute.name);
     attribute.vbo = GenBuffer();
+    EnableVertexAttribute(attribute.id);
   }
 
   // Add it to our vector and name dictionary
