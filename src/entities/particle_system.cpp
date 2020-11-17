@@ -8,32 +8,58 @@
 #include <assert.h>
 #include <math.h>
 #include <numbers>
+#include <ranges>
+#include <algorithm>
+#include <concepts>
 
 using std::vector;
 namespace rpg {
 
+inline bool is_live_particle(const Particle& P) {
+  return P.lifetime > 0;
+}
+
+inline bool is_dead_particle(const Particle& P) {
+  return !(is_live_particle(P));
+}
+
+inline auto get_live_particles(std::vector<Particle>& particles,
+                               int num_particles) {
+  auto view = std::ranges::views::take(particles, num_particles);
+  return std::ranges::filter_view(view, is_live_particle);
+}
+inline auto get_dead_particles(std::vector<Particle>& particles,
+                               int num_particles) {
+  auto view = std::ranges::views::take(particles, num_particles);
+  return std::ranges::filter_view(view, is_dead_particle);
+}
+
 /*! \brief Creates a position array from an array of particles */
-inline void CreatePositionArray(const vector<Particle>& particles,
+inline void CreatePositionArray(vector<Particle>& particles,
                                 vector<float>& pos_arr) {
-  for (int i = 0; i < particles.size(); i++) {
-    const auto offset = i * 3;
-    const Particle& particle = particles[i];
-    pos_arr[offset] = particle.pos.x;
-    pos_arr[offset + 1] = particle.pos.y;
-    pos_arr[offset + 2] = particle.pos.z;
-  }
+  int index = 0;
+  std::ranges::for_each(get_live_particles(particles, pos_arr.size() / 3),
+                        [&index, &pos_arr](const Particle& particle) {
+                          const auto offset = index * 3;
+                          pos_arr[offset] = particle.pos.x;
+                          pos_arr[offset + 1] = particle.pos.y;
+                          pos_arr[offset + 2] = particle.pos.z;
+                          index++;
+                        });
 }
 
 /*! \brief Creates a color array from an array of particles */
-inline void CreateColorArray(const vector<Particle>& particles,
+inline void CreateColorArray(vector<Particle>& particles,
                              vector<float>& color_arr) {
-  for (long long unsigned int i = 0; i < particles.size(); i++) {
-    const auto offset = i * 3;
-    const Particle& particle = particles[i];
-    color_arr[offset] = particle.color.r;
-    color_arr[offset + 1] = particle.color.g;
-    color_arr[offset + 2] = particle.color.b;
-  }
+  int index = 0;
+  std::ranges::for_each(get_live_particles(particles, color_arr.size() / 3),
+                        [&index, &color_arr](const Particle& particle) {
+                          const auto offset = index * 3;
+                          color_arr[offset] = particle.color.x;
+                          color_arr[offset + 1] = particle.color.y;
+                          color_arr[offset + 2] = particle.color.z;
+                          index++;
+                        });
 }
 
 void UpdateParticle(Particle& P,
@@ -120,36 +146,29 @@ void ParticleEngine::color_particle(Particle& P) {
 }
 
 void ParticleEngine::emit_particle(int num_particles) {
-  double sim_time = 0;
-  for (int i = 0; i < num_particles; i++) {
-    // Simulate this particle for the time between it should have been
-    // fired and the time it was fired
-    if (sim_time > particle_lifetime)
-      break;
-    Particle P = simulation::fire_particle(
+  double i = 0;
+  auto particles_to_replace = get_dead_particles(particles, max_particles) |
+                              std::views::take(num_particles);
+  std::ranges::for_each(particles_to_replace, [&i, this](Particle& P) {
+    const double time = this->overflow + (i * this->fire_rate);
+    P = simulation::fire_particle(
         this->magnitude.get_number(), this->vertical_angle.get_number(),
         this->particle_lifetime, this->horizontal_angle);
 
-    UpdateParticle(P, sim_time, this->bounce, this->coeff_of_restitution);
+    UpdateParticle(P, time, this->bounce, this->coeff_of_restitution);
     color_particle(P);
 
-    particles.push_back(P);
-    sim_time += fire_rate;
-  }
+    i++;
+  });
+  this->num_particles += i;
 }
 
 void ParticleEngine::create_new_particles(double time) {
-  if (NumVertices() / 3 >= max_particles)
-    return;
-
   const int num_shots = queued_shots(time);
 
-  // Limit max number of particles by max_particles and shot time
-  const int remaining_vertices =
-      std::max(max_particles - static_cast<int>(particles.size()), 0);
-  const int particle_budget = std::clamp(num_shots, 0, remaining_vertices);
+  std::max(max_particles - static_cast<int>(particles.size()), 0);
 
-  emit_particle(particle_budget);
+  emit_particle(num_shots);
 }
 
 ParticleEngine::ParticleEngine()
@@ -165,29 +184,41 @@ ParticleEngine::ParticleEngine()
 void remove_particles(std::vector<Particle>& particles) {
   particles.erase(
       std::remove_if(particles.begin(), particles.end(),
-                     [](Particle& p) -> bool { return (p.lifetime <= 0); }),
+                     [](Particle& p) -> bool { return (p.lifetime <= 0.0f); }),
       particles.end());
 }
 
 void ParticleEngine::simulate_particles(double time) {
   // Apply simulation step to all particles
-  for (auto& p : particles) {
-    UpdateParticle(p, time, this->bounce, this->coeff_of_restitution,
-                   this->horizontal_angle);
-    color_particle(p);
-  }
 
-  // Remove dead particles
-  remove_particles(this->particles);
+  int count = 0;
+  std::ranges::for_each(get_live_particles(particles, max_particles),
+                        [this, time, &count](Particle& p) {
+                          UpdateParticle(p, time, bounce, coeff_of_restitution,
+                                         horizontal_angle);
+                          color_particle(p);
+                          count += is_live_particle(p);
+                        });
 
-  // Create new particles
+  // Update our particle count
+  this->num_particles = count;
+
+  // Create new particles (They're updated implicitly)
   create_new_particles(time);
 }
 
 void ParticleEngine::Update() {
-  // Get time
-  this->fire_rate = 1.0 / static_cast<double>(this->particles_per_second);
+  // Resize particle array if needed
+  if (particles.size() != max_particles)
+    particles.resize(max_particles,
+                     Particle{glm::vec3(0, 0, 0), glm::vec3(0, 0, 0)});
+
+  // Update firerate and get the current time
+  fire_rate = 1.0 / static_cast<double>(particles_per_second);
   const double time = simulation::get_time_since(last_update) / 1000.0;
+
+  // If the time is within our update threshold, simulate particles, then
+  // update our last_update time
   if (time > (simulation::time_scale * update_threshold)) {
     const double this_update = simulation::get_time();
     simulate_particles(time);
@@ -197,7 +228,6 @@ void ParticleEngine::Update() {
 
 const std::vector<float>& ParticleEngine::GetColorBuffer() {
   if (color_storage.size() != max_particles * 3) {
-    printf("RESIZE\n");
     color_storage.resize(max_particles * 3, 0);
   }
 
@@ -214,7 +244,11 @@ const std::vector<float>& ParticleEngine::GetVertexBuffer() {
 };
 
 int ParticleEngine::NumVertices() const {
-  return std::min(static_cast<int>(particles.size()), max_particles) * 3;
+  return NumParticles() * 3;
+}
+
+int ParticleEngine::NumParticles() const {
+  return num_particles;
 }
 
 }  // namespace rpg

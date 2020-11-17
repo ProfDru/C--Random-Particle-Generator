@@ -21,6 +21,10 @@ class ParticleEngine : public Entity {
   const double update_threshold = 0.01 / 1000.0;
   std::vector<float> color_storage;
   std::vector<float> position_storage;
+  int num_particles = 0;
+
+  /*! \brief Create a enw particle */
+  Particle gen_particle();
 
   /*! \brief Determine how many particles should be emitted based on the
    * firerate, time since last update, and number of alive particles. */
@@ -78,6 +82,7 @@ class ParticleEngine : public Entity {
   const std::vector<float>& GetVertexBuffer();
   const std::vector<float>& GetColorBuffer();
   int NumVertices() const;
+  int NumParticles() const;
 
   //~ParticleEngine();
 };
