@@ -86,6 +86,7 @@ class ParticleEngine : public Entity {
   const std::vector<float>& GetColorBuffer();
   int NumVertices() const;
   int NumParticles() const;
+  int MaxVertices() const;
 
   //~ParticleEngine();
 };

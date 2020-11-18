@@ -258,4 +258,8 @@ inline void ParticleEngine::update_arrays(Particle& P, int i) {
   position_storage[offset + 2] = P.pos.z;
 }
 
+int ParticleEngine::MaxVertices() const {
+  return max_particles * 3;
+}
+
 }  // namespace rpg

@@ -30,10 +30,10 @@ class ShaderManager {
   void RegisterShader(int object_id, Shader& shader);
 
   /*! \brief Ge ta reference to the shader at a given ID */
-  const Shader& GetShader(int shader_id) const;
+  Shader& GetShader(int shader_id);
 
   /*! \brief Get the id of the shader assigned to a specific entity */
-  const Shader& GetShaderforObject(int ent_id) const;
+  Shader& GetShaderforObject(int ent_id);
 
   /*! \brief Update the MVP for every shader that needs it */
   void UpdateMVP(const float* MVP_ptr);

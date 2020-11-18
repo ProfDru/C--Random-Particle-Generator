@@ -60,7 +60,7 @@ void ShaderManager::RegisterShader(int object_id, Shader& shader) {
   this->entity_map.insert({object_id, shader_id});
 }
 
-const Shader& ShaderManager::GetShaderforObject(int ent_id) const {
+Shader& ShaderManager::GetShaderforObject(int ent_id) {
   assert(this->entity_map.count(ent_id) > 0);
 
   return shaders[this->entity_map.at(ent_id)];
