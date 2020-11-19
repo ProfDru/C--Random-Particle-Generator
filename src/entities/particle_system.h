@@ -31,7 +31,7 @@ class ParticleEngine : public Entity {
   int queued_shots(double time_since);
 
   /*! \brief Create and emit particles based on how much time passed.. */
-  void create_new_particles(double time);
+  void create_new_particles(double time, int count);
 
   /*! \brief Emit as many particles as possible */
   void emit_particle(int num_particles);
