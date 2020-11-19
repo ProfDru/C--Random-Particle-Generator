@@ -4,7 +4,7 @@
 
 #include <functional>
 #include <cassert>
-#include <math.h>
+#include <cmath>
 #include <assert.h>
 #include <math.h>
 #include <numbers>
@@ -30,8 +30,6 @@ inline void ParticleEngine::update_particle(Particle& P, double time) {
 
   if (bounce)
     simulation::simple_ground_bounce(P, 0, coeff_of_restitution, time);
-
-  color_particle(P);
 }
 
 int ParticleEngine::queued_shots(double time_since) {
@@ -62,46 +60,65 @@ inline float find_apex(float magnitude, float angle) {
   return y_component * apex_time + (-9.8 * pow(apex_time, 2) / 2);
 }
 
+inline std::array<float, 2> ParticleEngine::color_range() {
+  float min, max;
+  switch (color_param) {
+    case PARAMETER::LIFETIME:
+      min = 0;
+      max = particle_lifetime;
+      break;
+    case PARAMETER::VELOCITY:
+      min = 0;
+      max = calculate_height(magnitude.constant, vertical_angle.constant);
+      break;
+    case PARAMETER::DIST_FROM_GROUND:
+      min = 0;
+      max = find_apex(magnitude.constant, vertical_angle.constant);
+      break;
+    default:
+      min = 0;
+      max = 1;
+      break;
+  }
+  return std::array<float, 2>{min, max};
+}
+
+inline float ParticleEngine::get_particle_value(const Particle& P) {
+  switch (color_param) {
+    case PARAMETER::LIFETIME:
+      return P.lifetime;
+      break;
+    case PARAMETER::VELOCITY:
+      return abs(P.velocity.y);
+      break;
+    case PARAMETER::DIST_FROM_GROUND:
+      return P.pos.y;
+      break;
+  }
+  return 0.0f;
+}
+
+inline void ParticleEngine::color_particle(Particle& P, float min, float max) {
+  if (color_mode == COLOR_MODE::CONSTANT)
+    return;
+
+  const float val = get_particle_value(P);
+
+  if (color_mode == COLOR_MODE::RAINBOW)
+    P.color = simulation::rainbow_by_param(min, max, val);
+  else if (color_mode == COLOR_MODE::GRADIENT)
+    P.color = simulation::lerp_by_param(min, max, val, start_color, end_color);
+}
+
 void ParticleEngine::color_particle(Particle& P) {
   if (this->color_mode == COLOR_MODE::CONSTANT) {
     return;
   } else {
-    // Determine the parameters needed for lerp
-    float min, max, val;
-    switch (this->color_param) {
-      case PARAMETER::LIFETIME:
-        min = 0;
-        max = this->particle_lifetime;
-        val = P.lifetime;
-        break;
-      case PARAMETER::VELOCITY:
-        min = 0;
-        max = calculate_height(this->magnitude.constant,
-                               this->vertical_angle.constant);
-        val = abs(P.velocity.y);
-        break;
-      case PARAMETER::DIST_FROM_GROUND:
-        min = 0;
-        max =
-            find_apex(this->magnitude.constant, this->vertical_angle.constant);
-        val = P.pos.y;
-        break;
-      default:
-        min = 0;
-        max = 1;
-        val = 0;
-
-        break;
-    }
-
-    // Apply lerp color algorithm
-    if (this->color_mode == COLOR_MODE::RAINBOW)
-      P.color = simulation::rainbow_by_param(min, max, val);
-    else if (this->color_mode == COLOR_MODE::GRADIENT)
-      P.color = simulation::lerp_by_param(min, max, val, this->start_color,
-                                          this->end_color);
+    const auto min_max = color_range();
+    color_particle(P, min_max[0], min_max[1]);
   }
 }
+
 void ParticleEngine::emit_particle(int queued_shots) {
   double i = 0;
 
@@ -119,6 +136,7 @@ void ParticleEngine::emit_particle(int queued_shots) {
 
     P.color = start_color;
     update_particle(P, time);
+    color_particle(P);
 
     this->update_arrays(P);
     i += 1;
@@ -152,36 +170,46 @@ void remove_particles(std::vector<Particle>& particles) {
       particles.end());
 }
 
-void ParticleEngine::simulate_particles(double time) {
-  // Apply simulation step to all particles
-
+inline void ParticleEngine::resize_if_needed() {
   // Resize particle array if needed
   if (particles.size() != max_particles) {
     particles.clear();
     color_storage.clear();
     position_storage.clear();
+
     particles.resize(max_particles);
     color_storage.resize(max_particles * 3);
     position_storage.resize(max_particles * 3);
     num_particles = 0;
   }
+}
+
+void ParticleEngine::simulate_particles(double time) {
+  // Apply simulation step to all particles
+  resize_if_needed();
 
   // Note, here we take num_particles -1. Not sure why this is necessary,
   // however if we don't then it's a full array scan to perform this operation.
   auto currently_live_particles = particles | views::filter(is_live_particle) |
                                   views::take(num_particles - 1);
 
+  // Get the minimum and maximum values for colors
+  const auto min_max = color_range();
+  const float min = min_max[0];
+  const float max = min_max[1];
+
   int count = 0;
   if (num_particles > 0) {
     num_particles = 0;
     // iterate through each living particle and update it
-    for_each(currently_live_particles, [this, time, &count](Particle& p) {
-      update_particle(p, time);
-
-      // if the particle is still alive add it to our storage arrays
-      if (is_live_particle(p))
-        update_arrays(p);
-    });
+    for_each(currently_live_particles,
+             [this, time, &count, min, max](Particle& p) {
+               update_particle(p, time);
+               color_particle(p, min, max);
+               // if the particle is still alive add it to our storage arrays
+               if (is_live_particle(p))
+                 update_arrays(p);
+             });
     num_particles++;
   }
 
