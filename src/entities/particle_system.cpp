@@ -23,17 +23,15 @@ inline bool is_dead_particle(const Particle& P) {
   return !(is_live_particle(P));
 }
 
-void UpdateParticle(Particle& P,
-                    double time,
-                    bool enable_bounce = true,
-                    float coeff_of_restitution = 0.8,
-                    float mass = 0.5) {
+inline void ParticleEngine::update_particle(Particle& P, double time) {
   P.lifetime -= time;
   // simulation::apply_gravity(P, time);
   simulation::update_particle_position(P, time);
 
-  if (enable_bounce)
+  if (bounce)
     simulation::simple_ground_bounce(P, 0, coeff_of_restitution, time);
+
+  color_particle(P);
 }
 
 int ParticleEngine::queued_shots(double time_since) {
@@ -104,7 +102,6 @@ void ParticleEngine::color_particle(Particle& P) {
                                           this->end_color);
   }
 }
-static int frames = 0;
 void ParticleEngine::emit_particle(int queued_shots) {
   double i = 0;
 
@@ -112,22 +109,20 @@ void ParticleEngine::emit_particle(int queued_shots) {
   auto particles_to_replace =
       particles | views::filter(is_dead_particle) | views::take(queued_shots);
 
-  auto color = simulation::rainbow_by_param(0, 30, ++frames % 30);
   // For each queued shot, create a new particle to replace a dead particle
-  for_each(particles_to_replace, [&i, color, this](Particle& P) {
+  for_each(particles_to_replace, [&i, this](Particle& P) {
     const double time = this->overflow + (i * this->fire_rate);
+
     P = simulation::fire_particle(
         this->magnitude.get_number(), this->vertical_angle.get_number(),
         this->particle_lifetime, this->horizontal_angle);
 
-    UpdateParticle(P, time, this->bounce, this->coeff_of_restitution);
+    P.color = start_color;
+    update_particle(P, time);
 
-    P.color = color;
-
-    this->update_arrays(P, i + this->num_particles);
+    this->update_arrays(P);
     i += 1;
   });
-  this->num_particles += i;
 }
 
 void ParticleEngine::create_new_particles(double time, int count) {
@@ -178,25 +173,20 @@ void ParticleEngine::simulate_particles(double time) {
 
   int count = 0;
   if (num_particles > 0) {
+    num_particles = 0;
     // iterate through each living particle and update it
     for_each(currently_live_particles, [this, time, &count](Particle& p) {
-      UpdateParticle(p, time, bounce, coeff_of_restitution, horizontal_angle);
-      color_particle(p);
+      update_particle(p, time);
 
       // if the particle is still alive add it to our storage arrays
-      if (is_live_particle(p)) {
-        update_arrays(p, count);
-        count += 1;
-      }
+      if (is_live_particle(p))
+        update_arrays(p);
     });
-    count++;
+    num_particles++;
   }
 
-  // Update particle count
-  this->num_particles = count;
-
   // Create new particles based on firerate
-  create_new_particles(time, count);
+  create_new_particles(time, num_particles);
 }
 
 void ParticleEngine::Update() {
@@ -229,8 +219,8 @@ int ParticleEngine::NumParticles() const {
   return num_particles;
 }
 
-inline void ParticleEngine::update_arrays(Particle& P, int i) {
-  const int offset = i * 3;
+inline void ParticleEngine::update_arrays(Particle& P) {
+  const int offset = this->num_particles * 3;
   color_storage[offset] = P.color.x;
   color_storage[offset + 1] = P.color.y;
   color_storage[offset + 2] = P.color.z;
@@ -238,6 +228,7 @@ inline void ParticleEngine::update_arrays(Particle& P, int i) {
   position_storage[offset] = P.pos.x;
   position_storage[offset + 1] = P.pos.y;
   position_storage[offset + 2] = P.pos.z;
+  this->num_particles += 1;
 }
 
 int ParticleEngine::MaxVertices() const {

@@ -39,12 +39,15 @@ class ParticleEngine : public Entity {
   /*! \brief color particle by this particle engine's color mode. */
   void color_particle(Particle& P);
 
+  /*! \brief Update a particle's position */
+  void update_particle(Particle& P, double time);
+
   /*! \brief Apply simulation to every live particle, detect and remove dead
    * particles, and create new particles */
   void simulate_particles(double time);
 
   /*! Add this particle to the color and position arrays at index i. */
-  void update_arrays(Particle& P, int i);
+  void update_arrays(Particle& P);
 
  public:
   // EMITTER
