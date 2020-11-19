@@ -16,9 +16,7 @@ using std::vector;
 using namespace std::ranges;
 namespace rpg {
 
-static int life_checkers = 0;
 inline bool is_live_particle(const Particle& P) {
-  ++life_checkers;
   return P.lifetime > 0;
 }
 inline bool is_dead_particle(const Particle& P) {
@@ -106,7 +104,7 @@ void ParticleEngine::color_particle(Particle& P) {
                                           this->end_color);
   }
 }
-
+static int frames = 0;
 void ParticleEngine::emit_particle(int queued_shots) {
   double i = 0;
 
@@ -114,8 +112,9 @@ void ParticleEngine::emit_particle(int queued_shots) {
   auto particles_to_replace =
       particles | views::filter(is_dead_particle) | views::take(queued_shots);
 
+  auto color = simulation::rainbow_by_param(0, 30, ++frames % 30);
   // For each queued shot, create a new particle to replace a dead particle
-  for_each(particles_to_replace, [&i, this](Particle& P) {
+  for_each(particles_to_replace, [&i, color, this](Particle& P) {
     const double time = this->overflow + (i * this->fire_rate);
     P = simulation::fire_particle(
         this->magnitude.get_number(), this->vertical_angle.get_number(),
@@ -123,9 +122,8 @@ void ParticleEngine::emit_particle(int queued_shots) {
 
     UpdateParticle(P, time, this->bounce, this->coeff_of_restitution);
 
-    P.color = simulation::rainbow_by_param(0, max_particles, life_checkers);
+    P.color = color;
 
-    color_particle(P);
     this->update_arrays(P, i + this->num_particles);
     i += 1;
   });
@@ -193,16 +191,12 @@ void ParticleEngine::simulate_particles(double time) {
     });
     count++;
   }
-  printf("Live Checkers: %i\n Particles: %i\n", life_checkers, num_particles);
-  life_checkers = 0;
 
   // Update particle count
   this->num_particles = count;
 
   // Create new particles based on firerate
   create_new_particles(time, count);
-  printf("Death Checkers: %i\n", life_checkers);
-  life_checkers = 0;
 }
 
 void ParticleEngine::Update() {
