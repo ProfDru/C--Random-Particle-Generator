@@ -31,7 +31,7 @@ class ParticleEngine : public Entity {
   int queued_shots(double time_since);
 
   /*! \brief Create and emit particles based on how much time passed.. */
-  void create_new_particles(double time);
+  void create_new_particles(double time, int count);
 
   /*! \brief Emit as many particles as possible */
   void emit_particle(int num_particles);
@@ -39,12 +39,15 @@ class ParticleEngine : public Entity {
   /*! \brief color particle by this particle engine's color mode. */
   void color_particle(Particle& P);
 
+  /*! \brief Update a particle's position */
+  void update_particle(Particle& P, double time);
+
   /*! \brief Apply simulation to every live particle, detect and remove dead
    * particles, and create new particles */
   void simulate_particles(double time);
 
   /*! Add this particle to the color and position arrays at index i. */
-  void update_arrays(Particle& P, int i);
+  void update_arrays(Particle& P);
 
  public:
   // EMITTER
