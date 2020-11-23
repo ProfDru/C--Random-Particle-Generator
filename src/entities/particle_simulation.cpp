@@ -58,9 +58,7 @@ void simple_ground_bounce(Particle& p,
                           float ground_height,
                           float e,
                           double time_since_last_update) {
-  if (p.pos[1] <= ground_height && p.velocity[1] < 0) {
-    physics::bounce_basic(p, 0.5, e, ground_height, time_since_last_update);
-  }
+  physics::bounce_basic(p, 0.5, e, ground_height, time_since_last_update);
 }
 
 const glm::vec3 origin(0, 0, 0);
