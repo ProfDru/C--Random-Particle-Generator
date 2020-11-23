@@ -61,7 +61,7 @@ void InitParticleMenu(rpg::ParticleEngine* PE) {
 
   vector<Widget*> particle_system{
       new Slider(
-          "Number of Particles", &PE->max_particles, 1, 2500000,
+          "Number of Particles", &PE->max_particles, 1, 1000000,
           "Maximum number of particles that can be alive at any time. Once "
           "this cap is reached, no more particles will be created."),
       new Slider("Particle Lifetime", &PE->particle_lifetime, 0.1, 10,
@@ -70,7 +70,7 @@ void InitParticleMenu(rpg::ParticleEngine* PE) {
       new Slider("Horizontal Angle", &PE->horizontal_angle, 0, 360),
       BindRandomOrConstant(PE->vertical_angle, "Vertical Angle"),
       BindRandomOrConstant(PE->magnitude, "Magnitude"),
-      new Slider("Particles Per Second", &PE->particles_per_second, 1, 500000,
+      new Slider("Particles Per Second", &PE->particles_per_second, 1, 200000,
                  "Number of particles that can be created per second.")};
 
   vector<Widget*> physics = {new AlternateWidget(

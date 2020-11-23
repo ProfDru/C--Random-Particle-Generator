@@ -26,7 +26,7 @@ class ParticleEngine : public Entity {
   math::random::RNG_Algorithm random_algorithm =
       math::random::RNG_Algorithm::DEFAULT;
   int max_particles =
-      2500000;  //< Maximum number of particles alive at any given time
+      1000000;  //< Maximum number of particles alive at any given time
   double fire_rate =
       0.001;  //< Minimum delay between the creation of each particle
 
@@ -81,7 +81,7 @@ class ParticleEngine : public Entity {
  public:
   // EMITTER
 
-  int particles_per_second = 1000000;
+  int particles_per_second = 200000;
   float particle_lifetime = 5.0f;  //< Maximum length of time a particle can be
                                    // alive before being cleaned up
 
