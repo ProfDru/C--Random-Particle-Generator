@@ -3,7 +3,7 @@
 namespace rpg {
 
 struct Particle {
-  using Vector3 = std::array<float, 3>;
+  using Vector3 = std::array<double, 3>;
   float lifetime;
   Vector3 pos;
   Vector3 color;
