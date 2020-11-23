@@ -8,7 +8,7 @@
 
 namespace rpg::simulation {
 void rainbow_by_lifetime(Particle& P, float max_lifetime) {
-  P.color = rainbow_by_param(0, max_lifetime, P.lifetime);
+  P.set_color(rainbow_by_param(0, max_lifetime, P.lifetime));
 }
 
 glm::vec3 rainbow_by_param(float min, float max, float val) {

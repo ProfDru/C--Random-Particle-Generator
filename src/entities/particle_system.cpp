@@ -89,10 +89,10 @@ inline float ParticleEngine::get_particle_value(const Particle& P) {
       return P.lifetime;
       break;
     case PARAMETER::VELOCITY:
-      return abs(P.velocity.y);
+      return abs(P.velocity[1]);
       break;
     case PARAMETER::DIST_FROM_GROUND:
-      return P.pos.y;
+      return P.pos[1];
       break;
   }
   return 0.0f;
@@ -105,9 +105,10 @@ inline void ParticleEngine::color_particle(Particle& P, float min, float max) {
   const float val = get_particle_value(P);
 
   if (color_mode == COLOR_MODE::RAINBOW)
-    P.color = simulation::rainbow_by_param(min, max, val);
+    P.set_color(simulation::rainbow_by_param(min, max, val));
   else if (color_mode == COLOR_MODE::GRADIENT)
-    P.color = simulation::lerp_by_param(min, max, val, start_color, end_color);
+    P.set_color(
+        simulation::lerp_by_param(min, max, val, start_color, end_color));
 }
 
 void ParticleEngine::color_particle(Particle& P) {
@@ -134,7 +135,7 @@ void ParticleEngine::emit_particle(int queued_shots) {
         this->magnitude.get_number(), this->vertical_angle.get_number(),
         this->particle_lifetime, this->horizontal_angle);
 
-    P.color = start_color;
+    P.set_color(start_color);
     update_particle(P, time);
     color_particle(P);
 
@@ -249,13 +250,13 @@ int ParticleEngine::NumParticles() const {
 
 inline void ParticleEngine::update_arrays(Particle& P) {
   const int offset = this->num_particles * 3;
-  color_storage[offset] = P.color.x;
-  color_storage[offset + 1] = P.color.y;
-  color_storage[offset + 2] = P.color.z;
+  color_storage[offset] = P.color[0];
+  color_storage[offset + 1] = P.color[1];
+  color_storage[offset + 2] = P.color[2];
 
-  position_storage[offset] = P.pos.x;
-  position_storage[offset + 1] = P.pos.y;
-  position_storage[offset + 2] = P.pos.z;
+  position_storage[offset] = P.pos[0];
+  position_storage[offset + 1] = P.pos[1];
+  position_storage[offset + 2] = P.pos[2];
   this->num_particles += 1;
 }
 

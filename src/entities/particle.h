@@ -1,14 +1,31 @@
 #pragma once
-#include <glm/glm.hpp>
-
+#include <array>
 namespace rpg {
-struct Particle {
-  float lifetime = -1.0f;
-  glm::vec3 pos = glm::vec3(0, 0, 0);
-  glm::vec3 color = glm::vec3(0, 0, 0);
-  glm::vec3 velocity = glm::vec3(0, 0, 0);
 
-  Particle();
-  Particle(glm::vec3 pos, glm::vec3 color);
+struct Particle {
+  using Vector3 = std::array<float, 3>;
+  float lifetime;
+  Vector3 pos;
+  Vector3 color;
+  Vector3 velocity;
+
+  inline Particle()
+      : lifetime(-1.0f),
+        pos(Vector3{0, 0, 0}),
+        color(Vector3{0, 0, 0}),
+        velocity(Vector3{0, 0, 0}){};
+
+  template <typename Vec>
+  inline void set_color(const Vec& new_color) {
+    color[0] = new_color[0];
+    color[1] = new_color[1];
+    color[2] = new_color[2];
+  }
+  template <typename Vec>
+  inline void set_velocity(const Vec& new_velocity) {
+    velocity[0] = new_velocity[0];
+    velocity[1] = new_velocity[1];
+    velocity[2] = new_velocity[2];
+  }
 };
 }  // namespace rpg

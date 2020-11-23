@@ -102,8 +102,7 @@ inline constexpr void set(Vector3DBoth auto& st, Numeric auto value) {
 
 /*! \brief Convert 3 coordinates from a spherical coordinate system to a
  * cartesian coordinate system */
-inline constexpr Vector3D auto spherical_to_cartesian(
-    const Vector3D auto& coord) {
+inline constexpr Vector3D auto spherical_to_cartesian(Vector3D auto coord) {
   const Numeric auto rho = get<0>(coord);
   const Numeric auto theta = get<1>(coord);
   const Numeric auto phi = get<2>(coord);
@@ -116,7 +115,7 @@ inline constexpr Vector3D auto spherical_to_cartesian(
 }
 
 template <Vector3D T, Vector3D V>
-inline constexpr Vector3D auto add(const T& v1, const V& v2) {
+inline constexpr Vector3D auto add(T v1, V v2) {
   const Numeric auto x = get<0>(v1) + get<0>(v2);
   const Numeric auto y = get<1>(v1) + get<1>(v2);
   const Numeric auto z = get<2>(v1) + get<2>(v2);
@@ -125,19 +124,19 @@ inline constexpr Vector3D auto add(const T& v1, const V& v2) {
 }
 
 template <Vector3D T, Vector3D V>
-inline constexpr auto multiply(const T& v1, const V& v2) {
-  const auto x = get(v1, 0) * get(v2, 0);
-  const auto y = get(v1, 1) * get(v2, 1);
-  const auto z = get(v1, 2) * get(v2, 2);
+inline constexpr auto multiply(T v1, const V& v2) {
+  const Numeric auto x = get(v1, 0) * get(v2, 0);
+  const Numeric auto y = get(v1, 1) * get(v2, 1);
+  const Numeric auto z = get(v1, 2) * get(v2, 2);
 
   return T{x, y, z};
 }
 
 template <Vector3D T, Numeric S>
-inline constexpr auto multiply(const T& v1, S scalar) {
-  const auto x = get<0>(v1) * scalar;
-  const auto y = get<1>(v1) * scalar;
-  const auto z = get<2>(v1) * scalar;
+inline constexpr auto multiply(T v1, S scalar) {
+  const Numeric auto x = get<0>(v1) * scalar;
+  const Numeric auto y = get<1>(v1) * scalar;
+  const Numeric auto z = get<2>(v1) * scalar;
 
   return T{x, y, z};
 }

@@ -54,7 +54,7 @@ inline void bounce_basic(RigidBody auto& body,
   physics::update_position_with_gravity(body.pos, body.velocity,
                                         -time_since_collision);
   // Calculate how much energy was lost with the bounce
-  y_vel = body.velocity.y;
+  y_vel = get<1>(body.velocity);
 
   const double energy = kinematic_energy(y_vel, mass);
   const double energy_loss = calculate_energy_loss(e);

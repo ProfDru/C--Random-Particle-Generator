@@ -58,7 +58,7 @@ void simple_ground_bounce(Particle& p,
                           float ground_height,
                           float e,
                           double time_since_last_update) {
-  if (p.pos.y <= ground_height && p.velocity.y < 0) {
+  if (p.pos[1] <= ground_height && p.velocity[1] < 0) {
     physics::bounce_basic(p, 0.5, e, ground_height, time_since_last_update);
   }
 }
@@ -77,8 +77,8 @@ Particle fire_particle(float magnitude,
       1, math::to_radians(horizontal_angle), math::to_radians(vertical_angle)));
   dir = glm::rotateX(dir, rotation);
 
-  Particle out_particle(origin, white);
-  out_particle.velocity = (dir * magnitude);
+  Particle out_particle;
+  out_particle.set_velocity(dir * magnitude);
   out_particle.lifetime = lifetime;
   return out_particle;
 }
