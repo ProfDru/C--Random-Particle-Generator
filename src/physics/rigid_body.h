@@ -34,9 +34,9 @@ inline void bounce_basic(RigidBody auto& body,
                          Numeric auto time_since_last_update = -1) {
   // Do nothing if the particle has no vertical momentum
   double time_since = time_since_last_update;
-  double y_vel = abs(get(body.velocity, 1));
+  double y_vel = abs(get<1>(body.velocity));
 
-  const double distance_underground = abs(collision_pos - get(body.pos, 1));
+  const double distance_underground = abs(collision_pos - get<1>(body.pos));
   const double time_since_collision = distance_underground / y_vel;
 
   // If time_since_last_update is unset, set it to time_since_collision to
@@ -44,8 +44,8 @@ inline void bounce_basic(RigidBody auto& body,
   if (time_since == -1)
     time_since = time_since_collision;
   else if (time_since_collision > time_since || (abs(y_vel) <= 0.001)) {
-    set(body.velocity, 1, 0);
-    set(body.pos, 1, 0);
+    set<0>(body.velocity, 0);
+    set<1>(body.pos, 0);
 
     return;
   }
@@ -63,7 +63,7 @@ inline void bounce_basic(RigidBody auto& body,
   // Update the velocity of the body based on the new energy
   const double velocity_after_bounce =
       velocity_from_kinematic_energy(energy_after_bounce, mass);
-  set(body.velocity, 1, velocity_after_bounce);
+  set<1>(body.velocity, velocity_after_bounce);
 
   // Now play the motion of the object since the time of impact with the new
   // velocity

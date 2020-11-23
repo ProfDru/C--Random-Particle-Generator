@@ -80,15 +80,15 @@ inline void hsv_to_rgb_simplified(Numeric auto& h,
 
 /*! \brief Convert a vector3D to rgb */
 inline void hsv_to_rgb(Vector3D auto& hsv_color) {
-  Numeric auto h = get(hsv_color, 0);
-  Numeric auto s = get(hsv_color, 1);
-  Numeric auto v = get(hsv_color, 2);
+  Numeric auto h = get<0>(hsv_color);
+  Numeric auto s = get<1>(hsv_color);
+  Numeric auto v = get<2>(hsv_color);
 
   hsv_to_rgb_simplified(h, s, v);
 
-  set(hsv_color, 0, h);
-  set(hsv_color, 1, s);
-  set(hsv_color, 2, v);
+  set<0>(hsv_color, h);
+  set<1>(hsv_color, s);
+  set<2>(hsv_color, v);
 }
 
 }  // namespace rpg::math::color
