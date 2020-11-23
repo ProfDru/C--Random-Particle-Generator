@@ -28,6 +28,14 @@ namespace rpg {
    get_number
 */
 class RandomOrConstant {
+ public:
+  bool use_random = false;
+  float constant;
+  float scale_factor = 1;
+
+  float min_value, max_value;
+  float rand_min, rand_max;
+
  private:
   std::unique_ptr<math::random::Distribution>
       distribution;  //> A pointer to the current distribution
@@ -40,16 +48,11 @@ class RandomOrConstant {
   float gen_random_number();
 
  public:
-  float constant, min_value, max_value;
-  float rand_min, rand_max;
-  float scale_factor = 1;
-
   math::random::RNG_Algorithm next_algorithm =
       math::random::RNG_Algorithm::DEFAULT;
   math::random::RNG_Distribution next_distribution =
       math::random::RNG_Distribution::UNIFORM;
 
-  bool use_random = false;
   RandomOrConstant();
 
   /*! \brief Create a new random or constant.

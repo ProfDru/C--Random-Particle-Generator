@@ -33,7 +33,7 @@ inline void bounce_basic(RigidBody auto& body,
                          Numeric auto collision_pos = 0.0,
                          Numeric auto time_since_last_update = -1) {
   // Do nothing if the particle has no vertical momentum
-  double time_since = static_cast<double>(time_since_last_update);
+  double time_since = time_since_last_update;
   double y_vel = abs(get(body.velocity, 1));
 
   const double distance_underground = abs(collision_pos - get(body.pos, 1));

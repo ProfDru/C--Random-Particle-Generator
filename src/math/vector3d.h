@@ -47,12 +47,12 @@ auto get(int i, const T& st) {
 }
 
 template <Vector3DArray T>
-inline auto get(const T& st, int i) {
+inline Numeric auto get(const T& st, int i) {
   return st[i];
 }
 
 template <Vector3DStruct T, Numeric N>
-inline void set(T& st, int i, N value) {
+inline constexpr void set(T& st, int i, N value) {
   switch (i) {
     case 0:
       st.x = value;
@@ -70,30 +70,30 @@ inline void set(T& st, int i, N value) {
 }
 
 template <Vector3DArray T, Numeric N>
-inline auto set(const T& st, int i, N value) {
+inline constexpr auto set(const T& st, int i, N value) {
   st[i] = value;
 }
 
 /*! \brief Convert 3 coordinates from a spherical coordinate system to a
  * cartesian coordinate system */
 template <Vector3D T>
-inline auto spherical_to_cartesian(const T coord) {
-  const auto rho = get(coord, 0);
-  const auto theta = get(coord, 1);
-  const auto phi = get(coord, 2);
+inline constexpr Vector3D auto spherical_to_cartesian(const T coord) {
+  const Numeric auto rho = get(coord, 0);
+  const Numeric auto theta = get(coord, 1);
+  const Numeric auto phi = get(coord, 2);
 
-  const auto x = rho * sin(phi) * cos(theta);
-  const auto y = rho * sin(phi) * sin(theta);
-  const auto z = rho * cos(phi);
+  const Numeric auto x = rho * sin(phi) * cos(theta);
+  const Numeric auto y = rho * sin(phi) * sin(theta);
+  const Numeric auto z = rho * cos(phi);
 
   return T{x, y, z};
 }
 
 template <Vector3D T, Vector3D V>
 inline auto add(const T& v1, const V& v2) {
-  const auto x = get(v1, 0) + get(v2, 0);
-  const auto y = get(v1, 1) + get(v2, 1);
-  const auto z = get(v1, 2) + get(v2, 2);
+  const Numeric auto x = get(v1, 0) + get(v2, 0);
+  const Numeric auto y = get(v1, 1) + get(v2, 1);
+  const Numeric auto z = get(v1, 2) + get(v2, 2);
 
   return T{x, y, z};
 }

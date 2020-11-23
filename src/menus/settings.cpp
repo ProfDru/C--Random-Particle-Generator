@@ -61,7 +61,7 @@ void InitParticleMenu(rpg::ParticleEngine* PE) {
 
   vector<Widget*> particle_system{
       new Slider(
-          "Number of Particles", &PE->max_particles, 1, 10000000,
+          "Number of Particles", &PE->max_particles, 1, 2500000,
           "Maximum number of particles that can be alive at any time. Once "
           "this cap is reached, no more particles will be created."),
       new Slider("Particle Lifetime", &PE->particle_lifetime, 0.1, 10,

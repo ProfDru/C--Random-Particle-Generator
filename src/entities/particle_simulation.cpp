@@ -59,8 +59,7 @@ bool simple_ground_bounce(Particle& p,
                           float e,
                           double time_since_last_update) {
   if (p.pos.y <= ground_height && p.velocity.y < 0) {
-    physics::bounce_basic(p, 0.5, e, static_cast<double>(ground_height),
-                          time_since_last_update);
+    physics::bounce_basic(p, 0.5, e, ground_height, time_since_last_update);
     return true;
   }
   return false;
@@ -82,7 +81,6 @@ Particle fire_particle(float magnitude,
 
   Particle out_particle(origin, white);
   out_particle.velocity = (dir * magnitude);
-  out_particle.color = {0, 0.25, 1};
   out_particle.lifetime = lifetime;
   return out_particle;
 }
