@@ -13,7 +13,7 @@ double get_time_since(double last_time);
 
 double get_time();
 
-bool simple_ground_bounce(Particle& P,
+void simple_ground_bounce(Particle& P,
                           float ground_height,
                           float e,
                           double time);

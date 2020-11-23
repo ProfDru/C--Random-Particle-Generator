@@ -54,15 +54,13 @@ void update_particle_position(Particle& p, double time) {
   physics::update_position_with_gravity(p.pos, p.velocity, time);
 }
 
-bool simple_ground_bounce(Particle& p,
+void simple_ground_bounce(Particle& p,
                           float ground_height,
                           float e,
                           double time_since_last_update) {
   if (p.pos.y <= ground_height && p.velocity.y < 0) {
     physics::bounce_basic(p, 0.5, e, ground_height, time_since_last_update);
-    return true;
   }
-  return false;
 }
 
 const glm::vec3 origin(0, 0, 0);
@@ -75,7 +73,7 @@ Particle fire_particle(float magnitude,
   const double horizontal_angle = get_rand(0, max_horizontal_angle);
   static const float rotation = math::to_radians<int, float>(-90);
 
-  auto dir = math::spherical_to_cartesian(glm::vec3(
+  glm::vec3 dir = math::spherical_to_cartesian(glm::vec3(
       1, math::to_radians(horizontal_angle), math::to_radians(vertical_angle)));
   dir = glm::rotateX(dir, rotation);
 
