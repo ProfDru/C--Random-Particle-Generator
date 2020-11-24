@@ -15,7 +15,6 @@ std::string BuildString(const std::vector<std::string>& elements) {
     output.append("\0");
   }
 
-  std::cout << output << std::endl;
   return output;
 }
 
@@ -24,7 +23,7 @@ ComboBox::ComboBox(const std::string& name,
                    int* var)
     : Label(name, name), int_to_update(var), elements(elements) {
   this->values = BuildString(elements);
-  *int_to_update = 0;
+  this->last_value = *var;
 }
 
 ComboBox::ComboBox(const std::string& name,
@@ -36,7 +35,7 @@ ComboBox::ComboBox(const std::string& name,
       elements(elements),
       update_func(update_func) {
   this->values = BuildString(elements);
-  *int_to_update = 0;
+  this->last_value = *var;
 }
 
 void ComboBox::check_update(int new_value) {
