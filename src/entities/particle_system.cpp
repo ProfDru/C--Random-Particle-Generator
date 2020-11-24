@@ -48,20 +48,20 @@ int ParticleEngine::queued_shots(double time_since) {
   return shots;
 }
 
-inline float calculate_height(float magnitude, float angle) {
+inline double calculate_height(double magnitude, double angle) {
   return abs(magnitude * std::sin(std::numbers::pi * (90.0 - angle) / 180.0));
 }
 
 inline float find_apex(float magnitude, float angle) {
-  const float y_component = calculate_height(magnitude, angle);
+  const double y_component = calculate_height(magnitude, angle);
 
-  float apex_time = y_component / 9.8;
+  double apex_time = y_component / 9.8;
 
   return y_component * apex_time + (-9.8 * pow(apex_time, 2) / 2);
 }
 
-inline std::array<float, 2> ParticleEngine::color_range() {
-  float min, max;
+inline std::array<double, 2> ParticleEngine::color_range() {
+  double min, max;
   switch (color_param) {
     case PARAMETER::LIFETIME:
       min = 0;
@@ -80,10 +80,10 @@ inline std::array<float, 2> ParticleEngine::color_range() {
       max = 1;
       break;
   }
-  return std::array<float, 2>{min, max};
+  return std::array<double, 2>{min, max};
 }
 
-inline float ParticleEngine::get_particle_value(const Particle& P) {
+inline double ParticleEngine::get_particle_value(const Particle& P) {
   switch (color_param) {
     case PARAMETER::LIFETIME:
       return P.lifetime;
@@ -95,10 +95,12 @@ inline float ParticleEngine::get_particle_value(const Particle& P) {
       return P.pos[1];
       break;
   }
-  return 0.0f;
+  return 0.0;
 }
 
-inline void ParticleEngine::color_particle(Particle& P, float min, float max) {
+inline void ParticleEngine::color_particle(Particle& P,
+                                           double min,
+                                           double max) {
   if (color_mode == COLOR_MODE::CONSTANT)
     return;
 

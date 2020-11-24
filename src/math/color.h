@@ -19,7 +19,7 @@ inline void hsv_to_rgb(Numeric auto& h, Numeric auto& s, Numeric auto& v) {
   h = h * 360.0;
   const double h_prime = h / 60.0;
   const double chroma = v * s;
-  const double x = chroma * (1 - abs(std::fmod(h_prime, 2) - 1));
+  const double x = chroma * (1.0 - abs(std::fmod(h_prime, 2.0) - 1.0));
 
   const double m = v - chroma;
 

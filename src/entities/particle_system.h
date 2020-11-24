@@ -57,7 +57,7 @@ class ParticleEngine : public Entity {
   void color_particle(Particle& P);
 
   /*! \brief color particle by this particle engine's color mode. */
-  void color_particle(Particle& P, float min, float max);
+  void color_particle(Particle& P, double min, double max);
 
   /*! \brief Resize and clear arrays if needed. */
   void resize_if_needed();
@@ -65,11 +65,11 @@ class ParticleEngine : public Entity {
   /*! \brief Update a particle's position */
   void update_particle(Particle& P, double time);
 
-  float get_particle_value(const Particle& P);
+  double get_particle_value(const Particle& P);
 
   /*! \brief Get the current color range depending on which color enums are
    * specified */
-  std::array<float, 2> color_range();
+  std::array<double, 2> color_range();
 
   /*! \brief Apply simulation to every live particle, detect and remove dead
    * particles, and create new particles */
