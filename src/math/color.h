@@ -78,13 +78,81 @@ inline void hsv_to_rgb_simplified(Numeric auto& h,
   v = alt_function(1.0, H, S, V);
 }
 
+inline void hsv_to_rgb_char(unsigned char& h,
+                            unsigned char& s,
+                            unsigned char& v) {
+  const auto H = h;
+  const auto S = s;
+  const auto V = v;
+
+  const auto region = h / 43;
+  const auto remainder = (h - (region * 43)) * 6;
+
+  const auto p = (v * (255 - s)) >> 8;
+  const auto q = (v * (255 - ((s * remainder) >> 8))) >> 8;
+  const auto t = (v * (255 - ((s * (255 - remainder)) >> 8))) >> 8;
+
+  switch (region) {
+    case 0:
+      h = V;
+      s = t;
+      v = p;
+      break;
+    case 1:
+      h = q;
+      s = V;
+      v = p;
+      break;
+    case 2:
+      h = p;
+      s = V;
+      v = t;
+      break;
+    case 3:
+      h = p;
+      s = q;
+      v = V;
+      break;
+    case 4:
+      h = t;
+      s = p;
+      v = V;
+      break;
+    default:
+      h = V;
+      s = p;
+      v = q;
+      break;
+  }
+}
+
+inline unsigned char double_to_char(double f) {
+  return static_cast<unsigned char>(f * 255.0);
+}
+
+inline float char_to_double(unsigned char c) {
+  return static_cast<double>(c) / 255.0;
+}
+
+inline void hsv_to_rgb_char(Numeric auto& h, Numeric auto& s, Numeric auto& v) {
+  auto H = double_to_char(h);
+  auto S = double_to_char(s);
+  auto V = double_to_char(v);
+
+  hsv_to_rgb_char(H, S, V);
+
+  h = char_to_double(H);
+  s = char_to_double(S);
+  v = char_to_double(V);
+}
+
 /*! \brief Convert a vector3D to rgb */
 inline void hsv_to_rgb(Vector3D auto& hsv_color) {
   Numeric auto h = get<0>(hsv_color);
   Numeric auto s = get<1>(hsv_color);
   Numeric auto v = get<2>(hsv_color);
 
-  hsv_to_rgb_simplified(h, s, v);
+  hsv_to_rgb_char(h, s, v);
 
   set<0>(hsv_color, h);
   set<1>(hsv_color, s);
