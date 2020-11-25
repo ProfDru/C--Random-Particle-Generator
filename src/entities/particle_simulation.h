@@ -7,7 +7,7 @@ namespace rpg::simulation {
 
 extern float time_scale;
 
-void update_particle_position(Particle& P, double time);
+void update_particle_position(Particle& P, float time);
 
 double get_time_since(double last_time);
 
@@ -16,7 +16,7 @@ double get_time();
 void simple_ground_bounce(Particle& P,
                           float ground_height,
                           float e,
-                          double time);
+                          float time);
 
 Particle fire_particle(float magnitude,
                        float vertical_angle,

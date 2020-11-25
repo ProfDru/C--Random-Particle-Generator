@@ -50,17 +50,15 @@ inline float get_rand_nolimits() {
 }
 
 /*! \brief Move particle based on it's velocity */
-void update_particle_position(Particle& p, double time) {
-  physics::update_position_with_gravity(p.pos, p.velocity,
-                                        static_cast<float>(time));
+void update_particle_position(Particle& p, float time) {
+  physics::update_position_with_gravity(p.pos, p.velocity, time);
 }
 
 void simple_ground_bounce(Particle& p,
                           float ground_height,
                           float e,
-                          double time_since_last_update) {
-  physics::bounce_basic(p, 0.5, e, ground_height,
-                        static_cast<float>(time_since_last_update));
+                          float time_since_last_update) {
+  physics::bounce_basic(p, 0.5, e, ground_height, time_since_last_update);
 }
 
 const glm::vec3 origin(0, 0, 0);

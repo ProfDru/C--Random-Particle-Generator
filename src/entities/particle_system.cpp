@@ -17,13 +17,13 @@ using namespace std::ranges;
 namespace rpg {
 
 inline bool is_live_particle(const Particle& P) {
-  return P.lifetime > 0;
+  return P.lifetime > 0.0f;
 }
 inline bool is_dead_particle(const Particle& P) {
   return !(is_live_particle(P));
 }
 
-inline void ParticleEngine::update_particle(Particle& P, double time) {
+inline void ParticleEngine::update_particle(Particle& P, float time) {
   P.lifetime -= time;
   // simulation::apply_gravity(P, time);
   simulation::update_particle_position(P, time);
@@ -60,8 +60,8 @@ inline float find_apex(float magnitude, float angle) {
   return y_component * apex_time + (-9.8 * pow(apex_time, 2) / 2);
 }
 
-inline std::array<double, 2> ParticleEngine::color_range() {
-  double min, max;
+inline std::array<float, 2> ParticleEngine::color_range() {
+  float min, max;
   switch (color_param) {
     case PARAMETER::LIFETIME:
       min = 0;
@@ -80,7 +80,7 @@ inline std::array<double, 2> ParticleEngine::color_range() {
       max = 1;
       break;
   }
-  return std::array<double, 2>{min, max};
+  return std::array<float, 2>{min, max};
 }
 
 inline double ParticleEngine::get_particle_value(const Particle& P) {
@@ -98,9 +98,7 @@ inline double ParticleEngine::get_particle_value(const Particle& P) {
   return 0.0;
 }
 
-inline void ParticleEngine::color_particle(Particle& P,
-                                           double min,
-                                           double max) {
+inline void ParticleEngine::color_particle(Particle& P, float min, float max) {
   if (color_mode == COLOR_MODE::CONSTANT)
     return;
 
@@ -200,11 +198,11 @@ void ParticleEngine::simulate_particles(double time) {
   const auto min_max = color_range();
   const float min = min_max[0];
   const float max = min_max[1];
-
+  const float float_time = static_cast<float>(time);
   num_particles = 0;
   // iterate through each living particle and update it
-  for_each(currently_live_particles, [this, time, min, max](Particle& p) {
-    update_particle(p, time);
+  for_each(currently_live_particles, [this, float_time, min, max](Particle& p) {
+    update_particle(p, float_time);
     color_particle(p, min, max);
     // if the particle is still alive add it to our storage arrays
     if (is_live_particle(p))
@@ -247,15 +245,17 @@ int ParticleEngine::NumParticles() const {
 }
 
 inline void ParticleEngine::update_arrays(Particle& P) {
-  const int offset = this->num_particles * 3;
-  color_storage[offset] = P.color[0];
-  color_storage[offset + 1] = P.color[1];
-  color_storage[offset + 2] = P.color[2];
+  const int offset = num_particles * 3;
+  const auto color = P.color;
+  color_storage[offset] = color[0];
+  color_storage[offset + 1] = color[1];
+  color_storage[offset + 2] = color[2];
 
-  position_storage[offset] = P.pos[0];
-  position_storage[offset + 1] = P.pos[1];
-  position_storage[offset + 2] = P.pos[2];
-  this->num_particles += 1;
+  const auto position = P.pos;
+  position_storage[offset] = position[0];
+  position_storage[offset + 1] = position[1];
+  position_storage[offset + 2] = position[2];
+  ++num_particles;
 }
 
 int ParticleEngine::MaxVertices() const {
