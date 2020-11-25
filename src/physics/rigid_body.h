@@ -49,10 +49,11 @@ inline void bounce_basic(RigidBody auto& body,
     return;
   }
 
-  auto y_vel = abs(get<1>(body.velocity));
-  double time_since = time_since_last_update;
-  const double distance_underground = abs(collision_pos - get<1>(body.pos));
-  const double time_since_collision = distance_underground / y_vel;
+  Numeric auto y_vel = abs(get<1>(body.velocity));
+  Numeric auto time_since = time_since_last_update;
+  const Numeric auto distance_underground =
+      abs(collision_pos - get<1>(body.pos));
+  const Numeric auto time_since_collision = distance_underground / y_vel;
 
   if (time_since_collision > time_since) {
     set_grounded(body);
@@ -66,9 +67,9 @@ inline void bounce_basic(RigidBody auto& body,
   // Calculate how much energy was lost with the bounce
   y_vel = get<1>(body.velocity);
 
-  const double energy = kinematic_energy(y_vel, mass);
-  const double energy_loss = calculate_energy_loss(e);
-  const double energy_after_bounce = energy - (energy_loss * energy);
+  const Numeric auto energy = kinematic_energy(y_vel, mass);
+  const Numeric auto energy_loss = calculate_energy_loss(e);
+  const Numeric auto energy_after_bounce = energy - (energy_loss * energy);
 
   // Update the velocity of the body based on the new energy
   const double velocity_after_bounce =

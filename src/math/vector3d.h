@@ -132,13 +132,12 @@ inline constexpr auto multiply(T v1, const V& v2) {
   return T{x, y, z};
 }
 
-template <Vector3D T, Numeric S>
-inline constexpr auto multiply(T v1, S scalar) {
+inline constexpr auto multiply(const Vector3D auto v1, Numeric auto scalar) {
   const Numeric auto x = get<0>(v1) * scalar;
   const Numeric auto y = get<1>(v1) * scalar;
   const Numeric auto z = get<2>(v1) * scalar;
 
-  return T{x, y, z};
+  return decltype(v1){x, y, z};
 }
 
 template <Numeric T>

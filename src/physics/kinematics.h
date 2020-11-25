@@ -7,8 +7,8 @@
 namespace rpg::physics {
 using namespace rpg::math;
 
-static const double gravitational_constant = 9.81;
-static const std::array<double, 3> Fg = {0, -gravitational_constant, 0};
+static const float gravitational_constant = 9.81;
+static const std::array<float, 3> Fg = {0, -gravitational_constant, 0};
 
 template <Vector3D K, Numeric seconds>
 inline void apply_velocity(K& position, const K& velocity, seconds S) {
@@ -23,13 +23,12 @@ inline void apply_gravity(K& velocity, seconds s) {
 inline void update_position_with_gravity(Vector3D auto& position,
                                          Vector3D auto& velocity,
                                          Numeric auto time) {
-  const double seconds = static_cast<double>(time);
   const Vector3D auto gravity_accel =
-      multiply(multiply(Fg, pow(seconds, 2)), 0.5);
-  const Vector3D auto change_due_to_velocity = multiply(velocity, seconds);
+      multiply(multiply(Fg, powf(time, 2)), 0.5f);
+  const Vector3D auto change_due_to_velocity = multiply(velocity, time);
 
   position = add(add(position, change_due_to_velocity), gravity_accel);
-  velocity = add(velocity, multiply(Fg, seconds));
+  velocity = add(velocity, multiply(Fg, time));
 }
 
 inline constexpr Numeric auto kinematic_energy(Numeric auto velocity_magnitude,

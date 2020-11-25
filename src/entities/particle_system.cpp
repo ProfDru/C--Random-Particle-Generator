@@ -152,8 +152,8 @@ void ParticleEngine::create_new_particles(double time, int count) {
   const int particles_remaining = std::max(max_particles - num_particles, 0);
   const int particle_budget = std::min(std::min(num_shots, particles_remaining),
                                        max_particles_per_frame);
-
-  emit_particle(particle_budget);
+  if (particle_budget > 0)
+    emit_particle(particle_budget);
 }
 
 ParticleEngine::ParticleEngine()
@@ -201,20 +201,16 @@ void ParticleEngine::simulate_particles(double time) {
   const float min = min_max[0];
   const float max = min_max[1];
 
-  int count = 0;
-  if (num_particles > 0) {
-    num_particles = 0;
-    // iterate through each living particle and update it
-    for_each(currently_live_particles,
-             [this, time, &count, min, max](Particle& p) {
-               update_particle(p, time);
-               color_particle(p, min, max);
-               // if the particle is still alive add it to our storage arrays
-               if (is_live_particle(p))
-                 update_arrays(p);
-             });
-    num_particles++;
-  }
+  num_particles = 0;
+  // iterate through each living particle and update it
+  for_each(currently_live_particles, [this, time, min, max](Particle& p) {
+    update_particle(p, time);
+    color_particle(p, min, max);
+    // if the particle is still alive add it to our storage arrays
+    if (is_live_particle(p))
+      update_arrays(p);
+  });
+  num_particles++;
 
   // Create new particles based on firerate
   create_new_particles(time, num_particles);
@@ -227,11 +223,11 @@ void ParticleEngine::Update() {
 
   // If the time is within our update threshold, simulate particles, then
   // update our last_update time
-  if (time > (simulation::time_scale * update_threshold)) {
-    const double this_update = simulation::get_time();
-    simulate_particles(time);
-    last_update = this_update;
-  }
+  // if (time > (simulation::time_scale * update_threshold)) {
+  const double this_update = simulation::get_time();
+  simulate_particles(time);
+  last_update = this_update;
+  //}
 }
 
 const std::vector<float>& ParticleEngine::GetColorBuffer() {

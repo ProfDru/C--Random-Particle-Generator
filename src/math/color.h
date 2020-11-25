@@ -78,72 +78,55 @@ inline void hsv_to_rgb_simplified(Numeric auto& h,
   v = alt_function(1.0, H, S, V);
 }
 
-inline void hsv_to_rgb_char(unsigned char& h,
-                            unsigned char& s,
-                            unsigned char& v) {
-  const auto H = h;
-  const auto S = s;
-  const auto V = v;
+inline std::array<unsigned char, 3> hsv_to_rgb_char(unsigned char h,
+                                                    unsigned char s,
+                                                    unsigned char v) {
+  const unsigned char region = h / 43;
+  const unsigned char remainder = (h - (region * 43)) * 6;
 
-  const auto region = h / 43;
-  const auto remainder = (h - (region * 43)) * 6;
-
-  const auto p = (v * (255 - s)) >> 8;
-  const auto q = (v * (255 - ((s * remainder) >> 8))) >> 8;
-  const auto t = (v * (255 - ((s * (255 - remainder)) >> 8))) >> 8;
+  const unsigned char p = (v * (255 - s)) >> 8;
+  const unsigned char q = (v * (255 - ((s * remainder) >> 8))) >> 8;
+  const unsigned char t = (v * (255 - ((s * (255 - remainder)) >> 8))) >> 8;
 
   switch (region) {
     case 0:
-      h = V;
-      s = t;
-      v = p;
+      return {v, t, p};
       break;
     case 1:
-      h = q;
-      s = V;
-      v = p;
+      return {q, v, p};
       break;
     case 2:
-      h = p;
-      s = V;
-      v = t;
+      return {p, v, t};
       break;
     case 3:
-      h = p;
-      s = q;
-      v = V;
+      return {p, q, v};
       break;
     case 4:
-      h = t;
-      s = p;
-      v = V;
+      return {t, p, q};
       break;
     default:
-      h = V;
-      s = p;
-      v = q;
+      return {v, p, q};
       break;
   }
 }
 
-inline unsigned char double_to_char(double f) {
-  return static_cast<unsigned char>(f * 255.0);
+inline unsigned char float_to_char(Numeric auto f) {
+  return static_cast<unsigned char>(f * 255.0f);
+}
+inline float char_to_float(unsigned char f) {
+  return static_cast<float>(f) / 255.0f;
 }
 
-inline float char_to_double(unsigned char c) {
-  return static_cast<double>(c) / 255.0;
-}
+inline auto hsv_to_rgb_char(Numeric auto h, Numeric auto s, Numeric auto v) {
+  const auto H = float_to_char(h);
+  const auto S = float_to_char(s);
+  const auto V = float_to_char(v);
 
-inline void hsv_to_rgb_char(Numeric auto& h, Numeric auto& s, Numeric auto& v) {
-  auto H = double_to_char(h);
-  auto S = double_to_char(s);
-  auto V = double_to_char(v);
+  const std::array<unsigned char, 3> rgb = hsv_to_rgb_char(H, S, V);
 
-  hsv_to_rgb_char(H, S, V);
-
-  h = char_to_double(H);
-  s = char_to_double(S);
-  v = char_to_double(V);
+  return std::array<decltype(h), 3>{char_to_float(rgb[0]),
+                                    s = char_to_float(rgb[1]),
+                                    v = char_to_float(rgb[2])};
 }
 
 /*! \brief Convert a vector3D to rgb */
@@ -152,11 +135,11 @@ inline void hsv_to_rgb(Vector3D auto& hsv_color) {
   Numeric auto s = get<1>(hsv_color);
   Numeric auto v = get<2>(hsv_color);
 
-  hsv_to_rgb_char(h, s, v);
+  const auto rgb = hsv_to_rgb_char(h, s, v);
 
-  set<0>(hsv_color, h);
-  set<1>(hsv_color, s);
-  set<2>(hsv_color, v);
+  set<0>(hsv_color, rgb[0]);
+  set<1>(hsv_color, rgb[1]);
+  set<2>(hsv_color, rgb[2]);
 }
 
 }  // namespace rpg::math::color
