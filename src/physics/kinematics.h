@@ -15,20 +15,23 @@ inline void apply_velocity(K& position, const K& velocity, seconds S) {
   change_over_time(position, velocity, S);
 }
 
-template <Vector3D K, Numeric seconds>
-inline void apply_gravity(K& velocity, seconds s) {
-  change_over_time(velocity, Fg, s);
+inline void apply_gravity(Vector3D auto& position,
+                          Vector3D auto& velocity,
+                          const Numeric auto& time) {
+  const Vector3D auto gravity_accel =
+      multiply(multiply(Fg, pow(time, 2)), 0.5f);
+
+  position = add(position, gravity_accel);
+  velocity = add(velocity, multiply(Fg, time));
 }
 
 inline void update_position_with_gravity(Vector3D auto& position,
                                          Vector3D auto& velocity,
                                          Numeric auto time) {
-  const Vector3D auto gravity_accel =
-      multiply(multiply(Fg, powf(time, 2)), 0.5f);
   const Vector3D auto change_due_to_velocity = multiply(velocity, time);
+  position = add(position, change_due_to_velocity);
 
-  position = add(add(position, change_due_to_velocity), gravity_accel);
-  velocity = add(velocity, multiply(Fg, time));
+  apply_gravity(position, velocity, time);
 }
 
 inline constexpr Numeric auto kinematic_energy(Numeric auto velocity_magnitude,
