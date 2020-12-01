@@ -13,10 +13,11 @@ double get_time_since(double last_time);
 
 double get_time();
 
-void simple_ground_bounce(Particle& P,
-                          float ground_height,
-                          float e,
-                          float time);
+void run_physics_simulation(Particle& P,
+                            bool enable_bounce,
+                            float ground_height,
+                            float e,
+                            float time);
 
 Particle fire_particle(float magnitude,
                        float vertical_angle,

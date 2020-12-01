@@ -17,9 +17,9 @@ inline void apply_velocity(K& position, const K& velocity, seconds S) {
 
 inline void apply_gravity(Vector3D auto& position,
                           Vector3D auto& velocity,
-                          const Numeric auto& time) {
+                          const Numeric auto time) {
   const Vector3D auto gravity_accel =
-      multiply(multiply(Fg, pow(time, 2)), 0.5f);
+      multiply(multiply(Fg, powf(time, 2)), 0.5f);
 
   position = add(position, gravity_accel);
   velocity = add(velocity, multiply(Fg, time));

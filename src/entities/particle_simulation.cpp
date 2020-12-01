@@ -51,14 +51,16 @@ inline float get_rand_nolimits() {
 
 /*! \brief Move particle based on it's velocity */
 void update_particle_position(Particle& p, float time) {
-  physics::update_position_with_gravity(p.pos, p.velocity, time);
+  // physics::update_position_with_gravity(p.pos, p.velocity, time);
 }
 
-void simple_ground_bounce(Particle& p,
-                          float ground_height,
-                          float e,
-                          float time_since_last_update) {
-  physics::bounce_basic(p, 0.5, e, ground_height, time_since_last_update);
+void run_physics_simulation(Particle& p,
+                            bool enable_bounce,
+                            float ground_height,
+                            float e,
+                            float time_since_last_update) {
+  physics::full_simulation_step(p, enable_bounce, 0.5f, e, 0.0f,
+                                time_since_last_update);
 }
 
 const glm::vec3 origin(0, 0, 0);

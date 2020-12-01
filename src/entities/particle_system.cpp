@@ -25,11 +25,7 @@ inline bool is_dead_particle(const Particle& P) {
 
 inline void ParticleEngine::update_particle(Particle& P, float time) {
   P.lifetime -= time;
-  // simulation::apply_gravity(P, time);
-  simulation::update_particle_position(P, time);
-
-  if (bounce)
-    simulation::simple_ground_bounce(P, 0, coeff_of_restitution, time);
+  simulation::run_physics_simulation(P, bounce, 0, coeff_of_restitution, time);
 }
 
 int ParticleEngine::queued_shots(double time_since) {
