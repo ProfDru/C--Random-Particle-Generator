@@ -26,7 +26,7 @@ using std::vector;
 namespace rpg::menus {
 
 std::string GetParticleCount(ParticleEngine* ps) {
-  return "Particle Count: " + std::to_string(ps->NumVertices());
+  return "Particle Count: " + std::to_string(ps->NumVertices() / 3);
 }
 
 /*! \brief Create a prebaked group to bind all parameters in a random or
@@ -56,7 +56,8 @@ void InitParticleMenu(rpg::ParticleEngine* PE) {
       color_pickers};
 
   vector<Widget*> simulation = {
-      new Slider("Simulation Speed", &rpg::simulation::time_scale, 0.0f, 2.0f),
+      new Slider("Simulation Speed", &rpg::simulation::time_scale, 0.001f,
+                 2.0f),
       new CheckBox("Enable Floor", &PE->bounce)};
 
   vector<Widget*> particle_system{
@@ -70,7 +71,7 @@ void InitParticleMenu(rpg::ParticleEngine* PE) {
       new Slider("Horizontal Angle", &PE->horizontal_angle, 0, 360),
       BindRandomOrConstant(PE->vertical_angle, "Vertical Angle"),
       BindRandomOrConstant(PE->magnitude, "Magnitude"),
-      new Slider("Particles Per Second", &PE->particles_per_second, 1, 100000,
+      new Slider("Particles Per Second", &PE->particles_per_second, 1, 200000,
                  "Number of particles that can be created per second.")};
 
   vector<Widget*> physics = {new AlternateWidget(

@@ -25,10 +25,13 @@ concept Vector3DArray = requires(T a) {
 };
 
 template <typename T>
+concept Vector3DBoth = Vector3DArray<T>&& Vector3DStruct<T>;
+
+template <typename T>
 concept Vector3D = Vector3DStruct<T> || Vector3DArray<T>;
 
-template <Vector3DStruct T>
-auto get(int i, const T& st) {
+template <int i>
+inline Numeric auto constexpr get(const Vector3DStruct auto& st) {
   switch (i) {
     case 0:
       return st.x;
@@ -39,20 +42,31 @@ auto get(int i, const T& st) {
     case 2:
       return st.z;
       break;
-    default:
-      assert(false);
-      return std::numeric_limits<float>::infinity();
-      break;
   }
 }
 
-template <Vector3DArray T>
-inline auto get(const T& st, int i) {
+template <int i>
+inline constexpr Numeric auto get(const Vector3DArray auto& st) {
   return st[i];
 }
 
-template <Vector3DStruct T, Numeric N>
-inline void set(T& st, int i, N value) {
+template <int i>
+inline constexpr Numeric auto get(const Vector3DBoth auto& st) {
+  switch (i) {
+    case 0:
+      return st.x;
+      break;
+    case 1:
+      return st.y;
+      break;
+    case 2:
+      return st.z;
+      break;
+  };
+}
+
+template <int i, Vector3DStruct T, Numeric N>
+inline constexpr void set(T& st, N value) {
   switch (i) {
     case 0:
       st.x = value;
@@ -63,66 +77,76 @@ inline void set(T& st, int i, N value) {
     case 2:
       st.z = value;
       break;
-    default:
-      assert(false);
+  }
+}
+
+template <int i, Vector3DArray T, Numeric N>
+inline constexpr void set(T& st, N value) {
+  st[i] = value;
+}
+
+template <int i>
+inline constexpr void set(Vector3DBoth auto& st, Numeric auto value) {
+  switch (i) {
+    case 0:
+      st.x = value;
+      break;
+    case 1:
+      st.y = value;
+      break;
+    case 2:
+      st.z = value;
       break;
   }
 }
 
-template <Vector3DArray T, Numeric N>
-inline auto set(const T& st, int i, N value) {
-  st[i] = value;
-}
-
 /*! \brief Convert 3 coordinates from a spherical coordinate system to a
  * cartesian coordinate system */
-template <Vector3D T>
-inline auto spherical_to_cartesian(const T coord) {
-  const auto rho = get(coord, 0);
-  const auto theta = get(coord, 1);
-  const auto phi = get(coord, 2);
+inline constexpr Vector3D auto spherical_to_cartesian(Vector3D auto coord) {
+  const Numeric auto rho = get<0>(coord);
+  const Numeric auto theta = get<1>(coord);
+  const Numeric auto phi = get<2>(coord);
 
-  const auto x = rho * sin(phi) * cos(theta);
-  const auto y = rho * sin(phi) * sin(theta);
-  const auto z = rho * cos(phi);
+  const Numeric auto x = rho * sin(phi) * cos(theta);
+  const Numeric auto y = rho * sin(phi) * sin(theta);
+  const Numeric auto z = rho * cos(phi);
+
+  return decltype(coord){x, y, z};
+}
+
+template <Vector3D T, Vector3D V>
+inline constexpr Vector3D auto add(T v1, V v2) {
+  const Numeric auto x = get<0>(v1) + get<0>(v2);
+  const Numeric auto y = get<1>(v1) + get<1>(v2);
+  const Numeric auto z = get<2>(v1) + get<2>(v2);
 
   return T{x, y, z};
 }
 
 template <Vector3D T, Vector3D V>
-inline auto add(const T& v1, const V& v2) {
-  const auto x = get(v1, 0) + get(v2, 0);
-  const auto y = get(v1, 1) + get(v2, 1);
-  const auto z = get(v1, 2) + get(v2, 2);
+inline constexpr auto multiply(T v1, const V& v2) {
+  const Numeric auto x = get(v1, 0) * get(v2, 0);
+  const Numeric auto y = get(v1, 1) * get(v2, 1);
+  const Numeric auto z = get(v1, 2) * get(v2, 2);
 
   return T{x, y, z};
 }
 
-template <Vector3D T, Vector3D V>
-inline auto multiply(const T& v1, const V& v2) {
-  const auto x = get(v1, 0) * get(v2, 0);
-  const auto y = get(v1, 1) * get(v2, 1);
-  const auto z = get(v1, 2) * get(v2, 2);
+inline constexpr auto multiply(const Vector3D auto v1, Numeric auto scalar) {
+  const Numeric auto x = get<0>(v1) * scalar;
+  const Numeric auto y = get<1>(v1) * scalar;
+  const Numeric auto z = get<2>(v1) * scalar;
 
-  return T{x, y, z};
-}
-
-template <Vector3D T, Numeric S>
-inline auto multiply(const T& v1, S scalar) {
-  const auto x = get(v1, 0) * scalar;
-  const auto y = get(v1, 1) * scalar;
-  const auto z = get(v1, 2) * scalar;
-
-  return T{x, y, z};
+  return decltype(v1){x, y, z};
 }
 
 template <Numeric T>
-auto magnitude(T x, T y, T z) {
+inline constexpr Numeric auto magnitude(T x, T y, T z) {
   return sqrt(pow(x, 2) + pow(y, 2) + pow(z, 2));
 }
 
 template <Vector3D T>
-auto magnitude(const T& vector) {
+inline constexpr Numeric auto magnitude(const T& vector) {
   const auto x = get(vector, 0);
   const auto y = get(vector, 1);
   const auto z = get(vector, 2);
@@ -130,15 +154,16 @@ auto magnitude(const T& vector) {
   return magnitude(x, y, z);
 }
 
-inline void normalize(Vector3D auto& v) {
-  const auto mag = magnitude(v);
+inline constexpr void normalize(Vector3D auto& v) {
+  const Numeric auto mag = magnitude(v);
 
   set(v, 0, get(v, 0) / mag);
   set(v, 1, get(v, 1) / mag);
   set(v, 2, get(v, 2) / mag);
 }
 
-inline void set_magnitude(Vector3D auto& v, Numeric auto new_magnitude) {
+inline constexpr void set_magnitude(Vector3D auto& v,
+                                    Numeric auto new_magnitude) {
   normalize(v);
 
   set(v, 0, get(v, 0) * new_magnitude);

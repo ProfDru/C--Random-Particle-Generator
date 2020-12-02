@@ -4,6 +4,32 @@
 cmake_minimum_required (VERSION 3.8)
 project ("RandomParticleEngine")
 
+
+# Set compiler commands
+set(GENERAL_COMPILER_OPTIONS
+)
+
+set(RELEASE_OPTIONS
+  -Ofast
+  -flto
+  -fuse-linker-plugin
+  -pipe
+  -fomit-frame-pointer
+)
+
+set(RELEASE_DEBUG_OPTIONS
+  -Ofast
+  -g
+  -Wall
+)
+
+set(DEBUG_OPTIONS
+  -Wall
+  -Wextra
+  -Og
+  -g
+)
+
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 if(CMAKE_EXPORT_COMPILE_COMMANDS)
     set(CMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES ${CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES})
@@ -14,6 +40,7 @@ endif()
 
 # headers
 set(CXX_STANDARD 20)
+
 
 include(FetchContent)
 
@@ -168,8 +195,22 @@ set_property(
   PROPERTY CXX_STANDARD 20
 )
 
+
+
+message([status] ${CMAKE_BUILD_TYPE})
+if(${CMAKE_BUILD_TYPE} STREQUAL "Release")
+  list(APPEND GENERAL_COMPILER_OPTIONS ${RELEASE_OPTIONS})
+  message("USING RELEASE OPTIMIZATIONS")
+elseif(${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo")
+  list(APPEND GENERAL_COMPILER_OPTIONS ${RELEASE_DEBUG_OPTIONS})
+  message("USING DEBUG-RELEASE OPTIMIZATIONS")
+else()
+  list(APPEND GENERAL_COMPILER_OPTIONS ${DEBUG_OPTIONS})
+  message("USING DEBUG")
+endif()
+
 target_compile_options(
-  RandomParticleEngine PRIVATE -Wall -Wextra -g
+  RandomParticleEngine PRIVATE ${GENERAL_COMPILER_OPTIONS}
 )
 
 add_custom_command(

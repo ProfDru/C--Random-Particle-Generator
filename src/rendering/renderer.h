@@ -17,9 +17,8 @@ class Renderer {
  public:
   /*! \brief Render the given entity */
   template <typename T>
-  inline static void Render(
-      const T& ent) requires std::derived_from<T, Entity> {
-    const auto& shader = shader_manager.GetShaderforObject(ent.GetID());
+  inline static void Render(T& ent) requires std::derived_from<T, Entity> {
+    auto& shader = shader_manager.GetShaderforObject(ent.GetID());
 
     Draw(ent, shader);
   }

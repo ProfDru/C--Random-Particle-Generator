@@ -19,7 +19,7 @@ inline void hsv_to_rgb(Numeric auto& h, Numeric auto& s, Numeric auto& v) {
   h = h * 360.0;
   const double h_prime = h / 60.0;
   const double chroma = v * s;
-  const double x = chroma * (1 - abs(std::fmod(h_prime, 2) - 1));
+  const double x = chroma * (1.0 - abs(std::fmod(h_prime, 2.0) - 1.0));
 
   const double m = v - chroma;
 
@@ -78,17 +78,68 @@ inline void hsv_to_rgb_simplified(Numeric auto& h,
   v = alt_function(1.0, H, S, V);
 }
 
+inline std::array<unsigned char, 3> hsv_to_rgb_char(unsigned char h,
+                                                    unsigned char s,
+                                                    unsigned char v) {
+  const unsigned char region = h / 43;
+  const unsigned char remainder = (h - (region * 43)) * 6;
+
+  const unsigned char p = (v * (255 - s)) >> 8;
+  const unsigned char q = (v * (255 - ((s * remainder) >> 8))) >> 8;
+  const unsigned char t = (v * (255 - ((s * (255 - remainder)) >> 8))) >> 8;
+
+  switch (region) {
+    case 0:
+      return {v, t, p};
+      break;
+    case 1:
+      return {q, v, p};
+      break;
+    case 2:
+      return {p, v, t};
+      break;
+    case 3:
+      return {p, q, v};
+      break;
+    case 4:
+      return {t, p, q};
+      break;
+    default:
+      return {v, p, q};
+      break;
+  }
+}
+
+inline unsigned char float_to_char(Numeric auto f) {
+  return static_cast<unsigned char>(f * 255.0f);
+}
+inline float char_to_float(unsigned char f) {
+  return static_cast<float>(f) / 255.0f;
+}
+
+inline auto hsv_to_rgb_char(Numeric auto h, Numeric auto s, Numeric auto v) {
+  const auto H = float_to_char(h);
+  const auto S = float_to_char(s);
+  const auto V = float_to_char(v);
+
+  const std::array<unsigned char, 3> rgb = hsv_to_rgb_char(H, S, V);
+
+  return std::array<decltype(h), 3>{char_to_float(rgb[0]),
+                                    s = char_to_float(rgb[1]),
+                                    v = char_to_float(rgb[2])};
+}
+
 /*! \brief Convert a vector3D to rgb */
 inline void hsv_to_rgb(Vector3D auto& hsv_color) {
-  Numeric auto h = get(hsv_color, 0);
-  Numeric auto s = get(hsv_color, 1);
-  Numeric auto v = get(hsv_color, 2);
+  Numeric auto h = get<0>(hsv_color);
+  Numeric auto s = get<1>(hsv_color);
+  Numeric auto v = get<2>(hsv_color);
 
-  hsv_to_rgb_simplified(h, s, v);
+  const auto rgb = hsv_to_rgb_char(h, s, v);
 
-  set(hsv_color, 0, h);
-  set(hsv_color, 1, s);
-  set(hsv_color, 2, v);
+  set<0>(hsv_color, rgb[0]);
+  set<1>(hsv_color, rgb[1]);
+  set<2>(hsv_color, rgb[2]);
 }
 
 }  // namespace rpg::math::color

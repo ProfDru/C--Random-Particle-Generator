@@ -50,20 +50,17 @@ inline float get_rand_nolimits() {
 }
 
 /*! \brief Move particle based on it's velocity */
-void update_particle_position(Particle& p, double time) {
-  physics::update_position_with_gravity(p.pos, p.velocity, time);
+void update_particle_position(Particle& p, float time) {
+  // physics::update_position_with_gravity(p.pos, p.velocity, time);
 }
 
-bool simple_ground_bounce(Particle& p,
-                          float ground_height,
-                          float e,
-                          double time_since_last_update) {
-  if (p.pos.y <= ground_height && p.velocity.y < 0) {
-    physics::bounce_basic(p, 0.5, e, static_cast<double>(ground_height),
-                          time_since_last_update);
-    return true;
-  }
-  return false;
+void run_physics_simulation(Particle& p,
+                            bool enable_bounce,
+                            float ground_height,
+                            float e,
+                            float time_since_last_update) {
+  physics::full_simulation_step(p, enable_bounce, 0.5f, e, 0.0f,
+                                time_since_last_update);
 }
 
 const glm::vec3 origin(0, 0, 0);
@@ -76,13 +73,12 @@ Particle fire_particle(float magnitude,
   const double horizontal_angle = get_rand(0, max_horizontal_angle);
   static const float rotation = math::to_radians<int, float>(-90);
 
-  auto dir = math::spherical_to_cartesian(glm::vec3(
+  glm::vec3 dir = math::spherical_to_cartesian(glm::vec3(
       1, math::to_radians(horizontal_angle), math::to_radians(vertical_angle)));
   dir = glm::rotateX(dir, rotation);
 
-  Particle out_particle(origin, white);
-  out_particle.velocity = (dir * magnitude);
-  out_particle.color = {0, 0.25, 1};
+  Particle out_particle;
+  out_particle.set_velocity(dir * magnitude);
   out_particle.lifetime = lifetime;
   return out_particle;
 }

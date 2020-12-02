@@ -27,48 +27,96 @@ inline auto kinematic_energy(const RigidBody auto& body, Numeric auto mass) {
   return kinematic_energy(body.velocity, mass);
 }
 
+inline void set_grounded(RigidBody auto& body) {
+  set<1>(body.velocity, 0);
+  set<1>(body.pos, 0);
+}
+
+enum class BODY_STATE { COLLIDING = 0, GROUNDED = 1, AIRBORNE = 2 };
+
+constexpr inline BODY_STATE check_state(const Vector3D auto& pos,
+                                        const Vector3D auto& velocity,
+                                        float ground_pos) {
+  const float grounded_threshold = 0.01f;
+  const Numeric auto y_pos = get<1>(pos);
+  const Numeric auto y_velocity = get<1>(velocity);
+
+  const bool is_above_ground = y_pos > ground_pos;
+  const bool has_upward_velocity = y_velocity > 0;
+  const bool is_within_grounded_threshold = y_velocity > -grounded_threshold;
+
+  if (is_above_ground || has_upward_velocity)
+    return BODY_STATE::AIRBORNE;
+  else if (is_within_grounded_threshold)
+    return BODY_STATE::GROUNDED;
+  else
+    return BODY_STATE::COLLIDING;
+}
+
 inline void bounce_basic(RigidBody auto& body,
                          Numeric auto mass = 5.0,
                          Numeric auto e = 0,
                          Numeric auto collision_pos = 0.0,
-                         Numeric auto time_since_last_update = -1) {
-  // Do nothing if the particle has no vertical momentum
-  double time_since = static_cast<double>(time_since_last_update);
-  double y_vel = abs(get(body.velocity, 1));
+                         Numeric auto time_since_last_update = 0.0) {
+  // Minimum velocity
+  Numeric auto y_vel = abs(get<1>(body.velocity));
+  Numeric auto time_since = time_since_last_update;
+  const Numeric auto distance_underground =
+      abs(collision_pos - get<1>(body.pos));
+  const Numeric auto time_since_collision = distance_underground / y_vel;
 
-  const double distance_underground = abs(collision_pos - get(body.pos, 1));
-  const double time_since_collision = distance_underground / y_vel;
-
-  // If time_since_last_update is unset, set it to time_since_collision to
-  // remove the check entirely
-  if (time_since == -1)
-    time_since = time_since_collision;
-  else if (time_since_collision > time_since || (abs(y_vel) <= 0.001)) {
-    set(body.velocity, 1, 0);
-    set(body.pos, 1, 0);
-
+  if (time_since_collision > time_since) {
+    set_grounded(body);
     return;
   }
 
   // Rewind the particle to the time just before the point of collision
   physics::update_position_with_gravity(body.pos, body.velocity,
                                         -time_since_collision);
-  // Calculate how much energy was lost with the bounce
-  y_vel = body.velocity.y;
 
-  const double energy = kinematic_energy(y_vel, mass);
-  const double energy_loss = calculate_energy_loss(e);
-  const double energy_after_bounce = energy - (energy_loss * energy);
+  // Calculate how much energy was lost with the bounce
+  y_vel = get<1>(body.velocity);
+
+  const Numeric auto energy = kinematic_energy(y_vel, mass);
+  const Numeric auto energy_loss = calculate_energy_loss(e);
+  const Numeric auto energy_after_bounce = energy - (energy_loss * energy);
 
   // Update the velocity of the body based on the new energy
-  const double velocity_after_bounce =
+  const Numeric auto velocity_after_bounce =
       velocity_from_kinematic_energy(energy_after_bounce, mass);
-  set(body.velocity, 1, velocity_after_bounce);
+  set<1>(body.velocity, velocity_after_bounce);
 
   // Now play the motion of the object since the time of impact with the new
   // velocity
   physics::update_position_with_gravity(
       body.pos, body.velocity,
       std::min(time_since_collision, time_since_last_update));
-}  // namespace rpg::physics
+}
+
+/*! \brief Full cycle physics step containing all phenomena */
+inline void full_simulation_step(RigidBody auto& body,
+                                 bool enable_bounce = true,
+                                 Numeric auto mass = 5.0f,
+                                 Numeric auto e = 0.0f,
+                                 Numeric auto ground_pos = 0.0f,
+                                 Numeric auto time = 0.0f) {
+  // Update position based on velocity since this is always relevant
+  const Vector3D auto change_due_to_velocity = multiply(body.velocity, time);
+  body.pos = add(body.pos, change_due_to_velocity);
+  apply_gravity(body.pos, body.velocity, time);
+  const auto state = check_state(body.pos, body.velocity, ground_pos);
+
+  switch (state) {
+    case BODY_STATE::GROUNDED:
+      set_grounded(body);
+      break;
+    case BODY_STATE::COLLIDING:
+      if (enable_bounce) {
+        bounce_basic(body, 0.5f, e, ground_pos, time);
+      }
+      break;
+    case BODY_STATE::AIRBORNE:
+      break;
+  }
+}
 }  // namespace rpg::physics

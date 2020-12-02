@@ -141,6 +141,7 @@ GLFWwindow* InitWindow(float window_width, float window_height) {
   // Make the window resizable and update at 60 FPS
   glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
   glfwWindowHint(GLFW_REFRESH_RATE, 120);
+  glfwWindowHint(GLFW_SAMPLES, 16);
   glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
   glEnable(GL_PROGRAM_POINT_SIZE);
   glEnable(GL_BLEND);
