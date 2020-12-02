@@ -56,7 +56,8 @@ void InitParticleMenu(rpg::ParticleEngine* PE) {
       color_pickers};
 
   vector<Widget*> simulation = {
-      new Slider("Simulation Speed", &rpg::simulation::time_scale, 0.0f, 2.0f),
+      new Slider("Simulation Speed", &rpg::simulation::time_scale, 0.001f,
+                 2.0f),
       new CheckBox("Enable Floor", &PE->bounce)};
 
   vector<Widget*> particle_system{
