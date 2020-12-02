@@ -33,6 +33,10 @@ class Camera {
    rotation */
   void UpdateMatricies();
 
+  void UpdateMatricies(const glm::vec3& right,
+                       const glm::vec3& direction,
+                       const glm::vec3& up);
+
  public:
   float fov = 90;
 
