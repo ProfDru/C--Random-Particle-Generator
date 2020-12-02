@@ -73,6 +73,8 @@ void Camera::Move(const glm::vec2& position_change,
   this->horizontal_angle += direction_change.x;
   this->vertical_angle += direction_change.y;
 
+  vertical_angle = std::clamp(vertical_angle, -3.14f / 2, 3.14f / 2);
+
   UpdateMatricies();
 }
 
