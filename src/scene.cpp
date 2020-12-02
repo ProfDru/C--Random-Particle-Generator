@@ -44,7 +44,7 @@ void Scene::Start() {
   this->PI.SetID(Registry::GetNextID());
 
   // Add hud widgets
-  rpg::menus::InitParticleMenu(&PI);
+  rpg::menus::InitParticleMenu(&PI, &main_camera);
 
   // Initiate draw loop
   printf("Beginning Draw Loop. \n");
