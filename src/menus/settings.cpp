@@ -74,7 +74,7 @@ void InitParticleMenu(rpg::ParticleEngine* PE,
 
   vector<Widget*> camera_settings = {
       new Label("Camera tracker", std::bind(print_pos, camera)),
-      new Slider("Field of View", &(camera->fov), 45.0f, 120.0f),
+      new Slider("Field of View", &(camera->fov), 20.0f, 120.0f),
       new Slider("Base Speed", camera_speed, 0.5f, 10.0f),
       new Slider("Boost/Brake Multiplier", camera_speed_multiplier, 1.25f,
                  3.0f),
