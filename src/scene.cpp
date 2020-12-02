@@ -23,6 +23,8 @@ namespace rpg {
 
 float camera_speed = 2.5f;
 float camera_boost_multi = 2.5f;
+const std::array<float, 3> default_camera_position = {18.27, 7.83, -0.26};
+const std::array<float, 2> default_camera_rotation = {4.75, -0.72};
 
 void ScreenResizeCallback(float x, float y) {
   rpg::rendering::Renderer::UpdateScreenXY(x, y);
@@ -41,7 +43,10 @@ void Scene::Start() {
 
   // Create a particle engine and camera
   printf("Creating Particle Engine and Camera...");
-  this->main_camera = Camera(0, 0, 2, 0, 0, -1);
+  this->main_camera =
+      Camera(default_camera_position[0], default_camera_position[1],
+             default_camera_position[2], default_camera_rotation[0],
+             default_camera_rotation[1]);
 
   // Set the ID of the particle system
   this->PI.SetID(Registry::GetNextID());
@@ -56,11 +61,23 @@ void Scene::Start() {
 }
 
 inline bool HandleMovement(Camera& camera, GLFWwindow* window) {
-  auto movement = Move(camera_speed, camera_boost_multi);
+  // Get movement from kbm_movement
+  const auto movement = Move(camera_speed, camera_boost_multi);
+
+  // If the movement isn't empty then carry the change over to the camera
+  // and update the renderer
   if (!movement.empty()) {
-    camera.Move(movement.position_change, movement.direction_change);
-    glm::mat4 MVP = camera.CalculateMVP();
-    rendering::Renderer::UpdateMVP(MVP);
+    // Update the camera's position or reset it to default
+    if (movement.reset)
+      camera.SetPos(default_camera_position[0], default_camera_position[1],
+                    default_camera_position[2], default_camera_rotation[0],
+                    default_camera_rotation[1]);
+    else
+      camera.Move(movement.position_change, movement.direction_change);
+
+    // Send the camera's MVP to the renderer
+    rendering::Renderer::UpdateMVP(camera.CalculateMVP());
+
     return true;
   } else
     return false;

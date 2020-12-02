@@ -85,7 +85,14 @@ inline bool PauseLogic() {
   return true;
 }
 
+inline bool check_for_restart() {
+  return DidPress(rpg::input::ACTION::RESET);
+}
+
 MoveInfo Move(float speed, float boost_multi) {
+  if (check_for_restart())
+    return MoveInfo(true);
+
   const float mouse_sensitivity = 0.15f;
   const float change_in_time = CalculateChangeInTime();
   speed = CalcBoostMultiplier(speed, boost_multi);

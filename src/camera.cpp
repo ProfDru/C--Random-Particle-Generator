@@ -21,21 +21,25 @@ inline glm::vec3 ComputeDirection(float vertical_angle,
 }
 
 Camera::Camera() {
-  this->SetPos(0, 0, 0, 0, 0, -1);
+  this->SetPos(0, 0, 0, -3, 0);
 }
 
-Camera::Camera(float px, float py, float pz, float dx, float dy, float dz) {
-  this->SetPos(px, py, pz, dx, dy, dz);
+Camera::Camera(float px,
+               float py,
+               float pz,
+               float horizontal_angle,
+               float vertical_angle) {
+  this->SetPos(px, py, pz, horizontal_angle, vertical_angle);
 }
 
 void Camera::SetPos(float px,
                     float py,
                     float pz,
-                    float dx,
-                    float dy,
-                    float dz) {
+                    float horizontal_angle,
+                    float vertical_angle) {
   this->pos = glm::vec3{px, py, pz};
-  this->rot = glm::vec3{dx, dy, dz};
+  this->vertical_angle = vertical_angle;
+  this->horizontal_angle = horizontal_angle;
   this->UpdateMatricies();
 }
 

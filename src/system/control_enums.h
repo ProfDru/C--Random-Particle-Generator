@@ -15,6 +15,7 @@ enum class ACTION {
   PAUSE = 9,
   QUIT = 10,
   USE = 11,
+  RESET = 12
 };
 
 }  // namespace rpg::input

@@ -1,6 +1,8 @@
 #pragma once
 #include <glm/glm.hpp>
 
+#include <array>
+
 namespace rpg {
 
 /*! \brief A vierpoint for the enging
@@ -19,7 +21,6 @@ class Camera {
   float horizontal_angle = 3.14f;  // Z-
   float vertical_angle = 0;
   glm::vec3 pos;
-  glm::vec3 rot;
   glm::vec3 up;
 
   glm::mat4 perspective_matrix;
@@ -39,15 +40,29 @@ class Camera {
   Camera();
 
   /*! \brief Create a camera at a specific position with a specific rotation */
-  Camera(float px, float py, float pz, float dx, float dy, float dz);
+  Camera(float px,
+         float py,
+         float pz,
+         float horizontal_angle,
+         float vertical_angle);
 
   /*! \brief Set the camera's position and rotation */
-  void SetPos(float px, float py, float pz, float dx, float dy, float dz);
+  void SetPos(float px,
+              float py,
+              float pz,
+              float horizontal_angle,
+              float vertical_angle);
 
   /*! \brief Move the camera and update it's matricies */
   void Move(const glm::vec2& position_change,
             const glm::vec2& direction_change);
 
+  inline std::array<float, 3> get_pos() const {
+    return {pos[0], pos[1], pos[2]};
+  };
+  std::array<float, 2> get_rotation() const {
+    return {horizontal_angle, vertical_angle};
+  };
   const glm::mat4& GetPerspectiveMatrix() const;
   const glm::mat4& GetViewMatrix() const;
 
