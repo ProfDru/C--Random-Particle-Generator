@@ -32,8 +32,8 @@ bool DidPress(ACTION act) {
   return InputManager::IsActive(act);
 }
 
-inline glm::vec2 CalcMovement() {
-  glm::vec2 control(0, 0);
+inline glm::vec3 CalcMovement() {
+  glm::vec3 control(0, 0, 0);
 
   if (DidPress(ACTION::FORWARD))
     control.y += 1;
@@ -43,20 +43,22 @@ inline glm::vec2 CalcMovement() {
     control.x += 1;
   if (DidPress(ACTION::LEFT))
     control.x -= 1;
+  if (DidPress(ACTION::UP))
+    control.z += 1;
+  if (DidPress(ACTION::DOWN))
+    control.z -= 1;
 
   return control;
 }
 
-inline float CalcBoostMultiplier() {
-  const float boost_factor = 2.5;
-  float boost_multiplier = 1.0f;
-
+inline float CalcBoostMultiplier(float speed, float boost_multi) {
   if (DidPress(ACTION::BOOST))
-    boost_multiplier *= boost_factor;
-  if (DidPress(ACTION::BRAKE))
-    boost_multiplier /= boost_factor;
+    speed *= boost_multi;
 
-  return boost_multiplier;
+  if (DidPress(ACTION::BRAKE))
+    speed /= boost_multi;
+
+  return speed;
 }
 
 inline float magnitude(const glm::vec2& vector) {
@@ -87,11 +89,17 @@ inline bool PauseLogic() {
   return true;
 }
 
-MoveInfo Move() {
-  const float speed = 2.5f;
+inline bool check_for_restart() {
+  return DidPress(rpg::input::ACTION::RESET);
+}
+
+MoveInfo Move(float speed, float boost_multi) {
+  if (check_for_restart())
+    return MoveInfo(true);
+
   const float mouse_sensitivity = 0.15f;
   const float change_in_time = CalculateChangeInTime();
-  const float boost_multi = CalcBoostMultiplier();
+  speed = CalcBoostMultiplier(speed, boost_multi);
 
   if (last_time == 0) {
     last_time = change_in_time;
@@ -102,8 +110,7 @@ MoveInfo Move() {
   if (!InputManager::IsTrackingMouse())
     return MoveInfo();
   else {
-    glm::vec2 movement_change =
-        CalcMovement() * speed * change_in_time * boost_multi;
+    glm::vec3 movement_change = CalcMovement() * speed * change_in_time;
     glm::vec2 direction_change =
         CalcDirection() * mouse_sensitivity * change_in_time;
     return (MoveInfo{movement_change, direction_change});

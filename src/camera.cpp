@@ -21,22 +21,34 @@ inline glm::vec3 ComputeDirection(float vertical_angle,
 }
 
 Camera::Camera() {
-  this->SetPos(0, 0, 0, 0, 0, -1);
+  this->SetPos(0, 0, 0, -3, 0);
 }
 
-Camera::Camera(float px, float py, float pz, float dx, float dy, float dz) {
-  this->SetPos(px, py, pz, dx, dy, dz);
+Camera::Camera(float px,
+               float py,
+               float pz,
+               float horizontal_angle,
+               float vertical_angle) {
+  this->SetPos(px, py, pz, horizontal_angle, vertical_angle);
 }
 
 void Camera::SetPos(float px,
                     float py,
                     float pz,
-                    float dx,
-                    float dy,
-                    float dz) {
+                    float horizontal_angle,
+                    float vertical_angle) {
   this->pos = glm::vec3{px, py, pz};
-  this->rot = glm::vec3{dx, dy, dz};
+  this->vertical_angle = vertical_angle;
+  this->horizontal_angle = horizontal_angle;
   this->UpdateMatricies();
+}
+void Camera::UpdateMatricies(const glm::vec3& right,
+                             const glm::vec3& direction,
+                             const glm::vec3& up) {
+  this->perspective_matrix =
+      glm::perspective(glm::radians(this->fov), Globals::CalculateAspectRatio(),
+                       this->near_plane, this->far_plane);
+  this->view_matrix = glm::lookAt(this->pos, direction + this->pos, up);
 }
 
 void Camera::UpdateMatricies() {
@@ -45,10 +57,7 @@ void Camera::UpdateMatricies() {
       ComputeDirection(this->vertical_angle, this->horizontal_angle);
   const glm::vec3 up = glm::cross(right, direction);
 
-  this->perspective_matrix =
-      glm::perspective(glm::radians(this->fov), Globals::CalculateAspectRatio(),
-                       this->near_plane, this->far_plane);
-  this->view_matrix = glm::lookAt(this->pos, direction + this->pos, up);
+  UpdateMatricies(right, direction, up);
 }
 
 const glm::mat4& Camera::GetPerspectiveMatrix() const {
@@ -64,16 +73,23 @@ glm::mat4 Camera::CalculateMVP() const {
   return this->perspective_matrix * this->view_matrix * model_matrix;
 }
 
-void Camera::Move(const glm::vec2& position_change,
+void Camera::Move(const glm::vec3& position_change,
                   const glm::vec2& direction_change) {
-  this->pos += (ComputeDirection(this->vertical_angle, this->horizontal_angle) *
-                position_change.y);
-  this->pos += (ComputeRightAngle(this->horizontal_angle) * position_change.x);
-
   this->horizontal_angle += direction_change.x;
   this->vertical_angle += direction_change.y;
 
-  UpdateMatricies();
+  const glm::vec3 right = ComputeRightAngle(this->horizontal_angle);
+  const glm::vec3 direction =
+      ComputeDirection(this->vertical_angle, this->horizontal_angle);
+  const glm::vec3 up = glm::cross(right, direction);
+
+  this->pos += (direction * position_change.y);
+  this->pos += (right * position_change.x);
+  this->pos += (up * position_change.z);
+
+  vertical_angle = std::clamp(vertical_angle, -3.14f / 2, 3.14f / 2);
+
+  UpdateMatricies(right, direction, up);
 }
 
 }  // namespace rpg

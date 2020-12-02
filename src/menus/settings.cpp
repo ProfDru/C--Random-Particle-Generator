@@ -35,7 +35,19 @@ Widget* BindRandomOrConstant(RandomOrConstant& ROC, const std::string& name) {
   return CreateDistributionWidgets(ROC, name);
 }
 
-void InitParticleMenu(rpg::ParticleEngine* PE) {
+std::string print_pos(const Camera* cam) {
+  const auto pos = cam->get_pos();
+  const auto rot = cam->get_rotation();
+
+  return "x=" + std::to_string(pos[0]) + ",y=" + std::to_string(pos[1]) +
+         ",z=" + std::to_string(pos[2]) + "\nhr=" + std::to_string(rot[0]) +
+         ",vr=" + std::to_string(rot[1]);
+}
+
+void InitParticleMenu(rpg::ParticleEngine* PE,
+                      Camera* camera,
+                      float* camera_speed,
+                      float* camera_speed_multiplier) {
   ColorPicker* start_color_picker =
       new ColorPicker("Gradient Begin Color", glm::value_ptr(PE->start_color));
   ColorPicker* end_color_picker =
@@ -60,6 +72,14 @@ void InitParticleMenu(rpg::ParticleEngine* PE) {
                  2.0f),
       new CheckBox("Enable Floor", &PE->bounce)};
 
+  vector<Widget*> camera_settings = {
+      new Label("Camera tracker", std::bind(print_pos, camera)),
+      new Slider("Field of View", &(camera->fov), 20.0f, 120.0f),
+      new Slider("Base Speed", camera_speed, 0.5f, 10.0f),
+      new Slider("Boost/Brake Multiplier", camera_speed_multiplier, 1.25f,
+                 3.0f),
+  };
+
   vector<Widget*> particle_system{
       new Slider(
           "Number of Particles", &PE->max_particles, 1, 1000000,
@@ -82,6 +102,7 @@ void InitParticleMenu(rpg::ParticleEngine* PE) {
       &PE->bounce)};
 
   std::vector<Widget*> options_widgets = {
+      new Group("Camera", camera_settings, true),
       new Group("Simulation", simulation, true),
       new Group("Colors", colors, true),
       new Group("Particle System", particle_system, true),
