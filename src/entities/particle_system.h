@@ -16,7 +16,7 @@ class ParticleEngine : public Entity {
   enum class PARAMETER { LIFETIME = 0, DIST_FROM_GROUND = 1, VELOCITY = 2 };
 
  public:
-  COLOR_MODE color_mode = COLOR_MODE::RAINBOW;
+  COLOR_MODE color_mode = COLOR_MODE::GRADIENT;
   PARAMETER color_param = PARAMETER::LIFETIME;
   /// PARTICLE
   float coeff_of_restitution = 0.8f;
