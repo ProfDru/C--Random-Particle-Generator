@@ -25,6 +25,6 @@ struct MoveInfo {
 
 /*! \brief Determine the change in the camera's position and rotation based on
  * inputs. */
-MoveInfo Move();
+MoveInfo Move(float base_speed = 2.5f, float boost_multiplier = 2.5f);
 
 }  // namespace rpg

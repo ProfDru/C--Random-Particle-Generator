@@ -21,6 +21,9 @@
 
 namespace rpg {
 
+float camera_speed = 2.5f;
+float camera_boost_multi = 2.5f;
+
 void ScreenResizeCallback(float x, float y) {
   rpg::rendering::Renderer::UpdateScreenXY(x, y);
 }
@@ -44,7 +47,8 @@ void Scene::Start() {
   this->PI.SetID(Registry::GetNextID());
 
   // Add hud widgets
-  rpg::menus::InitParticleMenu(&PI, &main_camera);
+  rpg::menus::InitParticleMenu(&PI, &main_camera, &camera_speed,
+                               &camera_boost_multi);
 
   // Initiate draw loop
   printf("Beginning Draw Loop. \n");
@@ -52,7 +56,7 @@ void Scene::Start() {
 }
 
 inline bool HandleMovement(Camera& camera, GLFWwindow* window) {
-  auto movement = Move();
+  auto movement = Move(camera_speed, camera_boost_multi);
   if (!movement.empty()) {
     camera.Move(movement.position_change, movement.direction_change);
     glm::mat4 MVP = camera.CalculateMVP();

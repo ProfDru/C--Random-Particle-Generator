@@ -35,7 +35,10 @@ Widget* BindRandomOrConstant(RandomOrConstant& ROC, const std::string& name) {
   return CreateDistributionWidgets(ROC, name);
 }
 
-void InitParticleMenu(rpg::ParticleEngine* PE, Camera* camera) {
+void InitParticleMenu(rpg::ParticleEngine* PE,
+                      Camera* camera,
+                      float* camera_speed,
+                      float* camera_speed_multiplier) {
   ColorPicker* start_color_picker =
       new ColorPicker("Gradient Begin Color", glm::value_ptr(PE->start_color));
   ColorPicker* end_color_picker =
@@ -61,7 +64,10 @@ void InitParticleMenu(rpg::ParticleEngine* PE, Camera* camera) {
       new CheckBox("Enable Floor", &PE->bounce)};
 
   vector<Widget*> camera_settings = {
-      new Slider("Field of View", &(camera->fov), 45.0f, 180.0f),
+      new Slider("Field of View", &(camera->fov), 45.0f, 120.0f),
+      new Slider("Base Speed", camera_speed, 0.5f, 10.0f),
+      new Slider("Boost/Brake Multiplier", camera_speed_multiplier, 1.25f,
+                 3.0f),
   };
 
   vector<Widget*> particle_system{
