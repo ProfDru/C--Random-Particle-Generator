@@ -32,8 +32,8 @@ bool DidPress(ACTION act) {
   return InputManager::IsActive(act);
 }
 
-inline glm::vec2 CalcMovement() {
-  glm::vec2 control(0, 0);
+inline glm::vec3 CalcMovement() {
+  glm::vec3 control(0, 0, 0);
 
   if (DidPress(ACTION::FORWARD))
     control.y += 1;
@@ -43,6 +43,10 @@ inline glm::vec2 CalcMovement() {
     control.x += 1;
   if (DidPress(ACTION::LEFT))
     control.x -= 1;
+  if (DidPress(ACTION::UP))
+    control.z += 1;
+  if (DidPress(ACTION::DOWN))
+    control.z -= 1;
 
   return control;
 }
@@ -106,7 +110,7 @@ MoveInfo Move(float speed, float boost_multi) {
   if (!InputManager::IsTrackingMouse())
     return MoveInfo();
   else {
-    glm::vec2 movement_change = CalcMovement() * speed * change_in_time;
+    glm::vec3 movement_change = CalcMovement() * speed * change_in_time;
     glm::vec2 direction_change =
         CalcDirection() * mouse_sensitivity * change_in_time;
     return (MoveInfo{movement_change, direction_change});

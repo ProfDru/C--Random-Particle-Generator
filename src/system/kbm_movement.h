@@ -9,14 +9,14 @@ namespace rpg {
 
 /*! \brief Holds vectors containing a change in position and direction */
 struct MoveInfo {
-  glm::vec2 position_change;
+  glm::vec3 position_change;
   glm::vec2 direction_change;
   bool reset;
 
   inline MoveInfo()
-      : position_change(0, 0), direction_change(0, 0), reset(false){};
+      : position_change(0, 0, 0), direction_change(0, 0), reset(false){};
 
-  inline MoveInfo(glm::vec2 pos_change, glm::vec2 dir_change)
+  inline MoveInfo(glm::vec3 pos_change, glm::vec2 dir_change)
       : position_change(pos_change),
         direction_change(dir_change),
         reset(false){};

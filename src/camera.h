@@ -54,7 +54,7 @@ class Camera {
               float vertical_angle);
 
   /*! \brief Move the camera and update it's matricies */
-  void Move(const glm::vec2& position_change,
+  void Move(const glm::vec3& position_change,
             const glm::vec2& direction_change);
 
   inline std::array<float, 3> get_pos() const {

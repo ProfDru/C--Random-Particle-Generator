@@ -68,14 +68,19 @@ glm::mat4 Camera::CalculateMVP() const {
   return this->perspective_matrix * this->view_matrix * model_matrix;
 }
 
-void Camera::Move(const glm::vec2& position_change,
+void Camera::Move(const glm::vec3& position_change,
                   const glm::vec2& direction_change) {
-  this->pos += (ComputeDirection(this->vertical_angle, this->horizontal_angle) *
-                position_change.y);
-  this->pos += (ComputeRightAngle(this->horizontal_angle) * position_change.x);
-
   this->horizontal_angle += direction_change.x;
   this->vertical_angle += direction_change.y;
+
+  const glm::vec3 right = ComputeRightAngle(this->horizontal_angle);
+  const glm::vec3 direction =
+      ComputeDirection(this->vertical_angle, this->horizontal_angle);
+  const glm::vec3 up = glm::cross(right, direction);
+
+  this->pos += (direction * position_change.y);
+  this->pos += (right * position_change.x);
+  this->pos += (up * position_change.z);
 
   vertical_angle = std::clamp(vertical_angle, -3.14f / 2, 3.14f / 2);
 
